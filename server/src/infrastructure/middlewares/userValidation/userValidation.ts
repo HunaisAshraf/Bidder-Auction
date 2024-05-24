@@ -2,7 +2,7 @@ import { body } from "express-validator";
 
 export const loginValidator = [
   body("email").isEmail().withMessage("Email must be provided"),
-  body("password").isEmpty().withMessage("password must be provided"),
+  body("password").notEmpty().withMessage("password must be provided"),
 ];
 
 export const signupValidator = [

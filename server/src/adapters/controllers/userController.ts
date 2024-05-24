@@ -2,11 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { User } from "../../entities/User";
 import { IUserInteractor } from "../../application/interfaces/IuserInteractor";
 import { validationResult } from "express-validator";
+import { IAuthService } from "../../application/interfaces/IAuthService";
 
 export class UserController {
   private interactor: IUserInteractor;
-  constructor(interactor: IUserInteractor) {
+  private authService: IAuthService;
+  constructor(interactor: IUserInteractor, authService: IAuthService) {
     this.interactor = interactor;
+    this.authService = authService;
   }
 
   async onUserLogin(req: Request, res: Response, next: NextFunction) {
@@ -19,9 +22,17 @@ export class UserController {
       }
 
       const { email, password } = req.body;
-      const data = await this.interactor.login(email, password);
+      const user = await this.interactor.login(email, password);
+      console.log(user);
+      const data = {
+        _id: user?._id,
+        email: user?.email,
+      };
 
-      res.status(200).json(data);
+      const token = this.authService.generateToken(data);
+      res.cookie("token", token, { httpOnly: true });
+
+      return res.status(200).json({ success: true, user });
     } catch (error) {
       next(error);
     }
@@ -38,9 +49,16 @@ export class UserController {
 
       const body = req.body;
 
-      const data = await this.interactor.signup(body);
+      const user = await this.interactor.signup(body);
+      const data = {
+        _id: user?._id,
+        email: user?.email,
+      };
 
-      res.status(200).json(data);
+      const token = this.authService.generateToken(data);
+      res.cookie("token", token, { httpOnly: true });
+
+      res.status(200).json({ success: true, user });
     } catch (error) {
       next(error);
     }

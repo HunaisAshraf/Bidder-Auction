@@ -15,12 +15,13 @@ export class UserInteractor implements IUserInteractor {
 
   async login(email: string, password: string): Promise<User | null> {
     try {
-      let user = await this.repository.findOne(email);
+      let user = await this.repository.findByEmail(email);
 
       if (!user) {
         return null;
       }
-
+      console.log(user);
+      
       const passwordMatch = await comparePassword(password, user.password);
 
       if (!passwordMatch) {
@@ -49,7 +50,7 @@ export class UserInteractor implements IUserInteractor {
 
       return newUser;
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("user aldready registered");
     }
   }
 
