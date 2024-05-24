@@ -4,7 +4,7 @@ import {
   generateHashPassword,
 } from "../../../infrastructure/middlewares/hashPasswordMiddleware";
 import { IUserRepository } from "../../interfaces/IUserRepository";
-import { IUserInteractor } from "../../interfaces/IuserInteractor";
+import { IUserInteractor } from "../../interfaces/user/IuserInteractor";
 
 export class UserInteractor implements IUserInteractor {
   private repository: IUserRepository;

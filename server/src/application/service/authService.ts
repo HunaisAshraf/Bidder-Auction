@@ -1,5 +1,5 @@
 import { User } from "../../entities/User";
-import { IAuthService } from "../interfaces/IAuthService";
+import { IAuthService } from "../interfaces/user/IAuthService";
 import jwt from "jsonwebtoken";
 
 export class AuthService implements IAuthService {

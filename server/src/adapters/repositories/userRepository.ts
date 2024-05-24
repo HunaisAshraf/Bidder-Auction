@@ -1,4 +1,4 @@
-import { IUserRepository } from "../../application/interfaces/IUserRepository";
+import { IUserRepository } from "../../application/interfaces/user/IUserRepository";
 import { User } from "../../entities/User";
 import { UserModel } from "../../infrastructure/db/models/userMoldel";
 
