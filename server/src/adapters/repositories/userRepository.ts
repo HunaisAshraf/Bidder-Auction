@@ -37,9 +37,9 @@ export class UserRepository implements IUserRepository {
       throw new Error("Method not implemented.");
     }
   }
-  async update(id: string, user: User): Promise<User | null> {
+  async update( user: User): Promise<User | null> {
     try {
-      const data = await UserModel.findByIdAndUpdate(id, user);
+      const data = await UserModel.findByIdAndUpdate(user._id, user);
       return data;
     } catch (error) {
       throw new Error("Method not implemented.");

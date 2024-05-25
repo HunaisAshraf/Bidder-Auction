@@ -3,14 +3,17 @@ import {
   comparePassword,
   generateHashPassword,
 } from "../../../infrastructure/middlewares/hashPasswordMiddleware";
-import { IUserRepository } from "../../interfaces/IUserRepository";
+import { IMailerService } from "../../interfaces/service/IMailerService";
+import { IUserRepository } from "../../interfaces/user/IUserRepository";
 import { IUserInteractor } from "../../interfaces/user/IuserInteractor";
 
 export class UserInteractor implements IUserInteractor {
   private repository: IUserRepository;
+  private mailService: IMailerService;
 
-  constructor(repository: IUserRepository) {
+  constructor(repository: IUserRepository, mailService: IMailerService) {
     this.repository = repository;
+    this.mailService = mailService;
   }
 
   async login(email: string, password: string): Promise<User | null> {
@@ -21,7 +24,7 @@ export class UserInteractor implements IUserInteractor {
         return null;
       }
       console.log(user);
-      
+
       const passwordMatch = await comparePassword(password, user.password);
 
       if (!passwordMatch) {
@@ -47,6 +50,8 @@ export class UserInteractor implements IUserInteractor {
       user.password = hashedPassword;
 
       const newUser = await this.repository.add(user);
+
+      await this.mailService.accountVerificationMail(newUser, "verifyEmail");
 
       return newUser;
     } catch (error) {
