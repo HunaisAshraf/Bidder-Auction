@@ -10,5 +10,9 @@ export class User {
     public role: string,
     public isActive: boolean,
     public profilePicture: string,
+    public verifyToken: string,
+    public verifyTokenExpiry: Date,
+    public forgotPasswordToken: string,
+    public forgotPasswordTokenExpiry: Date
   ) {}
 }

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { User } from "../../entities/User";
 import { IUserInteractor } from "../../application/interfaces/user/IuserInteractor";
 import { validationResult } from "express-validator";
-import { IAuthService } from "../../application/interfaces/user/IAuthService";
+import { IAuthService } from "../../application/interfaces/service/IAuthService";
 
 export class UserController {
   private interactor: IUserInteractor;
