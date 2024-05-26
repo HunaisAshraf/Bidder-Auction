@@ -63,4 +63,12 @@ export class UserController {
       next(error);
     }
   }
+
+  async onVerifyAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const body = req.body;
+    } catch (error) {
+      next(error);
+    }
+  }
 }

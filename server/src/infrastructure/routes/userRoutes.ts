@@ -27,5 +27,6 @@ router.post(
   signupValidator,
   controller.onUserSignUp.bind(controller)
 );
+router.post("/verifyemail")
 
 export { router as userRouter };

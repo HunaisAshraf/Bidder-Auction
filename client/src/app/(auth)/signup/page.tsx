@@ -30,10 +30,7 @@ export default function Signup() {
         password,
       };
 
-      const { data } = await axiosInstance.post(
-        "http://localhost:5000/api/auth/signup",
-        user
-      );
+      const { data } = await axiosInstance.post("/api/auth/signup", user);
 
       console.log(data);
 
@@ -53,30 +50,35 @@ export default function Signup() {
           type="text"
           placeholder="Name"
           icon={<DriveFileRenameOutlineRoundedIcon />}
+          value={name}
           setInput={setName}
         />
         <Input
           type="email"
           placeholder="Email"
           icon={<AlternateEmailRoundedIcon />}
+          value={email}
           setInput={setEmail}
         />
         <Input
           type="number"
           placeholder="Phone"
           icon={<LocalPhoneRoundedIcon />}
+          value={phone}
           setInput={setPhone}
         />
         <Input
           type="password"
           placeholder="Password"
           icon={<PasswordRoundedIcon />}
+          value={password}
           setInput={setPassword}
         />
         <Input
           type="password"
           placeholder="Confirm Password"
           icon={<PasswordRoundedIcon />}
+          value={confirmPassword}
           setInput={setconfirmPassword}
         />
         <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
