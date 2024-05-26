@@ -10,33 +10,43 @@ import LocalPhoneRoundedIcon from "@mui/icons-material/LocalPhoneRounded";
 import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+
+type FormValues = {
+  name: string;
+  email: string;
+  phone: number;
+  password: string;
+  confirmPassword: string;
+};
 
 export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setconfirmPassword] = useState("");
+
+  const { register, handleSubmit, formState, getValues } =
+    useForm<FormValues>();
+  const { errors } = formState;
 
   const router = useRouter();
 
-  const handleSignup = async (e: FormEvent) => {
+  const handleSignup = async(data: FormValues) => {
     try {
-      e.preventDefault();
-      const user = {
-        name,
-        email,
-        phone,
-        password,
-      };
-
-      const { data } = await axiosInstance.post("/api/auth/signup", user);
-
       console.log(data);
 
-      if (data.success) {
-        router.push("/");
-      }
+      // e.preventDefault();
+      // const user = {
+      //   name,
+      //   email,
+      //   phone,
+      //   password,
+      // };
+
+      // const { data } = await axiosInstance.post("/api/auth/signup", user);
+
+      // console.log(data);
+
+      // if (data.success) {
+      //   router.push("/");
+      // }
     } catch (error) {
       console.log(error);
     }
@@ -44,42 +54,77 @@ export default function Signup() {
 
   return (
     <div className="mx-96 shadow-lg flex justify-center min-h-[91vh]">
-      <form className="w-100" onSubmit={handleSignup}>
+      <form className="w-100" onSubmit={handleSubmit(handleSignup)} noValidate>
         <h1 className="text-3xl font-semibold text-gray-500 my-10">SignUp</h1>
         <Input
           type="text"
           placeholder="Name"
           icon={<DriveFileRenameOutlineRoundedIcon />}
-          value={name}
-          setInput={setName}
+          {...register("name", {
+            required: "Please enter name",
+            pattern: {
+              value: /^[A-Za-z]+$/i,
+              message:
+                "Please valid characters only. [Alphabets A to Z, a to z ]",
+            },
+          })}
+          errors={errors.name?.message}
         />
         <Input
           type="email"
           placeholder="Email"
           icon={<AlternateEmailRoundedIcon />}
-          value={email}
-          setInput={setEmail}
+          {...register("email", {
+            required: "Please enter email",
+            pattern: {
+              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+              message: "Please enter valid email",
+            },
+          })}
+          errors={errors.email?.message}
         />
         <Input
           type="number"
           placeholder="Phone"
           icon={<LocalPhoneRoundedIcon />}
-          value={phone}
-          setInput={setPhone}
+          {...register("phone", {
+            required: "Please enter phone number",
+            minLength: {
+              value: 10,
+              message: "Please enter valid phone number",
+            },
+            maxLength: {
+              value: 10,
+              message: "Please enter valid phone number",
+            },
+          })}
+          errors={errors.phone?.message}
         />
         <Input
           type="password"
           placeholder="Password"
           icon={<PasswordRoundedIcon />}
-          value={password}
-          setInput={setPassword}
+          {...register("password", {
+            required: "Please enter password",
+            pattern: {
+              value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+              message:
+                "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character",
+            },
+          })}
+          errors={errors.password?.message}
         />
         <Input
           type="password"
           placeholder="Confirm Password"
           icon={<PasswordRoundedIcon />}
-          value={confirmPassword}
-          setInput={setconfirmPassword}
+          {...register("confirmPassword", {
+            validate: (value) => {
+              const password = getValues("password");
+              return password === value || "Password dosen't match";
+            },
+          })}
+          errors={errors.confirmPassword?.message}
         />
         <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
           SignUp

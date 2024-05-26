@@ -1,31 +1,30 @@
-import React, { ReactElement } from "react";
-import GoogleIcon from "@mui/icons-material/Google";
+import React, { ReactElement, forwardRef } from "react";
 
-type Input = {
+type InputProps = {
   type: "text" | "number" | "email" | "password";
   placeholder: string;
   icon: ReactElement;
-  value: string;
-  setInput: React.Dispatch<React.SetStateAction<string>>;
-};
+  errors: string | undefined;
+} & React.InputHTMLAttributes<HTMLInputElement>;;
 
-export default function Input({
-  type,
-  placeholder,
-  icon,
-  value,
-  setInput,
-}: Input) {
-  return (
-    <div className="w-full my-3 flex items-center gap-2 border rounded-md p-2">
-      <p className="text-gray-400">{icon}</p>
-      <input
-        className="outline-none text-gray-600"
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => setInput(e.target.value)}
-      />
-    </div>
-  );
-}
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ type, placeholder, icon, errors, ...rest }, ref) => {
+    return (
+      <div>
+        <div className="w-full my-3 flex items-center gap-2 border rounded-md p-2">
+          <p className="text-gray-400">{icon}</p>
+          <input
+            className="outline-none text-gray-600"
+            type={type}
+            placeholder={placeholder}
+            {...rest}
+            ref={ref}
+          />
+        </div>
+        <p className="text-red-600 text-sm">{errors}</p>
+      </div>
+    );
+  }
+);
+
+export default Input;
