@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
+import { User } from "../../../utils/types";
 
 type FormValues = {
   name: string;
@@ -30,6 +31,7 @@ export default function Signup() {
 
   const router = useRouter();
 
+
   const handleSignup = async (formData: FormValues) => {
     try {
       setLoading(true);
@@ -37,7 +39,16 @@ export default function Signup() {
 
       console.log(data);
 
-      if (data.success) {
+      if (data?.success) {
+        const user = {
+          id: data?.user?._id,
+          name: data?.user?.name,
+          email: data?.user?.email,
+          phone: data?.user?.phone,
+        };
+        localStorage.setItem("auth", JSON.stringify(user));
+
+
         setLoading(false);
         router.push("/");
       }

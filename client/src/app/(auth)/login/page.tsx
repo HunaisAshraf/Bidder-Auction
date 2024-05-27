@@ -8,6 +8,10 @@ import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useState } from "react";
+import Spinner from "@/components/Spinner";
+import { axiosInstance } from "@/utils/constants";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 type FormValue = {
   email: string;
@@ -15,12 +19,33 @@ type FormValue = {
 };
 
 export default function Login() {
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState } = useForm<FormValue>();
   const { errors } = formState;
+  const router = useRouter();
 
-  const handleLogin = async (data: FormValue) => {
+  const handleLogin = async (formData: FormValue) => {
     try {
+      setLoading(true);
+      const { data } = await axiosInstance.post("/api/auth/login", formData);
+
+      console.log(data);
+      
+
+      if (data?.success) {
+        const user = {
+          id: data?.user?._id,
+          name: data?.user?.name,
+          email: data?.user?.email,
+          phone: data?.user?.phone,
+        };
+        localStorage.setItem("auth", JSON.stringify(user));
+
+        // router.push("/");
+      } else {
+        toast.error("laksdjf")
+      }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -28,6 +53,7 @@ export default function Login() {
 
   return (
     <div className="mx-96 shadow-lg flex justify-center  items-center min-h-[91vh]">
+      <Toaster />
       <form className="w-100" onSubmit={handleSubmit(handleLogin)} noValidate>
         <h1 className="text-3xl font-semibold text-gray-500 my-10">Login</h1>
         <Input

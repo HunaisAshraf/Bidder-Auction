@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { logout } from "@/lib/store/features/userSlice";
 
 const links = [
   { title: "Home", href: "/" },
@@ -21,8 +23,21 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const user = useAppSelector((state) => state?.users?.user?.id);
+
+  const dispatch = useAppDispatch();
+
   const toggleMenu = () => {
     setMenu(!menu);
+  };
+
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("auth");
+      dispatch(logout());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -60,7 +75,7 @@ export default function Header() {
           </ul>
         </div>
         <div className="flex items-center gap-6">
-          {!auth ? (
+          {!user ? (
             <>
               <Button
                 onClick={() => router.push("/login")}
@@ -79,7 +94,11 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Button className="font-bold bg-blue-600" variant="contained">
+              <Button
+                onClick={handleLogout}
+                className="font-bold bg-blue-600"
+                variant="contained"
+              >
                 Logout
               </Button>
             </>
