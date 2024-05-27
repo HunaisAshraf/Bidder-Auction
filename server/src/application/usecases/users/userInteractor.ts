@@ -21,7 +21,7 @@ export class UserInteractor implements IUserInteractor {
       let user = await this.repository.findByEmail(email);
 
       if (!user) {
-        return null;
+        throw new Error("user dosen't exist");
       }
       console.log(user);
 
@@ -33,7 +33,7 @@ export class UserInteractor implements IUserInteractor {
 
       return user;
     } catch (error: any) {
-      throw new Error(`error in login : ${error.message}`);
+      throw new Error(`${error.message}`);
     }
   }
 
