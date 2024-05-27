@@ -12,6 +12,9 @@ import Spinner from "@/components/Spinner";
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import useAuth from "@/utils/hooks/auth";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { login } from "@/lib/store/features/userSlice";
 
 type FormValue = {
   email: string;
@@ -19,10 +22,14 @@ type FormValue = {
 };
 
 export default function Login() {
+  useAuth();
+
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState } = useForm<FormValue>();
   const { errors } = formState;
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
 
   const handleLogin = async (formData: FormValue) => {
     try {
@@ -30,7 +37,6 @@ export default function Login() {
       const { data } = await axiosInstance.post("/api/auth/login", formData);
 
       console.log(data);
-      
 
       if (data?.success) {
         const user = {
@@ -41,13 +47,15 @@ export default function Login() {
         };
         localStorage.setItem("auth", JSON.stringify(user));
 
-        // router.push("/");
-      } else {
-        toast.error("laksdjf")
+        dispatch(login(user));
+
+        router.push("/");
       }
-      setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error(error?.response?.data?.error);
+    } finally {
+      setLoading(false);
     }
   };
 
