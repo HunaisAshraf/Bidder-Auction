@@ -6,6 +6,8 @@ import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
 import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
 import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
+import { useState } from "react";
 
 type FormValue = {
   email: string;
@@ -13,6 +15,7 @@ type FormValue = {
 };
 
 export default function Login() {
+  const [loading,setLoading] = useState(false)
   const { register, handleSubmit, formState } = useForm<FormValue>();
   const { errors } = formState;
 
@@ -49,9 +52,13 @@ export default function Login() {
           })}
           errors={errors.password?.message}
         />
-        <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
-          SignUp
-        </button>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
+            Loing
+          </button>
+        )}
         <h1 className="text-center text-blue-600 my-3">Forgot password?</h1>
 
         <div className="flex justify-center items-center gap-3">
@@ -63,6 +70,9 @@ export default function Login() {
             Facebook
           </button>
         </div>
+        <Link href="/signup">
+          <p className="text-center my-4 text-blue-600">Create new account</p>
+        </Link>
       </form>
     </div>
   );

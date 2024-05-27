@@ -5,5 +5,5 @@ export interface IUserRepository {
   findOne(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   add(user: User): Promise<User>;
-  update(user: User): Promise<User | null>;
+  update(email: string, user: any): Promise<User | null>;
 }

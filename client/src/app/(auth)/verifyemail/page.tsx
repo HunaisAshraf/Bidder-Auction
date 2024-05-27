@@ -1,21 +1,33 @@
 "use client";
 
 import { axiosInstance } from "@/utils/constants";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function VerifyEmail() {
-  const [verifying, setVerifying] = useState(true);
-  const [timer, setTimer] = useState(5);
+  const [verifying, setVerifying] = useState(false);
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const type = searchParams.get("type");
+  const token = searchParams.get("token");
+  const email = searchParams.get("email");
 
   async function verify() {
     try {
-      const { data } = await axiosInstance.get("/api/auth/verify");
+      setVerifying(true);
+      const { data } = await axiosInstance.post("/api/auth/verify-email", {
+        type,
+        token,
+        email,
+      });
+
+      console.log(data);
 
       if (data.success) {
         setVerifying(false);
-        router.push("/login");
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -28,11 +40,7 @@ export default function VerifyEmail() {
 
   return (
     <div className="min-h-[100vh] flex justify-center items-center">
-      {verifying ? (
-        <h1> Loading.....</h1>
-      ) : (
-        <h1> Redirecting in {timer} seconds...</h1>
-      )}
+      {verifying ? <h1> Loading.....</h1> : <h1> Redirecting...</h1>}
     </div>
   );
 }

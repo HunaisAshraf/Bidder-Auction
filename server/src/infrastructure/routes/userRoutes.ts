@@ -27,6 +27,8 @@ router.post(
   signupValidator,
   controller.onUserSignUp.bind(controller)
 );
-router.post("/verifyemail")
+router.post("/verify-email", controller.onVerifyAccount.bind(controller));
+router.post("/forgotpassword", controller.onForgotPassword.bind(controller));
+router.put("/update-user", controller.onUpdateUser.bind(controller));
 
 export { router as userRouter };

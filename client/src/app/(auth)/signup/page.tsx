@@ -1,6 +1,5 @@
 "use client";
 
-import { FormEvent, useState } from "react";
 import Input from "@/components/Input";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
@@ -11,6 +10,9 @@ import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
+import { useState } from "react";
+import Spinner from "@/components/Spinner";
 
 type FormValues = {
   name: string;
@@ -21,32 +23,24 @@ type FormValues = {
 };
 
 export default function Signup() {
-
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState, getValues } =
     useForm<FormValues>();
   const { errors } = formState;
 
   const router = useRouter();
 
-  const handleSignup = async(data: FormValues) => {
+  const handleSignup = async (formData: FormValues) => {
     try {
+      setLoading(true);
+      const { data } = await axiosInstance.post("/api/auth/signup", formData);
+
       console.log(data);
 
-      // e.preventDefault();
-      // const user = {
-      //   name,
-      //   email,
-      //   phone,
-      //   password,
-      // };
-
-      // const { data } = await axiosInstance.post("/api/auth/signup", user);
-
-      // console.log(data);
-
-      // if (data.success) {
-      //   router.push("/");
-      // }
+      if (data.success) {
+        setLoading(false);
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +48,11 @@ export default function Signup() {
 
   return (
     <div className="mx-96 shadow-lg flex justify-center min-h-[91vh]">
-      <form className="w-100" onSubmit={handleSubmit(handleSignup)} noValidate>
+      <form
+        className="w-[400px]"
+        onSubmit={handleSubmit(handleSignup)}
+        noValidate
+      >
         <h1 className="text-3xl font-semibold text-gray-500 my-10">SignUp</h1>
         <Input
           type="text"
@@ -109,7 +107,7 @@ export default function Signup() {
             pattern: {
               value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
               message:
-                "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character",
+                "Password must contain at least 8 characters, 1 upper & lowercase letter, 1 number, on 1 special character",
             },
           })}
           errors={errors.password?.message}
@@ -126,9 +124,13 @@ export default function Signup() {
           })}
           errors={errors.confirmPassword?.message}
         />
-        <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
-          SignUp
-        </button>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
+            SignUp
+          </button>
+        )}
         <h1 className="text-center text-blue-600 my-3">Forgot password?</h1>
 
         <div className="flex justify-center items-center gap-3">
@@ -140,6 +142,12 @@ export default function Signup() {
             Facebook
           </button>
         </div>
+
+        <Link href="/login">
+          <p className="text-center my-4 text-blue-600">
+            Already have an account
+          </p>
+        </Link>
       </form>
     </div>
   );

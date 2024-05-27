@@ -9,10 +9,11 @@ export class User {
     public password: string,
     public role: string,
     public isActive: boolean,
+    public isVerified: boolean,
     public profilePicture: string,
-    public verifyToken: string,
-    public verifyTokenExpiry: Date,
-    public forgotPasswordToken: string,
-    public forgotPasswordTokenExpiry: Date
+    public verifyToken: string | undefined,
+    public verifyTokenExpiry: Date | undefined,
+    public forgotPasswordToken: string | undefined,
+    public forgotPasswordTokenExpiry: Date | undefined
   ) {}
 }

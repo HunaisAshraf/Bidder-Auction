@@ -23,6 +23,10 @@ const userSchema = new Schema<User>(
       type: Boolean,
       default: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     profilePicture: {
       type: String,
     },

@@ -1,3 +1,4 @@
+import { Error } from "mongoose";
 import { IUserRepository } from "../../application/interfaces/user/IUserRepository";
 import { User } from "../../entities/User";
 import { UserModel } from "../../infrastructure/db/models/userMoldel";
@@ -33,16 +34,17 @@ export class UserRepository implements IUserRepository {
       const data = new UserModel(user);
       await data.save();
       return data;
-    } catch (error) {
-      throw new Error("Method not implemented.");
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
-  async update( user: User): Promise<User | null> {
+  async update(id: string, user: any): Promise<User | null> {
     try {
-      const data = await UserModel.findByIdAndUpdate(user._id, user);
-      return data;
+      const updatedUser = await UserModel.findByIdAndUpdate(id, user);
+
+      return updatedUser;
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("Error in updating user");
     }
   }
 }

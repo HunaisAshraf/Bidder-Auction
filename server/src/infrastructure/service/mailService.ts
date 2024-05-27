@@ -29,14 +29,14 @@ export class MailService implements IMailerService {
         user.forgotPasswordTokenExpiry = twoDaysLater;
       }
 
-      let data = await this.repository.update(user);
+      let data = await this.repository.update(user._id.toString(), user);
 
-      await sendMail(user.name, user.email, type,token);
-    } catch (error) {
-      throw new Error("Method not implemented.");
+      await sendMail(user.name, user.email, type, token);
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
-  async forgotPasswordMail(email: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+  // async forgotPasswordMail(email: string): Promise<void> {
+  //   throw new Error("Method not implemented.");
+  // }
 }

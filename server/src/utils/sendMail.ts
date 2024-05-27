@@ -30,9 +30,14 @@ export const sendMail = async (
     const info = await transporter.sendMail({
       from: '"Bidder "<bidder@gmail.com>',
       to: `${email}`,
-      subject: "Account verification",
+      subject:
+        type === "verifyEmail" ? "Account verification" : "Reset Password",
       html: `<h2>Hi ${name}</h2><br/>
-      <p>Click this <a href="${process.env.MAIL_LINK}/verifyemail?type=${type}&token=${token}"> link </a>to verify your account 
+      <p>Click this <a href="${
+        process.env.MAIL_LINK
+      }/verifyemail?type=${type}&token=${token}&email=${email}"> link </a>to ${
+        type === "verifyEmail" ? "verify your account " : "reset password"
+      } 
       
       </p><h4> </h4>`,
     });

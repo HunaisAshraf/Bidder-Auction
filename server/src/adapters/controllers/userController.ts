@@ -66,7 +66,35 @@ export class UserController {
 
   async onVerifyAccount(req: Request, res: Response, next: NextFunction) {
     try {
-      const body = req.body;
+      const { type, token, email } = req.body;
+
+      const data = await this.interactor.verifyMail(type, token, email);
+
+      if (data) {
+        res
+          .status(200)
+          .json({ success: true, message: "account verified", data });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onForgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body;
+      const data = await this.interactor.forgotPassword(email);
+
+      res.status(200).json({ success: true, message: "verification success" });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async onUpdateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password } = req.body;
+
+      let user = await this.interactor.updateDetails(email, password);
     } catch (error) {
       next(error);
     }
