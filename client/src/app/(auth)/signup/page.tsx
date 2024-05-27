@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
 import { User } from "../../../utils/types";
+import useAuth from "@/utils/hooks/auth";
 
 type FormValues = {
   name: string;
@@ -24,13 +25,14 @@ type FormValues = {
 };
 
 export default function Signup() {
+  useAuth();
+
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState, getValues } =
     useForm<FormValues>();
   const { errors } = formState;
 
   const router = useRouter();
-
 
   const handleSignup = async (formData: FormValues) => {
     try {
@@ -47,7 +49,6 @@ export default function Signup() {
           phone: data?.user?.phone,
         };
         localStorage.setItem("auth", JSON.stringify(user));
-
 
         setLoading(false);
         router.push("/");
