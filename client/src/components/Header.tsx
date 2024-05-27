@@ -18,7 +18,6 @@ const links = [
 ];
 
 export default function Header() {
-  const [auth, setAuth] = useState(false);
   const [menu, setMenu] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
