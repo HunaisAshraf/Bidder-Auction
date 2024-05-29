@@ -39,23 +39,25 @@ export class UserInteractor implements IUserInteractor {
 
   async signup(user: User): Promise<User> {
     try {
+      console.log("REACHED INTERACTOR");
+
       const userExist = await this.repository.findByEmail(user.email);
 
       console.log("userExist", userExist);
 
       if (userExist) {
-        console.log("askjdflkjsdlkdfjs");
-
-        // throw new Error("user aldready registered");
+        throw new Error("user aldready registered");
       }
-
-      const hashedPassword = await generateHashPassword(user.password);
-
-      user.password = hashedPassword;
+      if (user.password) {
+        const hashedPassword = await generateHashPassword(user.password);
+        user.password = hashedPassword;
+      }
 
       const newUser = await this.repository.add(user);
 
-      await this.mailService.accountVerificationMail(newUser, "verifyEmail");
+      if (!newUser.googleId) {
+        await this.mailService.accountVerificationMail(newUser, "verifyEmail");
+      }
 
       return newUser;
     } catch (error: any) {
@@ -125,6 +127,15 @@ export class UserInteractor implements IUserInteractor {
       }
 
       this.mailService.accountVerificationMail(user, "forgotPassword");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  async googleSignUp(user: User): Promise<User> {
+    try {
+      const data = await this.repository.upsert(user);
+      
+      return user;
     } catch (error: any) {
       throw new Error(error.message);
     }

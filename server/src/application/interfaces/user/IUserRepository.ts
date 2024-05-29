@@ -6,4 +6,5 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   add(user: User): Promise<User>;
   update(email: string, user: any): Promise<User | null>;
+  upsert(user: User): Promise<boolean>;
 }

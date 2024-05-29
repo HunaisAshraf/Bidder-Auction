@@ -47,4 +47,19 @@ export class UserRepository implements IUserRepository {
       throw new Error("Error in updating user");
     }
   }
+  async upsert(user: User): Promise<boolean> {
+    try {
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { email: user.email },
+        {
+          $set: user,
+        },
+        { upsert: true }
+      );
+
+      return true;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

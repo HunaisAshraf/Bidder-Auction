@@ -6,4 +6,5 @@ export interface IUserInteractor {
   updateDetails(email: string, password: string): Promise<User>;
   verifyMail(type: string, token: string, email: string): Promise<User | null>;
   forgotPassword(email: string): Promise<void>;
+  googleSignUp(user: User): Promise<User>;
 }

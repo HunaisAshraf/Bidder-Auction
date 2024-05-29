@@ -22,7 +22,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const user = useAppSelector((state) => state?.users?.user?.id);
+  const user = useAppSelector((state) => state?.users?.user?.email);
 
   const dispatch = useAppDispatch();
 

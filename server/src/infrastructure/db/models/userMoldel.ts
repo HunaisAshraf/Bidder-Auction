@@ -13,11 +13,9 @@ const userSchema = new Schema<User>(
     },
     phone: {
       type: Number,
-      required: true,
     },
     password: {
       type: String,
-      required: true,
     },
     isActive: {
       type: Boolean,

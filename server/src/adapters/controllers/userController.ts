@@ -40,6 +40,7 @@ export class UserController {
 
   async onUserSignUp(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("reached controller");
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -48,7 +49,7 @@ export class UserController {
       }
 
       const body = req.body;
-
+      console.log("validation completed");
       const user = await this.interactor.signup(body);
       const data = {
         _id: user?._id,
@@ -95,6 +96,31 @@ export class UserController {
       const { email, password } = req.body;
 
       let user = await this.interactor.updateDetails(email, password);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onGoogleSignUp(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("reached controeller");
+
+      const body = req.body;
+      body.isVerified = true;
+      console.log("body", body);
+
+      const user = await this.interactor.googleSignUp(body);
+      console.log(user);
+
+      const data = {
+        _id: user?._id,
+        email: user?.email,
+      };
+
+      const token = this.authService.generateToken(data);
+      res.cookie("token", token, { httpOnly: true });
+
+      res.status(200).json({ success: true, user });
     } catch (error) {
       next(error);
     }

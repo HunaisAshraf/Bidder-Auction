@@ -27,6 +27,7 @@ router.post(
   signupValidator,
   controller.onUserSignUp.bind(controller)
 );
+router.post("/google-signup", controller.onGoogleSignUp.bind(controller));
 router.post("/verify-email", controller.onVerifyAccount.bind(controller));
 router.post("/forgotpassword", controller.onForgotPassword.bind(controller));
 router.put("/update-user", controller.onUpdateUser.bind(controller));
