@@ -60,7 +60,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="mx-96 shadow-lg flex justify-center min-h-[91vh]">
+    <div className="lg:mx-96 lg:shadow-lg flex justify-center min-h-[91vh]">
       <div>
         <form
           className="w-[400px]"

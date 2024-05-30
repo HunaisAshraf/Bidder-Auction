@@ -8,17 +8,18 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { logout } from "@/lib/store/features/userSlice";
+import { signOut } from "next-auth/react";
 
 const links = [
   { title: "Home", href: "/" },
-  { title: "Auction", href: "/auction" },
+  { title: "Auction", href: "/auctions" },
   { title: "Watch List", href: "/watchlist" },
   { title: "Chat", href: "/chat" },
   { title: "notification", href: "/notification" },
 ];
 
 export default function Header() {
-  const [menu, setMenu] = useState(false);
+  const [menu, setMenu] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -33,6 +34,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       localStorage.removeItem("auth");
+      signOut();
       dispatch(logout());
     } catch (error) {
       console.log(error);

@@ -61,7 +61,7 @@ export default function Login() {
   };
 
   return (
-    <div className="mx-96 shadow-lg flex justify-center  items-center min-h-[91vh]">
+    <div className="lg:mx-96 md:shadow-lg flex justify-center items-center min-h-[91vh]">
       <Toaster />
       <div>
         <form className="w-100" onSubmit={handleSubmit(handleLogin)} noValidate>
