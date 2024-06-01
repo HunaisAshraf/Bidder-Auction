@@ -37,9 +37,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      const { data } = await axiosInstance.get("/logout");
-
-      console.log(data);
+      const { data } = await axiosInstance.get("/api/auth/logout");
 
       if (data.success) {
         localStorage.removeItem("auth");
@@ -51,8 +49,9 @@ export default function Header() {
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const user = localStorage.getItem("auth");
+
     if (!user && session?.user) {
       localStorage.setItem("auth", JSON.stringify(session.user));
       dispatch(login(session.user));
