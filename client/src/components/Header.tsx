@@ -3,12 +3,15 @@
 import { Button } from "@mui/material";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { logout } from "@/lib/store/features/userSlice";
-import { signOut } from "next-auth/react";
+import { login, logout } from "@/lib/store/features/userSlice";
+import { signOut, useSession } from "next-auth/react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { blue } from "@mui/material/colors";
+import { axiosInstance } from "@/utils/constants";
 
 const links = [
   { title: "Home", href: "/" },
@@ -22,8 +25,9 @@ export default function Header() {
   const [menu, setMenu] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
 
-  const user = useAppSelector((state) => state?.users?.user?.email);
+  const user = useAppSelector((state) => state?.users?.user);
 
   const dispatch = useAppDispatch();
 
@@ -33,13 +37,27 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("auth");
-      signOut();
-      dispatch(logout());
+      const { data } = await axiosInstance.get("/logout");
+
+      console.log(data);
+
+      if (data.success) {
+        localStorage.removeItem("auth");
+        signOut();
+        dispatch(logout());
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useLayoutEffect(() => {
+    const user = localStorage.getItem("auth");
+    if (!user && session?.user) {
+      localStorage.setItem("auth", JSON.stringify(session.user));
+      dispatch(login(session.user));
+    }
+  }, []);
 
   return (
     <header className="bg-white py-3">
@@ -76,7 +94,7 @@ export default function Header() {
           </ul>
         </div>
         <div className="flex items-center gap-6">
-          {!user ? (
+          {!user?.email ? (
             <>
               <Button
                 onClick={() => router.push("/login")}
@@ -102,6 +120,21 @@ export default function Header() {
               >
                 Logout
               </Button>
+
+              <button onClick={() => router.push("/profile")}>
+                {user.profilePicture ? (
+                  <img
+                    src={user?.profilePicture}
+                    alt={user.name}
+                    className="h-10 rounded-full"
+                  />
+                ) : (
+                  <AccountCircleIcon
+                    fontSize="large"
+                    sx={{ color: blue[800] }}
+                  />
+                )}
+              </button>
             </>
           )}
           <button className="md:hidden" onClick={toggleMenu}>

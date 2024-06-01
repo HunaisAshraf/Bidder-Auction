@@ -30,7 +30,11 @@ export class UserController {
       };
 
       const token = this.authService.generateToken(data);
-      res.cookie("token", token, { httpOnly: true });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
 
       return res.status(200).json({ success: true, user });
     } catch (error) {
@@ -59,8 +63,10 @@ export class UserController {
       const token = this.authService.generateToken(data);
       res.cookie("token", token, { httpOnly: true });
 
-      res.status(200).json({ success: true, user });
+      return res.status(200).json({ success: true, user });
     } catch (error) {
+      console.log(error);
+
       next(error);
     }
   }
@@ -121,6 +127,14 @@ export class UserController {
       res.cookie("token", token, { httpOnly: true });
 
       res.status(200).json({ success: true, user });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async onUserLogout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
+      return res.status(200).send({ success: true });
     } catch (error) {
       next(error);
     }

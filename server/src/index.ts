@@ -4,12 +4,19 @@ import dotenv from "dotenv";
 import { errorHandler } from "./infrastructure/middlewares/errorHandler";
 import { userRouter } from "./infrastructure/routes/userRoutes";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
 connectDb();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", userRouter);
 app.use(errorHandler);

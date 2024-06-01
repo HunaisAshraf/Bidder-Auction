@@ -61,6 +61,8 @@ export class UserInteractor implements IUserInteractor {
 
       return newUser;
     } catch (error: any) {
+      console.log(error.message);
+
       throw new Error(error.message);
     }
   }
@@ -134,7 +136,7 @@ export class UserInteractor implements IUserInteractor {
   async googleSignUp(user: User): Promise<User> {
     try {
       const data = await this.repository.upsert(user);
-      
+
       return user;
     } catch (error: any) {
       throw new Error(error.message);

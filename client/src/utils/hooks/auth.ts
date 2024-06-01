@@ -1,22 +1,26 @@
-import { login } from "@/lib/store/features/userSlice";
+import { login, logout } from "@/lib/store/features/userSlice";
+import { useAppDispatch } from "@/lib/store/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 
 const useAuth = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const user = localStorage.getItem("auth");
     if (user) {
-      router.push("/");
+      dispatch(login(JSON.parse(user)));
+      // router.push("/");
+    } else {
+      dispatch(logout());
     }
   }, []);
 
   const saveAuthData = (data: any) => {
     localStorage.setItem("auth", JSON.stringify(data));
     dispatch(login(data));
+    // router.push("/");
   };
   return { saveAuthData };
 };
