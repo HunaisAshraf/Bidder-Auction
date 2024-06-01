@@ -3,6 +3,9 @@
 import { useAppSelector } from "@/lib/store/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ProfilePictureModal from "./ProfilePictureModal";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 
 const links = [
   { title: "My Details", href: "/profile/details" },
@@ -19,12 +22,17 @@ export default function ProfileComponent() {
   return (
     <div className="">
       <div className="flex items-center gap-3">
-        <img
-          src={user?.profilePicture}
-          alt={user?.name}
-          className="rounded-full"
-        />
-        <p className="text-2xl font-semibold">{user?.name}</p>
+        {user?.profilePicture ? (
+          <img
+            src={user?.profilePicture}
+            alt={user?.name}
+            className="rounded-full"
+          />
+        ):(<>
+        <AccountCircleIcon sx={{fontSize:200}}/>
+        </>)}
+        <p className="text-3xl font-semibold">{user?.name}</p>
+        <ProfilePictureModal />
       </div>
       <div className="my-10">
         <ul className="flex items-center gap-6">

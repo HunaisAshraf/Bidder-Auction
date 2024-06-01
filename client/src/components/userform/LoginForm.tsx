@@ -13,8 +13,8 @@ import { login } from "@/lib/store/features/userSlice";
 
 import { signIn } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
-import Input from "./Input";
-import Spinner from "./Spinner";
+import Input from "../Input";
+import Spinner from "../Spinner";
 
 type FormValue = {
   email: string;

@@ -1,11 +1,13 @@
 "use client";
 
+import ProfilePictureModal from "@/components/ProfilePictureModal";
 import { useAppSelector } from "@/lib/store/hooks";
 
 export default function Profile() {
   const user = useAppSelector((state) => state.users.user);
   return (
     <div className="p-5">
+      
       {/* <div className="flex items-center gap-3">
         <img
           src={user?.profilePicture}

@@ -8,8 +8,8 @@ import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import Input from "./Input";
-import Spinner from "./Spinner";
+import Input from "../Input";
+import Spinner from "../Spinner";
 
 type FormValues = {
   name: string;
