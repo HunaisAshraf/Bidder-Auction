@@ -36,7 +36,7 @@ export class UserController {
         sameSite: "lax",
       });
 
-      return res.status(200).json({ success: true, user });
+      return res.status(200).json({ success: true, user, token });
     } catch (error) {
       next(error);
     }
@@ -66,7 +66,7 @@ export class UserController {
         secure: false,
         sameSite: "lax",
       });
-      return res.status(200).json({ success: true, user });
+      return res.status(200).json({ success: true, user, token });
     } catch (error) {
       console.log(error);
 
@@ -100,8 +100,11 @@ export class UserController {
       next(error);
     }
   }
+
   async onUpdateUser(req: Request, res: Response, next: NextFunction) {
     try {
+      const token = req?.headers?.authorization?.split(" ")[0];
+
       const { email, password } = req.body;
 
       let user = await this.interactor.updateDetails(email, password);
@@ -132,7 +135,7 @@ export class UserController {
         secure: false,
         sameSite: "lax",
       });
-      return res.status(200).json({ success: true, user });
+      return res.status(200).json({ success: true, user, token });
     } catch (error) {
       next(error);
     }
@@ -141,6 +144,35 @@ export class UserController {
     try {
       res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
       return res.status(200).send({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async onUpdateProfileImage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { fileUrl } = req.body;
+
+      console.log(fileUrl);
+
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        throw new Error("not authorised");
+      }
+      const { _id } = this.authService.verifyToken(token);
+
+      const user = await this.interactor.updateProfileImage(
+        _id.toString(),
+        fileUrl
+      );
+
+      return res.status(200).send({ success: true, user });
+    } catch (error) {
+      next(error);
+    }
+  }
+  onVerifyToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      // this.authService.verifyToken()
     } catch (error) {
       next(error);
     }

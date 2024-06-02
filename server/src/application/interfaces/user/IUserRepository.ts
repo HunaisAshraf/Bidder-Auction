@@ -5,6 +5,6 @@ export interface IUserRepository {
   findOne(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   add(user: User): Promise<User>;
-  update(email: string, user: any): Promise<User | null>;
+  update(_id: string, user: any): Promise<User | null>;
   upsert(user: User): Promise<boolean>;
 }

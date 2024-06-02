@@ -6,6 +6,7 @@ export type User = {
   email: string;
   phone?: string;
   profilePicture?: string;
+  token: string;
 };
 
 export type AuthData = {

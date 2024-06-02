@@ -26,7 +26,7 @@ export default function ProfileComponent() {
           <img
             src={user?.profilePicture}
             alt={user?.name}
-            className="rounded-full"
+            className="rounded-full h-40 w-40"
           />
         ):(<>
         <AccountCircleIcon sx={{fontSize:200}}/>

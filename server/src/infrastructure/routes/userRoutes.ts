@@ -32,5 +32,10 @@ router.post("/verify-email", controller.onVerifyAccount.bind(controller));
 router.post("/forgotpassword", controller.onForgotPassword.bind(controller));
 router.put("/update-user", controller.onUpdateUser.bind(controller));
 router.get("/logout", controller.onUserLogout.bind(controller));
+router.put(
+  "/update-profile-image",
+  controller.onUpdateProfileImage.bind(controller)
+);
+router.get("/verify-token", controller.onVerifyToken.bind(controller));
 
 export { router as userRouter };

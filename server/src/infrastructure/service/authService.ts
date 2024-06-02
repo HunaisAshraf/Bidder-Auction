@@ -14,7 +14,7 @@ export class AuthService implements IAuthService {
       throw new Error("error in generating token");
     }
   }
-  verifyToken(token: string): User | null {
+  verifyToken(token: string): User {
     try {
       const data = jwt.verify(token, process.env.JWT_SECRET!) as any;
       return data;

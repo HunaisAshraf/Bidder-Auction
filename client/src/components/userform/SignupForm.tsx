@@ -40,8 +40,10 @@ export default function SignupForm() {
           name: data?.user?.name,
           email: data?.user?.email,
           phone: data?.user?.phone,
+          profilePicture: data?.user?.profilePicture,
         };
         localStorage.setItem("auth", JSON.stringify(user));
+        localStorage.setItem("token", JSON.stringify(data?.token));
 
         setLoading(false);
         router.push("/");

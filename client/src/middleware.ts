@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-// import {} from ""
 
+const protectedRouteRegex = /^\/profile\/.*$/;
 const protectedRoute = ["/profile", "/watchlist"];
 const authRoute = ["/login", "/signup"];
 
@@ -19,7 +19,11 @@ export function middleware(req: NextRequest) {
     response.cookies.set("previousRoute", currentRoute);
   }
 
-  if (!token && protectedRoute.includes(currentRoute)) {
+  if (
+    !token &&
+    (protectedRoute.includes(currentRoute) ||
+      protectedRouteRegex.test(currentRoute))
+  ) {
     const absoluteUrl = new URL("/login", req.nextUrl.origin);
     console.log("prt rot:", absoluteUrl.toString());
 

@@ -1,5 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NextResponse, NextRequest } from "next/server";
+import { axiosInstance } from "@/utils/constants";
 
 const s3Client = new S3Client({
   region: process.env.NEXT_PUBLIC_AWS_S3_REGION!,
@@ -11,46 +13,32 @@ const s3Client = new S3Client({
 
 async function uploadToS3(file: any, fileName: any) {
   try {
-    const fileBuffer = file;
-    console.log("upload function");
-    
+    const buffer = Buffer.from(await file.arrayBuffer());
 
     const params = {
       Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
       Key: `${fileName}-${Date.now()}`,
-      Body: fileBuffer,
+      Body: buffer,
       ContentType: file.type,
     };
 
-
-
-
-
     const command = new PutObjectCommand(params);
 
-    console.log("command complete",command);
-    
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
     const data = await s3Client.send(command);
 
-    console.log(data);
-  } catch (error:any) {
+    return url.split("?")[0];
+  } catch (error: any) {
     console.log(error.message);
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-
-    console.log(process.env.NEXT_PUBLIC_AWS_S3_REGION);
-    console.log(process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID);
-    console.log(process.env.NEXT_PUBLIC_AWS_S3_SECRET_KEY);
-    
-
     const formData = await request.formData();
-    console.log("form data",formData);
-    const file = formData.get("image");
-    console.log("file",file);
+
+    const file = formData.get("image[]");
 
     if (!file || !(file instanceof File)) {
       return NextResponse.json(
@@ -61,15 +49,38 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log("file received");
-    
-    const buffer = Buffer.from(await file.arrayBuffer());
-    console.log("file buffer",buffer);
-    
-    const fileName = await uploadToS3(buffer, file.name);
-    console.log("file name",fileName);
-  } catch (error) {
-    console.log("error in router",error);
+
+    const fileUrl = await uploadToS3(file, file.name);
+
+    const cookie = request.cookies.get("token")?.value;
+
+    let { data } = await axiosInstance.put(
+      "/api/auth/update-profile-image",
+      { fileUrl },
+      {
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+        },
+      }
+    );
+
+    console.log(data);
+
+    const user = {
+      ...data.user,
+      password: undefined,
+      verifyToken: undefined,
+      verifyTokenExpiry: undefined,
+    };
+    console.log(user);
+
+    if (data.success) {
+      return NextResponse.json({ success: true, user });
+    }
+
+    return NextResponse.json({ succes: false });
+  } catch (error: any) {
+    console.log("error in router", error.data.error);
     return NextResponse.json({ success: false });
   }
 }

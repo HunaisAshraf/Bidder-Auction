@@ -84,6 +84,7 @@ export class UserInteractor implements IUserInteractor {
       throw new Error("Method not implemented.");
     }
   }
+
   async verifyMail(
     type: string,
     token: string,
@@ -120,6 +121,7 @@ export class UserInteractor implements IUserInteractor {
       throw new Error(error.message);
     }
   }
+
   async forgotPassword(email: string): Promise<void> {
     try {
       const user = await this.repository.findByEmail(email);
@@ -133,10 +135,21 @@ export class UserInteractor implements IUserInteractor {
       throw new Error(error.message);
     }
   }
+
   async googleSignUp(user: User): Promise<User> {
     try {
       const data = await this.repository.upsert(user);
 
+      return user;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async updateProfileImage(_id: string, url: string): Promise<User | null> {
+    try {
+      const data = { profilePicture: url };
+     const user = await this.repository.update(_id, data);
       return user;
     } catch (error: any) {
       throw new Error(error.message);
