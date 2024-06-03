@@ -27,6 +27,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
+        role:user?.role
       };
 
       const token = this.authService.generateToken(data);
@@ -58,6 +59,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
+        role:user?.role
       };
 
       const token = this.authService.generateToken(data);
@@ -143,6 +145,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
+        role:user?.role
       };
 
       const token = this.authService.generateToken(data);

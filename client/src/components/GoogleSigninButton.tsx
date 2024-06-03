@@ -5,10 +5,13 @@ import React, { useEffect } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
+import { setUser } from "@/lib/store/features/userSlice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 export default function GoogleSigninButton() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const dispatch = useAppDispatch()
 
   const handleGoogleLogin = async () => {
     try {
@@ -31,9 +34,12 @@ export default function GoogleSigninButton() {
         userData
       );
 
+      console.log(data);
+
       if (data?.success) {
         localStorage.setItem("auth", JSON.stringify(data?.user));
         localStorage.setItem("token", data.token);
+        dispatch(setUser(data.user));
         if (!data?.user?.role) {
           router.push("/role");
         } else {

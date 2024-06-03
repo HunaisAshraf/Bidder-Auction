@@ -50,25 +50,25 @@ export default function Header() {
     }
   };
 
-  useEffect(() => {
-    if (session?.user) {
-      const userData = {
-        name: session.user.name,
-        email: session.user.email,
-        profilePicture: session.user.image,
-      };
+  // useEffect(() => {
+  //   if (session?.user) {
+  //     const userData = {
+  //       name: session.user.name,
+  //       email: session.user.email,
+  //       profilePicture: session.user.image,
+  //     };
 
-      localStorage.setItem("auth", JSON.stringify(userData));
-      dispatch(setUser(userData));
-    }
-  }, [session, dispatch]);
+  //     localStorage.setItem("auth", JSON.stringify(userData));
+  //     dispatch(setUser(userData));
+  //   }
+  // }, [, dispatch]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("auth");
     if (storedUser && !user?.email) {
       dispatch(setUser(JSON.parse(storedUser)));
     }
-  }, [dispatch, user?.email]);
+  }, [session,dispatch, user?.email]);
 
   return (
     <header className="bg-white py-3">
@@ -132,7 +132,7 @@ export default function Header() {
                 Logout
               </Button>
 
-              <button onClick={() => router.push("/profile")}>
+              <button onClick={() => router.push("/profile/details")}>
                 {user.profilePicture ? (
                   <img
                     src={user?.profilePicture}

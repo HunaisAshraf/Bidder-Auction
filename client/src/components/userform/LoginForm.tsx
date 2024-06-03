@@ -35,17 +35,11 @@ export default function LoginForm() {
       const { data } = await axiosInstance.post("/api/auth/login", formData);
 
       if (data?.success) {
-        const user = {
-          id: data?.user?._id,
-          name: data?.user?.name,
-          email: data?.user?.email,
-          phone: data?.user?.phone,
-          profilePicture: data?.user?.profilePicture,
-        };
-        localStorage.setItem("auth", JSON.stringify(user));
+       
+        localStorage.setItem("auth", JSON.stringify(data.user));
         localStorage.setItem("token", JSON.stringify(data?.token));
 
-        dispatch(setUser(user));
+        dispatch(setUser(data.user));
 
         router.push("/");
       }
