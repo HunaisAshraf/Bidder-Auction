@@ -6,6 +6,7 @@ import { userRouter } from "./infrastructure/routes/userRoutes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import { auctionRouter } from "./infrastructure/routes/auctionRoute";
 
 const app = express();
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 app.use("/api/auth", userRouter);
+app.use("/api/auction", auctionRouter);
 app.use(errorHandler);
 
 const port = 5000;
