@@ -67,23 +67,36 @@ export class UserInteractor implements IUserInteractor {
     }
   }
 
-  async updateDetails(email: string, password: string): Promise<User> {
+  async updateDetails(id: string, value: User): Promise<User> {
     try {
-      const hashedPassword = await generateHashPassword(password);
+      console.log("user", value, id);
 
-      const data = await this.repository.update(email, {
-        password: hashedPassword,
-      });
-
-      if (!data) {
+      const user = await this.repository.update(id, value);
+      if (!user) {
         throw new Error("error in updating user");
       }
-
-      return data;
+      return user;
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("error in updating user");
     }
   }
+  // async updatePassword(email: string, password: string): Promise<User> {
+  //   try {
+  //     const hashedPassword = await generateHashPassword(password);
+
+  //     const data = await this.repository.update(email, {
+  //       password: hashedPassword,
+  //     });
+
+  //     if (!data) {
+  //       throw new Error("error in updating user");
+  //     }
+
+  //     return data;
+  //   } catch (error) {
+  //     throw new Error("Method not implemented.");
+  //   }
+  // }
 
   async verifyMail(
     type: string,
@@ -136,10 +149,18 @@ export class UserInteractor implements IUserInteractor {
     }
   }
 
-  async googleSignUp(user: User): Promise<User> {
+  async googleSignUp(user: User): Promise<User | null> {
     try {
-      const data = await this.repository.upsert(user);
 
+      const data = await this.repository.upsert(user);
+      if (!data) {
+        throw new Error("error in google signup");
+      }
+
+      if (user.email) {
+        const data = await this.repository.findByEmail(user.email);
+        return data;
+      }
       return user;
     } catch (error: any) {
       throw new Error(error.message);
@@ -149,7 +170,7 @@ export class UserInteractor implements IUserInteractor {
   async updateProfileImage(_id: string, url: string): Promise<User | null> {
     try {
       const data = { profilePicture: url };
-     const user = await this.repository.update(_id, data);
+      const user = await this.repository.update(_id, data);
       return user;
     } catch (error: any) {
       throw new Error(error.message);

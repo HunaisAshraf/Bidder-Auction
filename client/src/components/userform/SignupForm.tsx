@@ -46,7 +46,7 @@ export default function SignupForm() {
         localStorage.setItem("token", data?.token);
 
         setLoading(false);
-        router.push("/");
+        router.push("/role");
       }
     } catch (error) {
       console.log(error);

@@ -103,11 +103,27 @@ export class UserController {
 
   async onUpdateUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req?.headers?.authorization?.split(" ")[0];
+      console.log("update user");
 
-      const { email, password } = req.body;
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        throw new Error("not authorised");
+      }
+      const { _id } = this.authService.verifyToken(token);
 
-      let user = await this.interactor.updateDetails(email, password);
+      const body = req.body;
+      console.log(body);
+
+      let user = await this.interactor.updateDetails(_id.toString(), body);
+
+      return res.status(200).json({ success: true, user });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onUpdatePassword(req: Request, res: Response, next: NextFunction) {
+    try {
     } catch (error) {
       next(error);
     }
@@ -130,6 +146,9 @@ export class UserController {
       };
 
       const token = this.authService.generateToken(data);
+
+      console.log(token);
+
       res.cookie("token", token, {
         httpOnly: true,
         secure: false,
@@ -171,6 +190,7 @@ export class UserController {
       next(error);
     }
   }
+
   onVerifyToken(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.headers.authorization?.split(" ")[1];

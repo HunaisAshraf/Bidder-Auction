@@ -32,17 +32,13 @@ export default function GoogleSigninButton() {
       );
 
       if (data?.success) {
-        const user = {
-          id: data.user.googleId,
-          name: data.user.name,
-          email: data.user.email,
-          phone: data.user.phone,
-          profilePicture: data.user.profilePicture,
-        };
-
-        localStorage.setItem("auth", JSON.stringify(user));
+        localStorage.setItem("auth", JSON.stringify(data?.user));
         localStorage.setItem("token", data.token);
-        router.push("/");
+        if (!data?.user?.role) {
+          router.push("/role");
+        } else {
+          router.push("/");
+        }
       }
     } catch (error) {
       console.log(error);

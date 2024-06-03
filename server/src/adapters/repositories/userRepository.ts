@@ -38,11 +38,15 @@ export class UserRepository implements IUserRepository {
       throw new Error(error.message);
     }
   }
-  async update(id: string, user: any): Promise<User | null> {
+  async update(id: string, value: any): Promise<User | null> {
     try {
-      const updatedUser = await UserModel.findByIdAndUpdate(id, user);
+      console.log(id, value);
+
+      const updatedUser = await UserModel.findByIdAndUpdate(id, value, {
+        new: true,
+      });
       console.log(updatedUser);
-      
+
       return updatedUser;
     } catch (error) {
       console.log(error);

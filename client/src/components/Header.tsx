@@ -25,9 +25,11 @@ export default function Header() {
   const [menu, setMenu] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const user = useAppSelector((state) => state?.users?.user);
+
+  console.log("redux user", user);
 
   const dispatch = useAppDispatch();
 
@@ -42,19 +44,31 @@ export default function Header() {
       localStorage.removeItem("token");
       await signOut();
       dispatch(logout());
+      router.push("/login");
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("auth");
+    if (session?.user) {
+      const userData = {
+        name: session.user.name,
+        email: session.user.email,
+        profilePicture: session.user.image,
+      };
 
-    if (!user && session?.user) {
-      localStorage.setItem("auth", JSON.stringify(session.user));
-      dispatch(setUser(session.user));
+      localStorage.setItem("auth", JSON.stringify(userData));
+      dispatch(setUser(userData));
     }
-  }, [session]);
+  }, [session, dispatch]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("auth");
+    if (storedUser && !user?.email) {
+      dispatch(setUser(JSON.parse(storedUser)));
+    }
+  }, [dispatch, user?.email]);
 
   return (
     <header className="bg-white py-3">

@@ -5,10 +5,42 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import WorkIcon from "@mui/icons-material/Work";
 import { useRouter } from "next/navigation";
+import { axiosInstance } from "@/utils/constants";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { setUser } from "@/lib/store/features/userSlice";
 
 export default function Role() {
   const router = useRouter();
-  
+  const dispatch = useAppDispatch();
+
+  const handleUpdateRole = async (role: string) => {
+    try {
+      const { data } = await axiosInstance.put(
+        "/api/auth/update-user",
+        { role },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(data);
+      if (data.success) {
+        const user = {
+          ...data.user,
+        };
+
+        console.log(user);
+        dispatch(setUser(user));
+        localStorage.setItem("auth", JSON.stringify(user));
+
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-[75vh] flex justify-center items-center">
       <div className="flex justify-center items-center min-h-[90vh] w-[500px] border bottom-2 shadow-md border-t-0 border-b-0">
@@ -22,7 +54,7 @@ export default function Role() {
           </div>
           <div className="py-3">
             <button
-              onClick={() => router.push("/complete-profile/?role=bidder")}
+              onClick={() => handleUpdateRole("bidder")}
               className="border rounded-md border-blue-500 flex justify-center items-center gap-4 py-2 px-4 my-3"
             >
               <AccountCircleIcon className=" text-blue-600" />
@@ -35,7 +67,7 @@ export default function Role() {
               <ArrowForwardIcon className=" text-blue-600" />
             </button>
             <button
-              onClick={() => router.push("/complete-profile/?role=auctioner")}
+              onClick={() => handleUpdateRole("auctioner")}
               className="border rounded-md border-blue-500 flex justify-center items-center gap-4 py-2 px-4 my-3"
             >
               <WorkIcon className=" text-blue-600" />

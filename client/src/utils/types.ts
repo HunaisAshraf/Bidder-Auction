@@ -7,6 +7,7 @@ export type User = {
   phone?: string;
   profilePicture?: string;
   token: string;
+  role: string;
 };
 
 export type AuthData = {
