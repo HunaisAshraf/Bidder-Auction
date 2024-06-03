@@ -43,7 +43,7 @@ export default function SignupForm() {
           profilePicture: data?.user?.profilePicture,
         };
         localStorage.setItem("auth", JSON.stringify(user));
-        localStorage.setItem("token", JSON.stringify(data?.token));
+        localStorage.setItem("token", data?.token);
 
         setLoading(false);
         router.push("/");

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
 import { AppStore, makeStore } from "../lib/store/store";
-import { login } from "@/lib/store/features/userSlice";
+import { setUser } from "@/lib/store/features/userSlice";
 import { User } from "@/utils/types";
 
 export default function StoreProvider({
@@ -19,7 +19,7 @@ export default function StoreProvider({
     const userJson = localStorage.getItem("auth");
     if (userJson) {
       const user: User = JSON.parse(userJson);
-      storeRef.current?.dispatch(login(user));
+      storeRef.current?.dispatch(setUser(user));
     }
   }, []);
 

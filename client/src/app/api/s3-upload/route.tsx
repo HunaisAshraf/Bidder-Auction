@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
     const fileUrl = await uploadToS3(file, file.name);
 
     const cookie = request.cookies.get("token")?.value;
+    
 
     let { data } = await axiosInstance.put(
       "/api/auth/update-profile-image",

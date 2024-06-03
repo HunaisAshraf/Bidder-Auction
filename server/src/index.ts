@@ -5,6 +5,7 @@ import { errorHandler } from "./infrastructure/middlewares/errorHandler";
 import { userRouter } from "./infrastructure/routes/userRoutes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 const app = express();
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan("dev"));
 
 app.use("/api/auth", userRouter);
 app.use(errorHandler);

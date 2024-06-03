@@ -1,6 +1,6 @@
 "use client";
 
-import { login } from "@/lib/store/features/userSlice";
+import { setUser } from "@/lib/store/features/userSlice";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { SessionProvider } from "next-auth/react";
 
@@ -13,12 +13,10 @@ type NextAuthProviderProps = {
 export const NextAuthProvider = ({ children }: NextAuthProviderProps) => {
   const dispatch = useAppDispatch();
 
-  
-
   useEffect(() => {
     const user = localStorage.getItem("auth");
     if (user) {
-      dispatch(login(user));
+      dispatch(setUser(user));
     }
   }, []);
 

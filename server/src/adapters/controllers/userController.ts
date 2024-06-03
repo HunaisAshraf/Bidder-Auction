@@ -122,7 +122,7 @@ export class UserController {
       console.log("body", body);
 
       const user = await this.interactor.googleSignUp(body);
-      console.log(user);
+      console.log("user", user);
 
       const data = {
         _id: user?._id,
@@ -135,6 +135,7 @@ export class UserController {
         secure: false,
         sameSite: "lax",
       });
+      console.log("user", user);
       return res.status(200).json({ success: true, user, token });
     } catch (error) {
       next(error);
@@ -172,7 +173,19 @@ export class UserController {
   }
   onVerifyToken(req: Request, res: Response, next: NextFunction) {
     try {
-      // this.authService.verifyToken()
+      const token = req.headers.authorization?.split(" ")[1];
+      console.log(token);
+
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+      const validToken = this.authService.verifyToken(token);
+
+      if (!validToken) {
+        throw new Error("user not authorised");
+      }
+
+      return res.status(200).send({ success: true, message: "user verified" });
     } catch (error) {
       next(error);
     }

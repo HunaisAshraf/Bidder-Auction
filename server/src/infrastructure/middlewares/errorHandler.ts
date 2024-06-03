@@ -6,7 +6,5 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  res.status(400).send({
-    error: error.message,
-  });
+  res.status(400).send({ success: false, error: error.message });
 };

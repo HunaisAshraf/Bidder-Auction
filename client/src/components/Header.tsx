@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { login, logout } from "@/lib/store/features/userSlice";
+import { setUser, logout } from "@/lib/store/features/userSlice";
 import { signOut, useSession } from "next-auth/react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { blue } from "@mui/material/colors";
@@ -38,12 +38,10 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       const { data } = await axiosInstance.get("/api/auth/logout");
-
-      if (data.success) {
-        localStorage.removeItem("auth");
-        signOut();
-        dispatch(logout());
-      }
+      localStorage.removeItem("auth");
+      localStorage.removeItem("token");
+      await signOut();
+      dispatch(logout());
     } catch (error) {
       console.log(error);
     }
@@ -54,9 +52,9 @@ export default function Header() {
 
     if (!user && session?.user) {
       localStorage.setItem("auth", JSON.stringify(session.user));
-      dispatch(login(session.user));
+      dispatch(setUser(session.user));
     }
-  }, []);
+  }, [session]);
 
   return (
     <header className="bg-white py-3">

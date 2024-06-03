@@ -16,7 +16,7 @@ import Spinner from "./Spinner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import { login } from "@/lib/store/features/userSlice";
+import { setUser } from "@/lib/store/features/userSlice";
 
 const style = {
   position: "absolute" as "absolute",
@@ -74,7 +74,7 @@ export default function ProfilePictureModal() {
           profilePicture: data?.user?.profilePicture,
         };
         localStorage.setItem("auth", JSON.stringify(user));
-        dispatch(login(user));
+        dispatch(setUser(user));
         setLoading(false);
         router.push("/profile/details");
       } else {

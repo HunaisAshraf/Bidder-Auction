@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { axiosInstance } from "@/utils/constants";
-import { login } from "@/lib/store/features/userSlice";
+import { setUser } from "@/lib/store/features/userSlice";
 
 import { signIn } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
@@ -34,8 +34,6 @@ export default function LoginForm() {
       setLoading(true);
       const { data } = await axiosInstance.post("/api/auth/login", formData);
 
-      console.log(data);
-
       if (data?.success) {
         const user = {
           id: data?.user?._id,
@@ -47,7 +45,7 @@ export default function LoginForm() {
         localStorage.setItem("auth", JSON.stringify(user));
         localStorage.setItem("token", JSON.stringify(data?.token));
 
-        dispatch(login(user));
+        dispatch(setUser(user));
 
         router.push("/");
       }
