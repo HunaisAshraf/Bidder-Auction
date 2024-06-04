@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AddAuctionModal from "./AddAuctionModal";
+import { axiosInstance } from "@/utils/constants";
 
 function createData(
   name: string,
@@ -27,6 +28,16 @@ const rows = [
 ];
 
 export default function AuctionTable() {
+  const getAuctions = async () => {
+    try {
+      const { data } = await axiosInstance.get("/api/auction/get-auction");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {}, []);
+
   return (
     <div>
       <div className="flex justify-between items-center">
