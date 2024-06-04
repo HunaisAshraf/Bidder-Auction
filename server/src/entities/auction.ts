@@ -9,6 +9,7 @@ export class Auction {
     public startTime: Date,
     public endTime: Date,
     public auctioner: ObjectId | string,
-    public isListed: boolean
+    public isListed: boolean,
+    public images: string[]
   ) {}
 }

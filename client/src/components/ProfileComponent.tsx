@@ -2,10 +2,12 @@
 
 import { useAppSelector } from "@/lib/store/hooks";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ProfilePictureModal from "./ProfilePictureModal";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import { Router } from "next/router";
+import { useEffect } from "react";
 
 const links = [
   { title: "My Details", href: "/profile/details" },
@@ -21,14 +23,23 @@ const links = [
 ];
 
 export default function ProfileComponent() {
-  // const user = useAppSelector((state) => state.users.user);
+  const user = useAppSelector((state) => state.users.user);
   const pathname = usePathname();
+  const router = useRouter();
 
-  const user = JSON.parse(localStorage.getItem("auth")!);
-  console.log(user);
+  // const user = JSON.parse(localStorage.getItem("auth")!);
+  // console.log(user);
   const filteredLink = links.filter(
     (link) => link.role === user?.role || !link.role
   );
+
+  useEffect(() => {
+    const currentLink = links.find((link) => link.href === pathname);
+    if (currentLink && currentLink.role && currentLink.role !== user?.role) {
+      router.push("/profile/details");
+    }
+  }, [pathname, user?.role, router]);
+
   return (
     <div className="">
       <div className="flex items-center gap-3">
