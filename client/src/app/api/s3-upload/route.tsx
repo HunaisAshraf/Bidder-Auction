@@ -38,9 +38,9 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    const file = formData.get("image[]");
+    const files = formData.getAll("images[]");
 
-    if (!file || !(file instanceof File)) {
+    if (!files || files.length === 0) {
       return NextResponse.json(
         {
           success: false,
@@ -50,36 +50,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const fileUrl = await uploadToS3(file, file.name);
+    const uploadedImage = [];
 
-    const cookie = request.cookies.get("token")?.value;
-    
-
-    let { data } = await axiosInstance.put(
-      "/api/auth/update-profile-image",
-      { fileUrl },
-      {
-        headers: {
-          Authorization: `Bearer ${cookie}`,
-        },
+    for (let file of files) {
+      if (file instanceof File) {
+        const fileUrl = await uploadToS3(file, file.name);
+        uploadedImage.push(fileUrl);
       }
-    );
-
-    console.log(data);
-
-    const user = {
-      ...data.user,
-      password: undefined,
-      verifyToken: undefined,
-      verifyTokenExpiry: undefined,
-    };
-    console.log(user);
-
-    if (data.success) {
-      return NextResponse.json({ success: true, user });
     }
 
-    return NextResponse.json({ succes: false });
+    // const cookie = request.cookies.get("token")?.value;
+
+    // let { data } = await axiosInstance.put(
+    //   "/api/auth/update-profile-image",
+    //   { fileUrl },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${cookie}`,
+    //     },
+    //   }
+    // );
+
+    // console.log(data);
+
+    // const user = {
+    //   ...data.user,
+    //   password: undefined,
+    //   verifyToken: undefined,
+    //   verifyTokenExpiry: undefined,
+    // };
+    // console.log(user);
+
+    // if (data.success) {
+    // return NextResponse.json({ success: true, user });
+    // }
+
+    console.log(uploadedImage);
+    
+
+    return NextResponse.json({ success: true, uploadedImage });
+
+    // return NextResponse.json({ succes: false });
   } catch (error: any) {
     console.log("error in router", error.data.error);
     return NextResponse.json({ success: false });

@@ -29,8 +29,6 @@ export default function Header() {
 
   const user = useAppSelector((state) => state?.users?.user);
 
-  console.log("redux user", user);
-
   const dispatch = useAppDispatch();
 
   const toggleMenu = () => {
@@ -68,7 +66,7 @@ export default function Header() {
     if (storedUser && !user?.email) {
       dispatch(setUser(JSON.parse(storedUser)));
     }
-  }, [session,dispatch, user?.email]);
+  }, [session, dispatch, user?.email]);
 
   return (
     <header className="bg-white py-3">

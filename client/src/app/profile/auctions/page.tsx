@@ -1,7 +1,10 @@
-import React from 'react'
+import AuctionTable from "@/components/AuctionTable";
+
 
 export default function Auctions() {
   return (
-    <div>Auctions</div>
-  )
+    <div>
+      <AuctionTable />
+    </div>
+  );
 }
