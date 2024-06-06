@@ -12,7 +12,15 @@ export class AuctionInteractor implements IAuctionInteractor {
     this.userRepository = userRepository;
   }
 
-  async getAuction(): Promise<Auction[]> {
+  async getAuction(id:string): Promise<Auction[]> {
+    try {
+      const data = await this.repository.findByAuctionerId(id);
+      return data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  async getAllAuctions(): Promise<Auction[]> {
     try {
       const data = await this.repository.find();
       return data;

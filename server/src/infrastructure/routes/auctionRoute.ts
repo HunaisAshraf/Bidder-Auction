@@ -8,15 +8,16 @@ const router = express.Router();
 
 const authService = new AuthService();
 const repository = new AuctionRepositry();
-const userRepository = new UserRepository()
-const interactor = new AuctionInteractor(repository,userRepository);
+const userRepository = new UserRepository();
+const interactor = new AuctionInteractor(repository, userRepository);
 
 const controller = new AuctionController(authService, interactor);
 
 router.post("/add-auction", controller.onAddAuction.bind(controller));
+router.get("/get-all-auctions", controller.onGetAllAuction.bind(controller));
 router.get("/get-auctions", controller.onGetAuction.bind(controller));
-router.get("/get-single-auction", controller.onGetOneAuction.bind(controller));
+router.get("/get-single-auction/:id", controller.onGetOneAuction.bind(controller));
 router.put("/edit-auction/:id", controller.onEditAuction.bind(controller));
-router.put("/auction-status", controller.onAuctionStatus.bind(controller));
+router.put("/auction-status/:id", controller.onAuctionStatus.bind(controller));
 
 export { router as auctionRouter };

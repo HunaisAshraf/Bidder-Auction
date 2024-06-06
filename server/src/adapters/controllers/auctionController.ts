@@ -11,9 +11,33 @@ export class AuctionController {
     this.interactor = interactor;
   }
 
+  async onGetAllAuction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const auctions = await this.interactor.getAllAuctions();
+      return res.status(200).json({ success: true, auctions });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   async onGetAuction(req: Request, res: Response, next: NextFunction) {
     try {
-      const auctions = await this.interactor.getAuction();
+      const token = req.headers.authorization?.split(" ")[1];
+
+      console.log(token);
+
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+
+      const { _id, role } = this.authService.verifyToken(token);
+
+      if (role !== "auctioner" && role !== "admin") {
+        throw new Error("user not authorised");
+      }
+
+      const auctions = await this.interactor.getAuction(_id.toString());
       return res.status(200).json({ success: true, auctions });
     } catch (error) {
       console.log(error);
@@ -54,7 +78,7 @@ export class AuctionController {
 
   async onGetOneAuction(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
 
       const auction = await this.interactor.getSingleAuctoin(id);
 
@@ -106,16 +130,23 @@ export class AuctionController {
         throw new Error("user not authorised");
       }
 
-      const { auctionId, status } = req.body;
+      const id = req.params.id;
+
+      const { status } = req.body;
 
       const auction = await this.interactor.changeAuctionStatus(
-        auctionId,
+        id,
         status
       );
+
+      return res.status(200).json({
+        success: true,
+        message: "auction edited successfully",
+        auction,
+      });
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
 }
-

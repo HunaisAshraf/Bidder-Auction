@@ -15,7 +15,7 @@ export class AuctionRepositry implements IAuctionRepository {
   }
   async find(): Promise<Auction[]> {
     try {
-      const auctions = await AuctionModel.find();
+      const auctions = await AuctionModel.find({ isListed: true });
 
       if (!auctions) {
         throw new Error("no auction found");
@@ -27,6 +27,22 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new Error(error.message);
     }
   }
+
+  async findByAuctionerId(id: string): Promise<Auction[]> {
+    try {
+      const auctions = await AuctionModel.find({ auctioner: id });
+
+      if (!auctions) {
+        throw new Error("no auction found");
+      }
+
+      return auctions;
+    } catch (error: any) {
+      console.log("error in getting all auction", error);
+      throw new Error(error.message);
+    }
+  }
+
   async findOne(id: string): Promise<Auction> {
     try {
       const auction = await AuctionModel.findOne({ _id: id });
@@ -44,8 +60,6 @@ export class AuctionRepositry implements IAuctionRepository {
   async edit(id: string, value: Auction): Promise<Auction> {
     try {
       console.log(id, value);
-      const a = await AuctionModel.findById(id);
-      console.log(a);
 
       const auction = await AuctionModel.findByIdAndUpdate(id, value, {
         new: true,

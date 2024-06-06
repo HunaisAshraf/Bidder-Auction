@@ -3,11 +3,11 @@
 import { useAppSelector } from "@/lib/store/hooks";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import ProfilePictureModal from "./ProfilePictureModal";
+import EditProfileComponent from "./EditProfileComponent";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { Router } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const links = [
   { title: "My Details", href: "/profile/details" },
@@ -26,17 +26,22 @@ export default function ProfileComponent() {
   const user = useAppSelector((state) => state.users.user);
   const pathname = usePathname();
   const router = useRouter();
+  const [redirected, setRedirected] = useState(false);
 
-  // const user = JSON.parse(localStorage.getItem("auth")!);
-  // console.log(user);
   const filteredLink = links.filter(
     (link) => link.role === user?.role || !link.role
   );
 
   useEffect(() => {
     const currentLink = links.find((link) => link.href === pathname);
-    if (currentLink && currentLink.role && currentLink.role !== user?.role) {
+    if (
+      !redirected &&
+      currentLink &&
+      currentLink.role &&
+      currentLink.role !== user?.role
+    ) {
       router.push("/profile/details");
+      setRedirected(true);
     }
   }, [pathname, user?.role, router]);
 
@@ -55,7 +60,7 @@ export default function ProfileComponent() {
           </>
         )}
         <p className="text-3xl font-semibold">{user?.name}</p>
-        <ProfilePictureModal />
+        <EditProfileComponent />
       </div>
       <div className="my-10">
         <ul className="flex items-center gap-6">

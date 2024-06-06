@@ -18,7 +18,7 @@ const links = [
   { title: "Auction", href: "/auctions" },
   { title: "Watch List", href: "/watchlist" },
   { title: "Chat", href: "/chat" },
-  { title: "notification", href: "/notification" },
+  { title: "Notification", href: "/notification" },
 ];
 
 export default function Header() {

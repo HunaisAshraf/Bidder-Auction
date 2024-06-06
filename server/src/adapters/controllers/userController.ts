@@ -27,7 +27,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
-        role:user?.role
+        role: user?.role,
       };
 
       const token = this.authService.generateToken(data);
@@ -59,7 +59,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
-        role:user?.role
+        role: user?.role,
       };
 
       const token = this.authService.generateToken(data);
@@ -97,7 +97,9 @@ export class UserController {
       const { email } = req.body;
       const data = await this.interactor.forgotPassword(email);
 
-      res.status(200).json({ success: true, message: "verification success" });
+      res
+        .status(200)
+        .json({ success: true, message: "mail send successfully" });
     } catch (error) {
       next(error);
     }
@@ -114,9 +116,10 @@ export class UserController {
       const { _id } = this.authService.verifyToken(token);
 
       const body = req.body;
-      console.log(body);
 
-      let user = await this.interactor.updateDetails(_id.toString(), body);
+      const id = req.params.id;
+
+      let user = await this.interactor.updateDetails(id, body);
 
       return res.status(200).json({ success: true, user });
     } catch (error) {
@@ -126,6 +129,10 @@ export class UserController {
 
   async onUpdatePassword(req: Request, res: Response, next: NextFunction) {
     try {
+      const { email, password } = req.body;
+
+      const user = await this.interactor.updatePassword(email, password);
+      return res.status(200).json({ success: true });
     } catch (error) {
       next(error);
     }
@@ -145,7 +152,7 @@ export class UserController {
       const data = {
         _id: user?._id,
         email: user?.email,
-        role:user?.role
+        role: user?.role,
       };
 
       const token = this.authService.generateToken(data);

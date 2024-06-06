@@ -6,8 +6,8 @@ export class Auction {
     public itemName: string,
     public basePrice: number,
     public description: string,
-    public startTime: Date,
-    public endTime: Date,
+    public startDate: Date,
+    public endDate: Date,
     public auctioner: ObjectId | string,
     public isListed: boolean,
     public images: string[]

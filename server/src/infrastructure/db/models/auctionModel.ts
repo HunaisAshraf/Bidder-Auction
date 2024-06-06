@@ -19,13 +19,13 @@ const auctionSchema = new Schema<Auction>({
     ref: "User",
     required: true,
   },
-  startTime: {
+  startDate: {
     type: Date,
-    // required: true,
+    required: true,
   },
-  endTime: {
+  endDate: {
     type: Date,
-    // required: true,
+    required: true,
   },
   isListed: {
     type: Boolean,

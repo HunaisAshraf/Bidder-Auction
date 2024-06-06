@@ -3,23 +3,14 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { useForm } from "react-hook-form";
-import Input from "./Input";
-import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
-import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
-import LocalPhoneRoundedIcon from "@mui/icons-material/LocalPhoneRounded";
 import Spinner from "./Spinner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import { setUser } from "@/lib/store/features/userSlice";
 import Badge from "@mui/material/Badge";
 import CloseIcon from "@mui/icons-material/Close";
-import MailIcon from "@mui/icons-material/Mail";
 import { axiosInstance } from "@/utils/constants";
 
 const style = {
@@ -34,25 +25,21 @@ const style = {
 };
 
 type FormValues = {
-  name: string;
-  price: number;
-  startDate: Date;
-  endDate: Date;
+  _id: string;
+  itemName: string;
+  basePrice: number;
+  startDate: string;
+  endDate: string;
   description: string;
-  images: File[];
+  images: string[];
   // password: string;
   // confirmPassword: string;
 };
 
-export default function AddAuctionModal({
-  setChange,
-  change,
-}: {
-  setChange: React.Dispatch<React.SetStateAction<boolean>>;
-  change: boolean;
-}) {
+export default function EditAuctionModal({ id }: { id: string }) {
   const [images, setImages] = useState<File[]>([]);
   const [open, setOpen] = useState(false);
+  const [auction, setAuction] = useState<FormValues>();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [loading, setLoading] = useState(false);
@@ -63,6 +50,7 @@ export default function AddAuctionModal({
     handleSubmit,
     formState,
     getValues,
+    setValue,
     setError,
     clearErrors,
   } = useForm<FormValues>();
@@ -80,8 +68,8 @@ export default function AddAuctionModal({
 
       if (data.success) {
         const auction = {
-          itemName: formValue.name,
-          basePrice: formValue.price,
+          itemName: formValue.itemName,
+          basePrice: formValue.basePrice,
           description: formValue.description,
           startDate: formValue.startDate,
           endDate: formValue.endDate,
@@ -95,9 +83,7 @@ export default function AddAuctionModal({
 
         if (response?.data?.success) {
           setLoading(false);
-          handleClose();
-          setChange(!change);
-          router.push("/profile/auctions");
+          router.refresh();
         } else {
           setLoading(false);
           toast.error("failed to add auction");
@@ -106,7 +92,7 @@ export default function AddAuctionModal({
     } catch (error) {
       console.log(error);
       setLoading(false);
-      toast.error("failed to add auction");
+      toast.error("failed to edit auction");
     }
   };
   const handleDelete = async (image: any) => {
@@ -134,15 +120,43 @@ export default function AddAuctionModal({
     }
   };
 
+  const getAuction = async () => {
+    try {
+      const { data } = await axiosInstance.get(
+        `/api/auction/get-single-auction/${id}`
+      );
+
+      if (data?.success) {
+        setAuction(data.auction);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAuction();
+  }, []);
+
+  useEffect(() => {
+    if (auction) {
+      setValue("itemName", auction?.itemName);
+      setValue("basePrice", auction?.basePrice);
+      setValue("description", auction?.description);
+      setValue("startDate", auction.startDate.split("T")[0]);
+      setValue("endDate", auction.endDate.split("T")[0]);
+    }
+  }, [auction]);
+
   return (
     <div>
       <div>
-        <Toaster />
+        {/* <Toaster /> */}
         <Button
           onClick={handleOpen}
           className="bg-[#231656] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#201744]"
         >
-          create auction
+          Edit
         </Button>
         <Modal
           open={open}
@@ -159,7 +173,7 @@ export default function AddAuctionModal({
                   noValidate
                 >
                   <h1 className="text-3xl font-semibold text-gray-500 my-10">
-                    Create Auction
+                    Edit Auction
                   </h1>
                   <div className="flex gap-2">
                     <div>
@@ -172,7 +186,7 @@ export default function AddAuctionModal({
                           id="itemname"
                           className="outline-none border px-3 py-2 mt-2 rounded-md w-full"
                           placeholder="name"
-                          {...register("name", {
+                          {...register("itemName", {
                             required: "Please enter name",
                             pattern: {
                               value: /^[A-Za-z]+$/i,
@@ -182,7 +196,7 @@ export default function AddAuctionModal({
                           })}
                         />
                         <span className="text-red-600">
-                          {errors.name?.message}
+                          {errors.itemName?.message}
                         </span>
                       </div>
                       <div className="my-3">
@@ -194,13 +208,13 @@ export default function AddAuctionModal({
                           id="price"
                           className="outline-none border px-3 py-2 mt-2 rounded-md w-full"
                           placeholder="price"
-                          {...register("price", {
+                          {...register("basePrice", {
                             required: "enter the price",
                             min: { value: 30, message: "Minimum price is 30" },
                           })}
                         />
                         <span className="text-red-600">
-                          {errors.price?.message}
+                          {errors.basePrice?.message}
                         </span>
                       </div>
                       <div className="my-3">
@@ -299,7 +313,7 @@ export default function AddAuctionModal({
                         </span>
                       </div>
                       <div className=" p-6 flex flex-wrap gap-5 shadow-md">
-                        {images.map((image, i) => (
+                        {auction?.images?.map((image, i) => (
                           <Badge
                             key={i}
                             badgeContent={<CloseIcon />}
@@ -308,8 +322,8 @@ export default function AddAuctionModal({
                             <img
                               onClick={() => handleDelete(image)}
                               className="h-32 w-44 my-3 shadow-lg "
-                              src={URL.createObjectURL(image)}
-                              alt={image.name}
+                              src={image}
+                              alt={image}
                             />
                           </Badge>
                         ))}
@@ -320,7 +334,7 @@ export default function AddAuctionModal({
                     <Spinner />
                   ) : (
                     <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
-                      SignUp
+                      Submit
                     </button>
                   )}
                 </form>

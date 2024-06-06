@@ -14,7 +14,8 @@ export class MailService implements IMailerService {
   async accountVerificationMail(user: User, type: string): Promise<void> {
     try {
       let token = await generateHashPassword(user._id.toString());
-
+      console.log("kdjsfkjasdhfasdhfjkshdfjkhsdjkfhkhsdfsdhfjk");
+      
       const currentDate = new Date();
       const twoDaysLater = new Date(currentDate);
 
@@ -23,11 +24,14 @@ export class MailService implements IMailerService {
         user.verifyToken = token;
 
         user.verifyTokenExpiry = twoDaysLater;
-      } else if (type === "forgetPassword") {
+      } else if (type === "forgotPassword") {
         twoDaysLater.setDate(currentDate.getDate() + 1);
         user.forgotPasswordToken = token;
         user.forgotPasswordTokenExpiry = twoDaysLater;
       }
+
+      console.log("token ddddddddddddddddddddddd",user);
+      
 
       let data = await this.repository.update(user._id.toString(), user);
 

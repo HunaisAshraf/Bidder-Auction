@@ -71,6 +71,12 @@ export class UserInteractor implements IUserInteractor {
     try {
       console.log("user", value, id);
 
+      const data = await this.repository.findByEmail(value.email);
+
+      if (data && data._id === value._id) {
+        throw new Error("email already exists");
+      }
+
       const user = await this.repository.update(id, value);
       if (!user) {
         throw new Error("error in updating user");
@@ -106,7 +112,7 @@ export class UserInteractor implements IUserInteractor {
     try {
       const user = await this.repository.findByEmail(email);
 
-      if (user?.verifyTokenExpiry) {
+      if (type === "verifyEmail" && user?.verifyTokenExpiry) {
         const date = user.verifyTokenExpiry.getTime();
 
         if (date < Date.now()) {
@@ -118,6 +124,28 @@ export class UserInteractor implements IUserInteractor {
             isVerified: true,
             verifyToken: "",
             verifyTokenExpiry: "",
+          };
+
+          let updatedUser = await this.repository.update(
+            user._id.toString(),
+            data
+          );
+          console.log(updatedUser);
+
+          return updatedUser;
+        }
+      } else if (type === "forgotPassword" && user?.forgotPasswordTokenExpiry) {
+        const date = user.forgotPasswordTokenExpiry.getTime();
+
+        if (date < Date.now()) {
+          throw new Error("Token expired");
+        }
+
+        if (user.forgotPasswordToken === token) {
+          const data = {
+            isVerified: true,
+            forgotPasswordToken: "",
+            verifyTokenExforgotPasswordTokenExpirypiry: "",
           };
 
           let updatedUser = await this.repository.update(
@@ -144,14 +172,27 @@ export class UserInteractor implements IUserInteractor {
       }
 
       this.mailService.accountVerificationMail(user, "forgotPassword");
+      return;
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
+  async updatePassword(email: string, password: string): Promise<User | null> {
+    try {
+      const hashedPassword = await generateHashPassword(password);
 
+      const user = await this.repository.findByEmail(email);
+
+      const updatedUser = await this.repository.update(user?._id.toString()!, {
+        password: hashedPassword,
+      });
+      return updatedUser;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
   async googleSignUp(user: User): Promise<User | null> {
     try {
-
       const data = await this.repository.upsert(user);
       if (!data) {
         throw new Error("error in google signup");

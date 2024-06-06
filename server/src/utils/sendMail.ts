@@ -8,17 +8,17 @@ export const sendMail = async (
 ) => {
   try {
     console.log("otp sending...");
-    //   const transporter = nodemailer.createTransport({
-    //     host: "smtp.gmail.com",
-    //     port: 587,
-    //     secure: false,
-    //     auth: {
-    //       user: process.env.EMAIL,
-    //       pass: process.env.PASSWORD,
-    //     },
-    //   });
+      // const transporter = nodemailer.createTransport({
+      //   host: "smtp.gmail.com",
+      //   port: 587,
+      //   secure: false,
+      //   auth: {
+      //     user: process.env.EMAIL,
+      //     pass: process.env.PASSWORD,
+      //   },
+      // });
 
-    var transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
       auth: {

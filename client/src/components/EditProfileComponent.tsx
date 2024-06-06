@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -17,6 +17,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { setUser } from "@/lib/store/features/userSlice";
+import { axiosInstance } from "@/utils/constants";
 
 const style = {
   position: "absolute" as "absolute",
@@ -34,15 +35,16 @@ type FormValues = {
   name: string | undefined;
   email: string | undefined;
   phone: string | undefined;
-  image: File[] | undefined;
+  images: File[] | undefined;
   // password: string;
   // confirmPassword: string;
 };
 
-export default function ProfilePictureModal() {
+export default function EditProfileComponent() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [img, setImg] = useState<File>();
 
   const [loading, setLoading] = React.useState(false);
 
@@ -58,30 +60,55 @@ export default function ProfilePictureModal() {
     try {
       setLoading(true);
 
-      const { data } = await axios.post("/api/s3-upload", formValue, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(data);
+      let image;
+      console.log("kjsdanfkjsdf", formValue);
 
-      if (data.success) {
-        const user = {
-          id: data?.user?._id,
-          name: data?.user?.name,
-          email: data?.user?.email,
-          phone: data?.user?.phone,
-          profilePicture: data?.user?.profilePicture,
-        };
-        localStorage.setItem("auth", JSON.stringify(user));
+      if (formValue.images) {
+        const { data } = await axios.post("/api/s3-upload", formValue, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(data);
+
+        if (data.success) {
+          image = data.uploadedImage[0];
+        }
+      }
+
+      const updateuser = {
+        name: formValue.name,
+        email: formValue.email,
+        phone: formValue.phone,
+        profilePicture: image,
+      };
+
+      console.log(updateuser);
+
+      const { data } = await axiosInstance.put(
+        `/api/auth/update-user/${user?.id}`,
+        updateuser
+      );
+
+      if (data?.success) {
+        localStorage.setItem("auth", JSON.stringify(data.user));
         dispatch(setUser(user));
         setLoading(false);
-        router.push("/profile/details");
-      } else {
-        toast.error("failed to update profile picture");
+        handleClose();
+        window.location.reload();
       }
     } catch (error: any) {
       toast.error(error.message);
+      setLoading(false);
+    }
+  };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      setImg(file);
     }
   };
 
@@ -117,13 +144,14 @@ export default function ProfilePictureModal() {
                   </h1>
 
                   <div>
+                    {img && <img src={URL.createObjectURL(img)} alt="" />}
                     <input
                       type="file"
                       accept="image/*"
-                      {...register("image", {
+                      {...register("images", {
                         required: "Please enter name",
                       })}
-                      multiple
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -132,7 +160,6 @@ export default function ProfilePictureModal() {
                     placeholder="Name"
                     icon={<DriveFileRenameOutlineRoundedIcon />}
                     {...register("name", {
-                      required: "Please enter name",
                       pattern: {
                         value: /^[A-Za-z]+$/i,
                         message:
@@ -146,7 +173,6 @@ export default function ProfilePictureModal() {
                     placeholder="Email"
                     icon={<AlternateEmailRoundedIcon />}
                     {...register("email", {
-                      required: "Please enter email",
                       pattern: {
                         value:
                           /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
@@ -159,17 +185,7 @@ export default function ProfilePictureModal() {
                     type="number"
                     placeholder="Phone"
                     icon={<LocalPhoneRoundedIcon />}
-                    {...register("phone", {
-                      required: "Please enter phone number",
-                      minLength: {
-                        value: 10,
-                        message: "Please enter valid phone number",
-                      },
-                      maxLength: {
-                        value: 10,
-                        message: "Please enter valid phone number",
-                      },
-                    })}
+                    {...register("phone", {})}
                     errors={errors.phone?.message}
                   />
                   {/* <Input
@@ -203,7 +219,7 @@ export default function ProfilePictureModal() {
                     <Spinner />
                   ) : (
                     <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
-                      SignUp
+                      Submit
                     </button>
                   )}
                 </form>

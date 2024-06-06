@@ -38,7 +38,7 @@ export default function GoogleSigninButton() {
 
       if (data?.success) {
         localStorage.setItem("auth", JSON.stringify(data?.user));
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", JSON.stringify(data.token));
         dispatch(setUser(data.user));
         if (!data?.user?.role) {
           router.push("/role");

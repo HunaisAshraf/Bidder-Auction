@@ -27,7 +27,11 @@ export default function VerifyEmail() {
 
       if (data.success) {
         setVerifying(false);
-        router.push("/");
+        if (type === "forgotPassword") {
+          router.push(`/update-password/?email=${email}`);
+        } else {
+          router.push("/");
+        }
       }
     } catch (error) {
       console.log(error);

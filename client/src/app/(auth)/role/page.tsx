@@ -15,14 +15,13 @@ export default function Role() {
 
   const handleUpdateRole = async (role: string) => {
     try {
+
+      console.log(localStorage.getItem("token"));
+      
       const { data } = await axiosInstance.put(
         "/api/auth/update-user",
         { role },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+
       );
       console.log(data);
       if (data.success) {
