@@ -7,6 +7,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { auctionRouter } from "./infrastructure/routes/auctionRoute";
+import { paymentRouter } from "./infrastructure/routes/paymentRoute";
 
 const app = express();
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(morgan("dev"));
 
 app.use("/api/auth", userRouter);
 app.use("/api/auction", auctionRouter);
+app.use("/api/payments", paymentRouter);
 app.use(errorHandler);
 
 const port = 5000;
