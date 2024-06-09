@@ -1,22 +1,29 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import PaymentIcon from "@mui/icons-material/Payment";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PaymentModal from "@/components/PaymentModal";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-
-const stripePrmoise = loadStripe(`${process.env.STRIPE_PUBLISHABLE_KEY as string}` );
+import { useRouter } from "next/navigation";
 
 export default function Wallet() {
+  const [amount, setAmount] = useState<number | null>();
+  const [error, setError] = useState(false);
+  const router = useRouter();
 
-  
+  function handleClick() {
+    if (!amount || amount < 10) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    router.push(`/profile/wallet/payment/?amount=${amount}`);
+  }
+
   return (
     <div className="p-5 shadow-sm shadow-gray-400 rounded-md">
-      <div className="">
+      <div>
         <div className="flex justify-between">
-          <div className="">
+          <div>
             <p className="text-gray-600">Wallet Amount</p>
             <h1 className="text-3xl my-3 font-semibold">$ 123.00</h1>
           </div>
@@ -26,12 +33,20 @@ export default function Wallet() {
             </div>
           </div>
         </div>
-        <Elements stripe={stripePrmoise}>
-          <PaymentModal />
-        </Elements>
-        {/* <button className="bg-blue-700 text-white font-semibold px-3 py-2 rounded-full mt-4">
+        <input
+          type="number"
+          className="outline-none text-gray-600 w-full border px-3 py-2"
+          placeholder="$ enter the amount"
+          onChange={(e) => setAmount(Number(e.target.value))}
+          min={10}
+        />
+        {error && <p className="text-red-500">Enter a minimum of $10</p>}
+        <button
+          className="bg-[#231656] text-white font-semibold px-3 py-2 rounded-full mt-4"
+          onClick={handleClick}
+        >
           Add Amount <ArrowForwardIcon />
-        </button> */}
+        </button>
       </div>
     </div>
   );
