@@ -23,5 +23,6 @@ router.get(
 router.put("/edit-auction/:id", controller.onEditAuction.bind(controller));
 router.put("/auction-status/:id", controller.onAuctionStatus.bind(controller));
 router.post("/place-bid", controller.onPlaceBid.bind(controller));
+router.get("/get-bids/:id", controller.onGetBids.bind(controller));
 
 export { router as auctionRouter };

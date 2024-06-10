@@ -11,6 +11,7 @@ type Auction = {
   itemName: string;
   description: string;
   basePrice: number;
+  currentBid: number;
   startDate: Date;
   endDate: Date;
   images: string[];
@@ -59,6 +60,12 @@ export default function SingleAuction({
   };
 
   useEffect(() => {
+    socket?.on("updatedAuction", (auction) => {
+      setAuction((prev) => auction);
+    });
+  }, [socket]);
+
+  useEffect(() => {
     getAuction();
   }, []);
 
@@ -96,7 +103,7 @@ export default function SingleAuction({
               </p>
               <h1 className="text-2xl font-bold mt-6 text-gray-500">
                 Current bid :{" "}
-                <span className="text-[#231656]">{auction.basePrice}</span>
+                <span className="text-[#231656]">{auction.currentBid}</span>
               </h1>
 
               <div className="flex items-center my-5 gap-3">
@@ -120,7 +127,7 @@ export default function SingleAuction({
             </div>
           </div>
         </div>
-        <BidderListComponent />
+        <BidderListComponent auctionId={auctionId} />
       </div>
     </div>
   );

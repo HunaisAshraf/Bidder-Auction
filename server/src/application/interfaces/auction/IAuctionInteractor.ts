@@ -9,4 +9,5 @@ export interface IAuctionInteractor {
   editAuction(id: string, value: Auction): Promise<Auction>;
   changeAuctionStatus(id: string, status: string): Promise<Auction>;
   placeBid(bidAmount: number, auctionId: string, userId: string): Promise<Bid>;
+  getBids(id:string): Promise<Bid[]>;
 }

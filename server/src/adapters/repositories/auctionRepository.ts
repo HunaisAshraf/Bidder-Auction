@@ -91,4 +91,14 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new Error(error.message);
     }
   }
+
+ async getBid(id:string): Promise<Bid[]> {
+    try {
+
+      const bids = await BidModel.find({auctionId:id}).sort({bidTime:-1})
+      return bids
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

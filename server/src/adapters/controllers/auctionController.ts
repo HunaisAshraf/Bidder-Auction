@@ -170,4 +170,16 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onGetBids(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const bids = await this.interactor.getBids(id);
+
+      return res.status(200).json({ success: true, bids });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -115,11 +115,24 @@ export class AuctionInteractor implements IAuctionInteractor {
       const newBid = await this.repository.addBid(bid);
 
       auction.currentBid = bidAmount;
-      await this.repository.edit(auction._id.toString(), auction);
+      const updatedAuction = await this.repository.edit(
+        auction._id.toString(),
+        auction
+      );
 
+      io.emit("updatedAuction", updatedAuction);
       io.emit("newBid", newBid);
 
       return newBid;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getBids(id: string): Promise<Bid[]> {
+    try {
+      const bids = await this.repository.getBid(id);
+      return bids;
     } catch (error: any) {
       throw new Error(error.message);
     }
