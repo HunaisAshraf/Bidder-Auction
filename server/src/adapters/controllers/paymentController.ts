@@ -10,6 +10,22 @@ export class PaymentController {
     this.authService = authService;
   }
 
+  async onGetWallet(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+      const { _id } = this.authService.verifyToken(token);
+      const data = await this.interactor.getWallet(_id.toString());
+
+      return res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async onCreateIntent(req: Request, res: Response, next: NextFunction) {
     try {
       const { amount } = req.body;
@@ -26,13 +42,11 @@ export class PaymentController {
     try {
       const token = req.headers.authorization?.split(" ")[1];
 
-      console.log(token);
-
       if (!token) {
         throw new Error("user not authorised");
       }
 
-      const { _id, role } = this.authService.verifyToken(token);
+      const { _id } = this.authService.verifyToken(token);
 
       const { paymentIntent } = req.body;
 

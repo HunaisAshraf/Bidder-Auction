@@ -9,6 +9,21 @@ export class PaymentInteractor implements IPaymentInteractor {
     this.stripeInteractor = new StipeIneractor();
     this.repository = repository;
   }
+  async getWallet(id: string): Promise<any> {
+    try {
+      const wallet = await this.repository.get(id);
+
+      if (!wallet) {
+        throw new Error("No data in wallet");
+      }
+
+      return wallet;
+    } catch (error: any) {
+      console.log(error);
+
+      throw new Error(error.message);
+    }
+  }
 
   async createPaymentIntent(amount: number): Promise<string> {
     try {
@@ -39,7 +54,7 @@ export class PaymentInteractor implements IPaymentInteractor {
         action: "added to wallet",
         time: new Date(),
       };
-      
+
       if (data) {
         amount += data.balance;
       }
