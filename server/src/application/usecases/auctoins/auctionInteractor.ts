@@ -3,6 +3,8 @@ import { Auction } from "../../../entities/auction";
 import { IAuctionInteractor } from "../../interfaces/auction/IAuctionInteractor";
 import { IAuctionRepository } from "../../interfaces/auction/IAuctionRepository";
 import { IUserRepository } from "../../interfaces/user/IUserRepository";
+import { Bid } from "../../../entities/bid";
+import { io } from "../../..";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
@@ -12,7 +14,7 @@ export class AuctionInteractor implements IAuctionInteractor {
     this.userRepository = userRepository;
   }
 
-  async getAuction(id:string): Promise<Auction[]> {
+  async getAuction(id: string): Promise<Auction[]> {
     try {
       const data = await this.repository.findByAuctionerId(id);
       return data;
@@ -20,6 +22,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       throw new Error(error.message);
     }
   }
+
   async getAllAuctions(): Promise<Auction[]> {
     try {
       const data = await this.repository.find();
@@ -62,6 +65,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       throw new Error(error.message);
     }
   }
+
   async changeAuctionStatus(id: string, status: string): Promise<Auction> {
     try {
       const auction = await this.repository.findOne(id);
@@ -75,6 +79,47 @@ export class AuctionInteractor implements IAuctionInteractor {
       const updatetdAuction = await this.repository.edit(id, auction);
 
       return updatetdAuction;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async placeBid(
+    bidAmount: number,
+    auctionId: string,
+    userId: string
+  ): Promise<Bid> {
+    try {
+      const auction = await this.repository.findOne(auctionId);
+
+      if (auction.startDate > new Date()) {
+        throw new Error("Auction has not started yet");
+      }
+
+      if (auction.endDate < new Date()) {
+        throw new Error("Auction has ended");
+      }
+
+      if (auction.currentBid >= bidAmount) {
+        throw new Error("Bid amount must be greater than current bid");
+      }
+
+      const bid: Bid = {
+        auctionId,
+        userId,
+        bidAmount,
+        bidTime: new Date(),
+        isCancelled: false,
+      };
+
+      const newBid = await this.repository.addBid(bid);
+
+      auction.currentBid = bidAmount;
+      await this.repository.edit(auction._id.toString(), auction);
+
+      io.emit("newBid", newBid);
+
+      return newBid;
     } catch (error: any) {
       throw new Error(error.message);
     }

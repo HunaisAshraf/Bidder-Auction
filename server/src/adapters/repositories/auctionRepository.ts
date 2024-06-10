@@ -1,6 +1,8 @@
 import { IAuctionRepository } from "../../application/interfaces/auction/IAuctionRepository";
 import { Auction } from "../../entities/auction";
+import { Bid } from "../../entities/bid";
 import { AuctionModel } from "../../infrastructure/db/models/auctionModel";
+import { BidModel } from "../../infrastructure/db/models/bidModel";
 
 export class AuctionRepositry implements IAuctionRepository {
   async add(auction: Auction): Promise<Auction> {
@@ -45,7 +47,7 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async findOne(id: string): Promise<Auction> {
     try {
-      const auction = await AuctionModel.findOne({ _id: id });
+      const auction = await AuctionModel.findById(id);
 
       if (!auction) {
         throw new Error("auction not found");
@@ -73,6 +75,19 @@ export class AuctionRepositry implements IAuctionRepository {
       return auction;
     } catch (error: any) {
       console.log("error in editing auction", error);
+      throw new Error(error.message);
+    }
+  }
+
+  async addBid(bid: Bid): Promise<Bid> {
+    try {
+      const newBid = new BidModel(bid);
+      await newBid.save();
+      if (!newBid) {
+        throw new Error("Error in adding bid");
+      }
+      return newBid;
+    } catch (error: any) {
       throw new Error(error.message);
     }
   }

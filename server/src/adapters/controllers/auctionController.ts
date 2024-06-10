@@ -134,10 +134,7 @@ export class AuctionController {
 
       const { status } = req.body;
 
-      const auction = await this.interactor.changeAuctionStatus(
-        id,
-        status
-      );
+      const auction = await this.interactor.changeAuctionStatus(id, status);
 
       return res.status(200).json({
         success: true,
@@ -146,6 +143,30 @@ export class AuctionController {
       });
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  }
+
+  async onPlaceBid(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+
+      const { _id } = this.authService.verifyToken(token);
+
+      const { bidAmount, auctionId } = req.body;
+
+      const bid = await this.interactor.placeBid(
+        bidAmount,
+        auctionId,
+        _id.toString()
+      );
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
       next(error);
     }
   }

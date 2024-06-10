@@ -5,6 +5,7 @@ export class Auction {
     public _id: ObjectId | string,
     public itemName: string,
     public basePrice: number,
+    public currentBid: number,
     public description: string,
     public startDate: Date,
     public endDate: Date,

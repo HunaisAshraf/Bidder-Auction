@@ -10,6 +10,10 @@ const auctionSchema = new Schema<Auction>({
     type: Number,
     required: true,
   },
+  currentBid: {
+    type: Number,
+    default: 0,
+  },
   description: {
     type: String,
     required: true,

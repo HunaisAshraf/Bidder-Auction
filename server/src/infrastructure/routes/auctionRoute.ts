@@ -16,8 +16,12 @@ const controller = new AuctionController(authService, interactor);
 router.post("/add-auction", controller.onAddAuction.bind(controller));
 router.get("/get-all-auctions", controller.onGetAllAuction.bind(controller));
 router.get("/get-auctions", controller.onGetAuction.bind(controller));
-router.get("/get-single-auction/:id", controller.onGetOneAuction.bind(controller));
+router.get(
+  "/get-single-auction/:id",
+  controller.onGetOneAuction.bind(controller)
+);
 router.put("/edit-auction/:id", controller.onEditAuction.bind(controller));
 router.put("/auction-status/:id", controller.onAuctionStatus.bind(controller));
+router.post("/place-bid", controller.onPlaceBid.bind(controller));
 
 export { router as auctionRouter };
