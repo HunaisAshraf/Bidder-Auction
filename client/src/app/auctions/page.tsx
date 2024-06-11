@@ -26,7 +26,7 @@ export default function Auction() {
       if (data.success) {
         setAuctions(data.auctions);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
     }
   };
@@ -53,18 +53,47 @@ export default function Auction() {
         </div>
       </div>
       <div className="my-4 flex flex-wrap">
-        {auctions?.map((auction) => (
-          <Link href={`/auctions/${auction._id}`}>
-            <AuctionCard
-              basePrice={auction.basePrice}
-              description={auction.description}
-              endDate={auction.endDate}
-              itemName={auction.itemName}
-              startDate={auction.endDate}
-              image={auction.images[0]}
-            />
-          </Link>
-        ))}
+        {auctions?.map((auction) => {
+          if (
+            new Date(auction.startDate) < new Date() &&
+            new Date(auction.endDate) > new Date()
+          )
+            return (
+              <Link href={`/auctions/${auction._id}`} key={auction._id}>
+                <AuctionCard
+                  basePrice={auction.basePrice}
+                  description={auction.description}
+                  endDate={auction.endDate}
+                  itemName={auction.itemName}
+                  startDate={auction.startDate}
+                  image={auction.images[0]}
+                />
+              </Link>
+            );
+        })}
+      </div>
+
+      <div>
+        <h1 className="text-gray-500 text-xl md:text-3xl font-bold">
+          Upcoming <span className="text-[#231656]">Auction</span>
+        </h1>
+      </div>
+      <div className="my-4 flex flex-wrap">
+        {auctions?.map((auction) => {
+          if (new Date(auction.startDate) > new Date())
+            return (
+              <Link href={`/auctions/${auction._id}`} key={auction._id}>
+                <AuctionCard
+                  basePrice={auction.basePrice}
+                  description={auction.description}
+                  endDate={auction.endDate}
+                  itemName={auction.itemName}
+                  startDate={auction.startDate}
+                  image={auction.images[0]}
+                />
+              </Link>
+            );
+        })}
       </div>
     </div>
   );

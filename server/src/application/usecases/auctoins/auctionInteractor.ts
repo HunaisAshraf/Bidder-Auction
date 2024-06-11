@@ -44,6 +44,7 @@ export class AuctionInteractor implements IAuctionInteractor {
   async addAuction(id: string, auction: Auction): Promise<Auction> {
     try {
       auction.auctioner = id;
+      auction.currentBid = auction.basePrice;
       console.log(auction);
 
       const data = await this.repository.add(auction);

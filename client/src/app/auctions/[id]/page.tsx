@@ -6,6 +6,8 @@ import { axiosInstance } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import { useSocket } from "@/utils/hooks/useSocket";
 import BidderListComponent from "@/components/BidderListComponent";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type Auction = {
   itemName: string;
@@ -28,6 +30,7 @@ export default function SingleAuction({
   const auctionId = params.id;
   const [auction, setAuction] = useState<Auction>();
   const [bidAmount, setBidAmount] = useState<number>();
+  const router = useRouter();
 
   const getAuction = async () => {
     try {
@@ -41,7 +44,7 @@ export default function SingleAuction({
         }
       }
       console.log(auction);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
     }
   };
@@ -54,8 +57,13 @@ export default function SingleAuction({
       });
 
       console.log(data);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.error === "user not authorised") {
+        router.push("/login");
+      } else {
+        toast.error(error?.response?.data?.error);
+      }
     }
   };
 
@@ -75,6 +83,7 @@ export default function SingleAuction({
 
   return (
     <div>
+      <Toaster />
       <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2 md:mt-5">
         <div className="flex justify-center ">
           <div className="w-1/2 shadow-md p-3">
@@ -87,9 +96,20 @@ export default function SingleAuction({
           </div>
           <div className="w-1/2 shadow-md py-3 px-6">
             <div className="text-center">
-              <p className="text-[#231656] font-semibold text-xl my-5">
-                {moment(auction.endDate).format("lll")}
-              </p>
+              {new Date(auction.startDate) < new Date() ? (
+                <>
+                  <p className="text-[#231656] font-semibold text-2xl my-5">
+                    Ends {moment(auction.endDate).endOf("day").fromNow()}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    End Date: {moment(auction.endDate).format("lll")}
+                  </p>
+                </>
+              ) : (
+                <p className="text-[#231656] font-semibold text-xl my-5">
+                  Start Date : {moment(auction.startDate).format("lll")}
+                </p>
+              )}
             </div>
             <div className="">
               <h1 className="text-[#231656] text-2xl font-semibold my-5">
@@ -101,25 +121,38 @@ export default function SingleAuction({
                 beatae, sed eius doloremque rerum? Fuga itaque corrupti labore
                 culpa unde, tenetur accusamus? Atque, reprehenderit.
               </p>
-              <h1 className="text-2xl font-bold mt-6 text-gray-500">
-                Current bid :{" "}
-                <span className="text-[#231656]">{auction.currentBid}</span>
-              </h1>
-
-              <div className="flex items-center my-5 gap-3">
-                <input
-                  type="number"
-                  className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full w-[200px] md:w-[400px]"
-                  placeholder="place bid"
-                  onChange={(e) => setBidAmount(Number(e.target.value))}
-                />
-                <button
-                  onClick={handleBid}
-                  className="bg-[#231656] text-white py-2 px-4 rounded-r-full rounded-l-full font-semibold"
-                >
-                  Bid
-                </button>
+              <div className="flex justify-between items-center my-4">
+                <h1 className="text-2xl font-bold mt-6 text-gray-500">
+                  Base Price :{" "}
+                  <span className="text-[#231656]">$ {auction.basePrice}</span>
+                </h1>
+                {new Date(auction.startDate) < new Date() && (
+                  <h1 className="text-2xl font-bold mt-6 text-gray-500">
+                    Current bid :{" "}
+                    <span className="text-[#231656]">
+                      $ {auction.currentBid}
+                    </span>
+                  </h1>
+                )}
               </div>
+
+              {new Date(auction.startDate) < new Date() && (
+                <div className="flex items-center my-5 gap-3">
+                  <input
+                    type="number"
+                    className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full w-[200px] md:w-[400px]"
+                    placeholder="place bid"
+                    onChange={(e) => setBidAmount(Number(e.target.value))}
+                  />
+
+                  <button
+                    onClick={handleBid}
+                    className="bg-[#231656] text-white py-2 px-4 rounded-r-full rounded-l-full font-semibold"
+                  >
+                    Bid
+                  </button>
+                </div>
+              )}
               <button className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4">
                 <QuestionAnswerIcon />
                 Chat with auctioner
@@ -127,7 +160,9 @@ export default function SingleAuction({
             </div>
           </div>
         </div>
-        <BidderListComponent auctionId={auctionId} />
+        {new Date(auction.startDate) < new Date() && (
+          <BidderListComponent auctionId={auctionId} />
+        )}
       </div>
     </div>
   );

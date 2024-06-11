@@ -17,7 +17,10 @@ export class AuctionRepositry implements IAuctionRepository {
   }
   async find(): Promise<Auction[]> {
     try {
-      const auctions = await AuctionModel.find({ isListed: true });
+      const auctions = await AuctionModel.find({
+        isListed: true,
+        endDate: { $gte: new Date() },
+      });
 
       if (!auctions) {
         throw new Error("no auction found");
@@ -92,11 +95,10 @@ export class AuctionRepositry implements IAuctionRepository {
     }
   }
 
- async getBid(id:string): Promise<Bid[]> {
+  async getBid(id: string): Promise<Bid[]> {
     try {
-
-      const bids = await BidModel.find({auctionId:id}).sort({bidTime:-1})
-      return bids
+      const bids = await BidModel.find({ auctionId: id }).populate("userId").sort({ bidTime: -1 });
+      return bids;
     } catch (error: any) {
       throw new Error(error.message);
     }
