@@ -66,6 +66,10 @@ export default function Header() {
     if (storedUser && !user?.email) {
       dispatch(setUser(JSON.parse(storedUser)));
     }
+    if(user && !user?.role){
+      router.push("/role")
+    }
+
   }, [session, dispatch, user?.email]);
 
   return (

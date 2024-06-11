@@ -102,6 +102,8 @@ export class AuctionInteractor implements IAuctionInteractor {
       const wallet = await this.paymentRepository.get(userId);
       const user = await this.userRepository.findOne(userId);
 
+      console.log(wallet);
+
       if (auction.startDate > new Date()) {
         throw new Error("Auction has not started yet");
       }
@@ -118,7 +120,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         throw new Error("Bid amount must be greater than current bid");
       }
 
-      if (wallet?.balance < bidAmount) {
+      if (!wallet || wallet?.balance < bidAmount) {
         throw new Error("No sufficient balance in wallet");
       }
 
