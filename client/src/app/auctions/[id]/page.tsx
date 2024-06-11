@@ -8,6 +8,7 @@ import { useSocket } from "@/utils/hooks/useSocket";
 import BidderListComponent from "@/components/BidderListComponent";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Loading from "./loading";
 
 type Auction = {
   itemName: string;
@@ -61,6 +62,11 @@ export default function SingleAuction({
       console.log(error);
       if (error?.response?.data?.error === "user not authorised") {
         router.push("/login");
+      } else if (
+        error?.response?.data?.error === "No sufficient balance in wallet"
+      ) {
+        toast.error(error?.response?.data?.error);
+        router.push("/profile/wallet");
       } else {
         toast.error(error?.response?.data?.error);
       }
@@ -78,7 +84,7 @@ export default function SingleAuction({
   }, []);
 
   if (!auction) {
-    return <h1>loading......</h1>;
+    return <Loading />;
   }
 
   return (

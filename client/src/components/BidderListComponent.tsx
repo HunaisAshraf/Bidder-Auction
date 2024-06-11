@@ -1,13 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import { useSocket } from "@/utils/hooks/useSocket";
 import moment from "moment";
 import { axiosInstance } from "@/utils/constants";
@@ -55,11 +48,11 @@ export default function BidderListComponent({
   };
   const arr = [];
 
-  for (let i = 0; i<bids.length; i++) {
+  for (let i = 0; i < bids.length; i++) {
     arr.push({
       id: bids.length - i,
       ...bids[i],
-      userId:bids[i].userId.name,
+      userId: bids[i].userId.name,
       date: moment(bids[i].bidTime).format("lll"),
     });
   }
@@ -92,35 +85,6 @@ export default function BidderListComponent({
           pageSizeOptions={[5, 10]}
         />
       </div>
-
-      {/* <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Bidder</TableCell>
-              <TableCell align="right">Bid Amount</TableCell>
-              <TableCell align="right">Bid Time</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {bids?.map((bid) => (
-              <TableRow
-                key={bid._id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="auction">
-                  {bid?.userId}
-                </TableCell>
-
-                <TableCell align="right">{bid?.bidAmount}</TableCell>
-                <TableCell align="right">
-                  {moment(bid?.bidTime).format("lll")}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function AuctionCard({
             {new Date(startDate) > new Date() ? (
               <>
                 <h1 className="text-xl font-semibold">Auction StartDate</h1>
-                <p className="text-gray-500">{moment(endDate).format("lll")}</p>
+                <p className="text-gray-500">{moment(startDate).format("lll")}</p>
               </>
             ) : (
               <>
