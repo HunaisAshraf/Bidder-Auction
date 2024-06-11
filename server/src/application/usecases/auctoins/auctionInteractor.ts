@@ -5,13 +5,20 @@ import { IAuctionRepository } from "../../interfaces/auction/IAuctionRepository"
 import { IUserRepository } from "../../interfaces/user/IUserRepository";
 import { Bid } from "../../../entities/bid";
 import { io } from "../../..";
+import { IPaymentRepository } from "../../interfaces/service/IPaymentRepository";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
   private userRepository: IUserRepository;
-  constructor(repository: IAuctionRepository, userRepository: IUserRepository) {
+  private paymentRepository: IPaymentRepository;
+  constructor(
+    repository: IAuctionRepository,
+    userRepository: IUserRepository,
+    paymentRepository: IPaymentRepository
+  ) {
     this.repository = repository;
     this.userRepository = userRepository;
+    this.paymentRepository = paymentRepository;
   }
 
   async getAuction(id: string): Promise<Auction[]> {
@@ -92,6 +99,8 @@ export class AuctionInteractor implements IAuctionInteractor {
   ): Promise<Bid> {
     try {
       const auction = await this.repository.findOne(auctionId);
+      const wallet = await this.paymentRepository.get(userId);
+      const user = await this.userRepository.findOne(userId);
 
       if (auction.startDate > new Date()) {
         throw new Error("Auction has not started yet");
@@ -101,8 +110,16 @@ export class AuctionInteractor implements IAuctionInteractor {
         throw new Error("Auction has ended");
       }
 
+      if (user?.role === "auctioner" || auction.auctioner === userId) {
+        throw new Error("Auctioner cannot bid");
+      }
+
       if (auction.currentBid >= bidAmount) {
         throw new Error("Bid amount must be greater than current bid");
+      }
+
+      if (wallet?.balance < bidAmount) {
+        throw new Error("No sufficient balance in wallet");
       }
 
       const bid: Bid = {
@@ -114,6 +131,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       };
 
       const newBid = await this.repository.addBid(bid);
+      // newBid.userId = user
 
       auction.currentBid = bidAmount;
       const updatedAuction = await this.repository.edit(
@@ -121,8 +139,18 @@ export class AuctionInteractor implements IAuctionInteractor {
         auction
       );
 
+      const bidUser = {
+        auctionId: newBid.auctionId,
+        bidAmount: newBid.bidAmount,
+        bidTime: newBid.bidTime,
+        isCancelled: newBid.isCancelled,
+        userId: {
+          name: user?.name,
+        },
+      };
+
       io.emit("updatedAuction", updatedAuction);
-      io.emit("newBid", newBid);
+      io.emit("newBid", bidUser);
 
       return newBid;
     } catch (error: any) {

@@ -9,6 +9,7 @@ import BidderListComponent from "@/components/BidderListComponent";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Loading from "./loading";
+import { useAppSelector } from "@/lib/store/hooks";
 
 type Auction = {
   itemName: string;
@@ -17,6 +18,7 @@ type Auction = {
   currentBid: number;
   startDate: Date;
   endDate: Date;
+  auctioner: string;
   images: string[];
 };
 
@@ -32,6 +34,7 @@ export default function SingleAuction({
   const [auction, setAuction] = useState<Auction>();
   const [bidAmount, setBidAmount] = useState<number>();
   const router = useRouter();
+  const user = useAppSelector((state) => state.users.user);
 
   const getAuction = async () => {
     try {
@@ -142,23 +145,24 @@ export default function SingleAuction({
                 )}
               </div>
 
-              {new Date(auction.startDate) < new Date() && (
-                <div className="flex items-center my-5 gap-3">
-                  <input
-                    type="number"
-                    className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full w-[200px] md:w-[400px]"
-                    placeholder="place bid"
-                    onChange={(e) => setBidAmount(Number(e.target.value))}
-                  />
+              {new Date(auction.startDate) < new Date() &&
+                user?.id !== auction?.auctioner && (
+                  <div className="flex items-center my-5 gap-3">
+                    <input
+                      type="number"
+                      className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full w-[200px] md:w-[400px]"
+                      placeholder="place bid"
+                      onChange={(e) => setBidAmount(Number(e.target.value))}
+                    />
 
-                  <button
-                    onClick={handleBid}
-                    className="bg-[#231656] text-white py-2 px-4 rounded-r-full rounded-l-full font-semibold"
-                  >
-                    Bid
-                  </button>
-                </div>
-              )}
+                    <button
+                      onClick={handleBid}
+                      className="bg-[#231656] text-white py-2 px-4 rounded-r-full rounded-l-full font-semibold"
+                    >
+                      Bid
+                    </button>
+                  </div>
+                )}
               <button className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4">
                 <QuestionAnswerIcon />
                 Chat with auctioner

@@ -4,12 +4,14 @@ import { AuthService } from "../service/authService";
 import { AuctionInteractor } from "../../application/usecases/auctoins/auctionInteractor";
 import { AuctionRepositry } from "../../adapters/repositories/auctionRepository";
 import { UserRepository } from "../../adapters/repositories/userRepository";
+import { PaymentRepository } from "../../adapters/repositories/paymentRepository";
 const router = express.Router();
 
 const authService = new AuthService();
 const repository = new AuctionRepositry();
 const userRepository = new UserRepository();
-const interactor = new AuctionInteractor(repository, userRepository);
+const paymentRepository = new PaymentRepository()
+const interactor = new AuctionInteractor(repository, userRepository,paymentRepository);
 
 const controller = new AuctionController(authService, interactor);
 

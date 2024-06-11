@@ -84,20 +84,34 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async addBid(bid: Bid): Promise<Bid> {
     try {
-      const newBid = new BidModel(bid);
-      await newBid.save();
+      // const newBid = new BidModel(bid);
+      // await newBid.save();
+      console.log(bid);
+
+      const newBid = await BidModel.findOneAndUpdate(
+        { auctionId: bid.auctionId, userId: bid.userId },
+        bid,
+        { new: true, upsert: true }
+      );
+
+      console.log(newBid);
+
       if (!newBid) {
         throw new Error("Error in adding bid");
       }
       return newBid;
     } catch (error: any) {
+      console.log(error);
+
       throw new Error(error.message);
     }
   }
 
   async getBid(id: string): Promise<Bid[]> {
     try {
-      const bids = await BidModel.find({ auctionId: id }).populate("userId").sort({ bidTime: -1 });
+      const bids = await BidModel.find({ auctionId: id })
+        .populate("userId")
+        .sort({ bidTime: -1 });
       return bids;
     } catch (error: any) {
       throw new Error(error.message);
