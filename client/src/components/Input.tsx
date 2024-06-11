@@ -4,7 +4,7 @@ type InputProps = {
   type: "text" | "number" | "email" | "password";
   placeholder: string;
   icon: ReactElement;
-  errors: string | undefined;
+  errors?: string | undefined;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = forwardRef<HTMLInputElement, InputProps>(

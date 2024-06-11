@@ -28,9 +28,9 @@ export default function VerifyEmail() {
       if (data.success) {
         setVerifying(false);
         if (type === "forgotPassword") {
-          router.push(`/update-password/?email=${email}`);
+          router.replace(`/update-password/?email=${email}`);
         } else {
-          router.push("/");
+          router.replace("/");
         }
       }
     } catch (error) {

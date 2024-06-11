@@ -32,7 +32,7 @@ export default function ForgotPasswordForm() {
         // localStorage.setItem("auth", JSON.stringify(data.user));
         // localStorage.setItem("token", JSON.stringify(data?.token));
         // dispatch(setUser(data.user));
-        router.push("/forgot-password/confirm-mail");
+        router.replace("/forgot-password/confirm-mail");
       }
     } catch (error: any) {
       console.log(error);
@@ -63,7 +63,6 @@ export default function ForgotPasswordForm() {
             message: "Please enter valid email",
           },
         })}
-        errors={errors?.email?.message}
       />
 
       {loading ? (

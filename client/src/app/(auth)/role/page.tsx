@@ -33,7 +33,7 @@ export default function Role() {
         dispatch(setUser(user));
         localStorage.setItem("auth", JSON.stringify(user));
 
-        router.push("/");
+        router.replace("/");
       }
     } catch (error) {
       console.log(error);

@@ -50,7 +50,7 @@ export default function BidderListComponent({
 
   for (let i = 0; i < bids.length; i++) {
     arr.push({
-      id: bids.length - i,
+      id: i + 1,
       ...bids[i],
       userId: bids[i].userId.name,
       date: moment(bids[i].bidTime).format("lll"),
