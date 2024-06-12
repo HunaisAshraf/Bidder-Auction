@@ -10,6 +10,7 @@ import morgan from "morgan";
 import { auctionRouter } from "./infrastructure/routes/auctionRoute";
 import { paymentRouter } from "./infrastructure/routes/paymentRoute";
 import { Server } from "socket.io";
+import "./infrastructure/scheduler/auctionSchedule"
 
 dotenv.config();
 
