@@ -1,4 +1,5 @@
 import moment from "moment";
+import Image from "next/image";
 import React from "react";
 
 type Auction = {
@@ -20,7 +21,7 @@ export default function AuctionCard({
 }: Auction) {
   return (
     <div className="flex  shadow-lg p-4  my-5 items-center">
-      <img className="h-44 w-64 rounded" src={image} alt="" />
+      <Image height={180} width={260} className="rounded" src={image} alt="" />
       <div className="p-2 w-full">
         {new Date(startDate) < new Date() && new Date(endDate) > new Date() && (
           <div className="mb-2 flex justify-center">
@@ -36,7 +37,9 @@ export default function AuctionCard({
             {new Date(startDate) > new Date() ? (
               <>
                 <h1 className="text-xl font-semibold">Auction StartDate</h1>
-                <p className="text-gray-500">{moment(startDate).format("lll")}</p>
+                <p className="text-gray-500">
+                  {moment(startDate).format("lll")}
+                </p>
               </>
             ) : (
               <>

@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Badge from "@mui/material/Badge";
 import CloseIcon from "@mui/icons-material/Close";
 import { axiosInstance } from "@/utils/constants";
+import Image from "next/image";
 
 const style = {
   position: "absolute" as "absolute",
@@ -319,9 +320,11 @@ export default function EditAuctionModal({ id }: { id: string }) {
                             badgeContent={<CloseIcon />}
                             color="error"
                           >
-                            <img
+                            <Image
+                              width={180}
+                              height={125}
                               onClick={() => handleDelete(image)}
-                              className="h-32 w-44 my-3 shadow-lg "
+                              className=" my-3 shadow-lg "
                               src={image}
                               alt={image}
                             />

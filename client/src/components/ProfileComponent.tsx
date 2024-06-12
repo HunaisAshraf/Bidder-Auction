@@ -8,6 +8,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { Router } from "next/router";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const links = [
   { title: "My Details", href: "/profile/details" },
@@ -49,10 +50,12 @@ export default function ProfileComponent() {
     <div className="">
       <div className="flex items-center gap-3">
         {user?.profilePicture ? (
-          <img
+          <Image
+            height={160}
+            width={160}
             src={user?.profilePicture}
             alt={user?.name}
-            className="rounded-full h-40 w-40"
+            className="rounded-full"
           />
         ) : (
           <>

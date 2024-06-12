@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { setUser } from "@/lib/store/features/userSlice";
 import { axiosInstance } from "@/utils/constants";
+import Image from "next/image";
 
 const style = {
   position: "absolute" as "absolute",
@@ -144,7 +145,7 @@ export default function EditProfileComponent() {
                   </h1>
 
                   <div>
-                    {img && <img src={URL.createObjectURL(img)} alt="" />}
+                    {img && <Image src={URL.createObjectURL(img)} alt="" />}
                     <input
                       type="file"
                       accept="image/*"

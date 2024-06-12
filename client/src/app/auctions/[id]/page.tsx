@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Loading from "./loading";
 import { useAppSelector } from "@/lib/store/hooks";
+import Image from "next/image";
 
 type Auction = {
   itemName: string;
@@ -94,16 +95,16 @@ export default function SingleAuction({
     <div>
       <Toaster />
       <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2 md:mt-5">
-        <div className="flex justify-center ">
-          <div className="w-1/2 shadow-md p-3">
-            <img src={auction.images[0]} alt={auction.itemName} />
-            <div className="flex gap-2 mt-2">
+        <div className="md:flex justify-center ">
+          <div className="md:w-1/2 shadow-md p-3">
+            <Image src={auction.images[0]} alt={auction.itemName} width={500} height={400}/>
+            <div className="flex flex-wrap gap-2 mt-2">
               {auction.images?.map((img: string, i: number) => (
-                <img key={i} src={img} alt="" className="h-24" />
+                <Image  key={i} src={img} alt="" height={100} width={150} />
               ))}
             </div>
           </div>
-          <div className="w-1/2 shadow-md py-3 px-6">
+          <div className="md:w-1/2 shadow-md py-3 px-6">
             <div className="text-center">
               {new Date(auction.startDate) < new Date() ? (
                 <>
@@ -130,7 +131,7 @@ export default function SingleAuction({
                 beatae, sed eius doloremque rerum? Fuga itaque corrupti labore
                 culpa unde, tenetur accusamus? Atque, reprehenderit.
               </p>
-              <div className="flex justify-between items-center my-4">
+              <div className="md:flex justify-between items-center my-4">
                 <h1 className="text-2xl font-bold mt-6 text-gray-500">
                   Base Price :{" "}
                   <span className="text-[#231656]">$ {auction.basePrice}</span>

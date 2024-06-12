@@ -14,6 +14,7 @@ import moment from "moment";
 import EditAuctionModal from "./EditAuctonModal";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 type Auction = {
   _id: string;
@@ -95,8 +96,9 @@ export default function AuctionTable() {
                   {auction?.itemName}
                 </TableCell>
                 <TableCell align="right">
-                  <img
-                    className="h-24 w-24"
+                  <Image
+                    width={96}
+                    height={96}
                     src={auction?.images[0]}
                     alt={auction?.itemName}
                   />
