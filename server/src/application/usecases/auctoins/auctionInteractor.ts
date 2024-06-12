@@ -6,6 +6,7 @@ import { IUserRepository } from "../../interfaces/user/IUserRepository";
 import { Bid } from "../../../entities/bid";
 import { io } from "../../..";
 import { IPaymentRepository } from "../../interfaces/service/IPaymentRepository";
+import { AuctionWinner } from "../../../entities/auctionWinner";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
@@ -164,6 +165,66 @@ export class AuctionInteractor implements IAuctionInteractor {
     try {
       const bids = await this.repository.getBid(id);
       return bids;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async completedAuction(): Promise<Auction[]> {
+    try {
+      console.log("completed auction function");
+      
+      const completedAuction = await this.repository.getCompletedAuction();
+
+      return completedAuction;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async completeAuction(auction: Auction): Promise<void> {
+    try {
+      auction.completed = true;
+
+      const completedAuction = await this.repository.edit(
+        auction._id.toString(),
+        auction
+      );
+
+      const bids = await this.repository.getBid(auction._id.toString());
+
+      console.log("available bids",bids);
+      
+
+      if (bids.length === 0) {
+        throw new Error("no bids available");
+      }
+
+      let highestBidder;
+
+      for (let bid of bids) {
+        if (!bid.isCancelled) {
+          highestBidder = bid;
+          break;
+        }
+      }
+
+      console.log("highest bidder",highestBidder);
+      
+
+      if (!highestBidder) {
+        throw new Error("no bids available");
+      }
+
+      const auctionWinner: AuctionWinner = {
+        user: highestBidder?.userId,
+        auctionItem: highestBidder?.auctionId,
+        auctioner: auction?.auctioner,
+        bidAmount: highestBidder?.bidAmount,
+      };
+      console.log("auction",auctionWinner);
+      
+      await this.repository.addWinner(auctionWinner);
     } catch (error: any) {
       throw new Error(error.message);
     }

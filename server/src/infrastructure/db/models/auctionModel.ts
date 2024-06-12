@@ -36,6 +36,10 @@ const auctionSchema = new Schema<Auction>({
     default: true,
   },
   images: [],
+  completed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const AuctionModel = model<Auction>("Auction", auctionSchema);

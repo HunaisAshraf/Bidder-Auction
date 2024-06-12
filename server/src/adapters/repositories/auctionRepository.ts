@@ -1,7 +1,9 @@
 import { IAuctionRepository } from "../../application/interfaces/auction/IAuctionRepository";
 import { Auction } from "../../entities/auction";
+import { AuctionWinner } from "../../entities/auctionWinner";
 import { Bid } from "../../entities/bid";
 import { AuctionModel } from "../../infrastructure/db/models/auctionModel";
+import { AuctionWinnerModel } from "../../infrastructure/db/models/auctionWinner";
 import { BidModel } from "../../infrastructure/db/models/bidModel";
 
 export class AuctionRepositry implements IAuctionRepository {
@@ -111,8 +113,37 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       const bids = await BidModel.find({ auctionId: id })
         .populate("userId")
-        .sort({ bidTime: -1 });
+        .sort({ bidAmount: -1 });
       return bids;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getCompletedAuction(): Promise<Auction[]> {
+    try {
+
+      console.log("getting completed auctionn from database");
+      
+      const completedAuction = await AuctionModel.find({
+        completed: false,
+        endDate: { $lte: new Date() },
+      });
+      console.log(completedAuction);
+      
+
+      return completedAuction;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async addWinner(data: AuctionWinner): Promise<AuctionWinner> {
+    try {
+      const winner = new AuctionWinnerModel(data);
+
+      await winner.save();
+      return winner;
     } catch (error: any) {
       throw new Error(error.message);
     }
