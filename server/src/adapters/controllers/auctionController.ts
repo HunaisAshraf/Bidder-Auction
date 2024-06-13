@@ -103,7 +103,7 @@ export class AuctionController {
       }
       const id = req.params.id;
       const body = req.body;
-
+      
       const auction = await this.interactor.editAuction(id, body);
 
       return res.status(200).json({

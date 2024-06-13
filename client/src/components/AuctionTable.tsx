@@ -25,6 +25,7 @@ type Auction = {
   endDate: Date;
   images: string[];
   isListed: string;
+  isCompleted:boolean;
 };
 
 export default function AuctionTable() {
@@ -53,8 +54,7 @@ export default function AuctionTable() {
       );
       if (data.success) {
         toast.success("status changed successfully");
-        setDataChange(!dataChange)
-        
+        setDataChange(!dataChange);
       }
     } catch (error) {
       console.log(error);
@@ -111,17 +111,23 @@ export default function AuctionTable() {
                   {moment(auction?.endDate).format("lll")}
                 </TableCell>
                 <TableCell align="right">
-                  <button onClick={() => handleChangeStatus(auction._id)}>
-                    {auction?.isListed ? (
-                      <span className="bg-green-500 text-white font-semibold py-2 px-3 rounded">
-                        listed
-                      </span>
-                    ) : (
-                      <span className="bg-red-500 text-white font-semibold py-2 px-3 rounded">
-                        Unlisted
-                      </span>
-                    )}
-                  </button>
+                  {auction?.isCompleted ? (
+                    <span className="bg-yellow-500 text-white font-semibold py-2 px-3 rounded">
+                      Completed
+                    </span>
+                  ) : (
+                    <button onClick={() => handleChangeStatus(auction._id)}>
+                      {auction?.isListed ? (
+                        <span className="bg-green-500 text-white font-semibold py-2 px-3 rounded">
+                          listed
+                        </span>
+                      ) : (
+                        <span className="bg-red-500 text-white font-semibold py-2 px-3 rounded">
+                          Unlisted
+                        </span>
+                      )}
+                    </button>
+                  )}
                 </TableCell>
                 <TableCell align="right">
                   <EditAuctionModal id={auction._id} />
