@@ -39,6 +39,10 @@ export class PaymentInteractor implements IPaymentInteractor {
   }
   async retrievePaymentIntent(paymentIntent: string, id: string): Promise<any> {
     try {
+
+      console.log("retrieve payment interactor");
+      
+
       const paymentData = await this.stripeInteractor.retreivePaymentIntent(
         paymentIntent
       );

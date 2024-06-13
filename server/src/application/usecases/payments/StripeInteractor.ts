@@ -25,6 +25,8 @@ export class StipeIneractor {
   }
   async retreivePaymentIntent(paymentIntent: string): Promise<any> {
     try {
+      console.log("retrieving payment intent");
+
       const data = await stripe.paymentIntents.retrieve(paymentIntent);
       return data;
     } catch (error: any) {

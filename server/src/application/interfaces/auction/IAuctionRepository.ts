@@ -9,7 +9,7 @@ export interface IAuctionRepository {
   findOne(id: string): Promise<Auction>;
   edit(id: string, value: Auction): Promise<Auction>;
   addBid(bid: Bid): Promise<Bid>;
-  getBid(id: string): Promise<Bid[]>;
+  getBid(id: string): Promise<any[]>;
   getCompletedAuction(): Promise<Auction[]>;
   addWinner(data: AuctionWinner): Promise<AuctionWinner>;
 }

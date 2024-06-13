@@ -6,7 +6,7 @@ export class AuthService implements IAuthService {
   generateToken(user: any): string {
     try {
       const token = jwt.sign(user, process.env.JWT_SECRET!, {
-        expiresIn: "2d",
+        expiresIn: "7d",
       });
       return token;
     } catch (error) {

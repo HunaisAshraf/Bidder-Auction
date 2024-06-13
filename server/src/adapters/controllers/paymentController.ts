@@ -40,6 +40,9 @@ export class PaymentController {
 
   async onAddToWallet(req: Request, res: Response, next: NextFunction) {
     try {
+
+      console.log("payment controller");
+      
       const token = req.headers.authorization?.split(" ")[1];
 
       if (!token) {
@@ -54,7 +57,8 @@ export class PaymentController {
         paymentIntent,
         _id.toString()
       );
-
+      console.log("sending response");
+      
       return res.status(200).json({ success: true, data });
     } catch (error) {
       console.log("error in controller", error);

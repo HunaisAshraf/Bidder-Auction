@@ -1,4 +1,5 @@
 import { IAuctionRepository } from "../../application/interfaces/auction/IAuctionRepository";
+import { User } from "../../entities/User";
 import { Auction } from "../../entities/auction";
 import { AuctionWinner } from "../../entities/auctionWinner";
 import { Bid } from "../../entities/bid";
@@ -109,7 +110,7 @@ export class AuctionRepositry implements IAuctionRepository {
     }
   }
 
-  async getBid(id: string): Promise<Bid[]> {
+  async getBid(id: string): Promise<any[]> {
     try {
       const bids = await BidModel.find({ auctionId: id })
         .populate("userId")

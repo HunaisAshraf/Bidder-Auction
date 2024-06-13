@@ -41,13 +41,13 @@ app.use("/api/auction", auctionRouter);
 app.use("/api/payments", paymentRouter);
 app.use(errorHandler);
 
-io.on("connection", (socket) => {
-  console.log("socket connected", socket.id);
+// io.on("connection", (socket) => {
+//   console.log("socket connected", socket.id);
 
-  socket.on("disconnect", () => {
-    console.log("socket disconnected");
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("socket disconnected");
+//   });
+// });
 
 const port = 5000;
 

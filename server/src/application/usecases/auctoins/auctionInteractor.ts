@@ -7,6 +7,7 @@ import { Bid } from "../../../entities/bid";
 import { io } from "../../..";
 import { IPaymentRepository } from "../../interfaces/service/IPaymentRepository";
 import { AuctionWinner } from "../../../entities/auctionWinner";
+import { User } from "../../../entities/User";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
@@ -113,7 +114,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         throw new Error("Auction has ended");
       }
 
-      if (user?.role === "auctioner" || auction.auctioner === userId) {
+      if (!user || user?.role === "auctioner" || auction.auctioner === userId) {
         throw new Error("Auctioner cannot bid");
       }
 
@@ -121,9 +122,17 @@ export class AuctionInteractor implements IAuctionInteractor {
         throw new Error("Bid amount must be greater than current bid");
       }
 
-      if (!wallet || wallet?.balance < bidAmount) {
+      if (
+        !wallet ||
+        wallet?.balance < bidAmount ||
+        wallet.amountUsed + bidAmount > wallet.balance
+      ) {
         throw new Error("No sufficient balance in wallet");
       }
+
+      let amountUsed = bidAmount + wallet.amountUsed;
+
+      await this.paymentRepository.edit(user?._id.toString(), { amountUsed },{});
 
       const bid: Bid = {
         auctionId,
@@ -173,7 +182,7 @@ export class AuctionInteractor implements IAuctionInteractor {
   async completedAuction(): Promise<Auction[]> {
     try {
       console.log("completed auction function");
-      
+
       const completedAuction = await this.repository.getCompletedAuction();
 
       return completedAuction;
@@ -184,17 +193,9 @@ export class AuctionInteractor implements IAuctionInteractor {
 
   async completeAuction(auction: Auction): Promise<void> {
     try {
-      auction.completed = true;
-
-      const completedAuction = await this.repository.edit(
-        auction._id.toString(),
-        auction
-      );
-
       const bids = await this.repository.getBid(auction._id.toString());
 
-      console.log("available bids",bids);
-      
+      console.log("available bids", bids);
 
       if (bids.length === 0) {
         throw new Error("no bids available");
@@ -209,8 +210,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         }
       }
 
-      console.log("highest bidder",highestBidder);
-      
+      console.log("highest bidder", highestBidder);
 
       if (!highestBidder) {
         throw new Error("no bids available");
@@ -222,9 +222,59 @@ export class AuctionInteractor implements IAuctionInteractor {
         auctioner: auction?.auctioner,
         bidAmount: highestBidder?.bidAmount,
       };
-      console.log("auction",auctionWinner);
-      
-      await this.repository.addWinner(auctionWinner);
+      console.log("auction", auctionWinner);
+
+      const winner = await this.repository.addWinner(auctionWinner);
+
+      const wallet = await this.paymentRepository.get(
+        highestBidder.userId._id.toString()
+      );
+      console.log("wallett", wallet);
+
+      const bidderPaymentUpdate = await this.paymentRepository.edit(
+        highestBidder.userId._id.toString(),
+        {
+          balance: wallet.balance - highestBidder.bidAmount,
+          amountUsed: wallet.amountUsed - highestBidder.bidAmount,
+        },
+        {
+          amount:  highestBidder.bidAmount,
+          time: new Date(),
+          action: `$ ${highestBidder.bidAmount} was paid for the auction ${auction.itemName}`,
+        }
+      );
+
+      console.log("bidder payment update", bidderPaymentUpdate);
+
+      const auctionerWallet = await this.paymentRepository.get(
+        auction.auctioner.toString()
+      );
+
+      // const transcationDetails = {
+      //   amount,
+      //   action: "added to wallet",
+      //   time: new Date(),
+      // };
+
+      const auctionerPaymentUpdate = await this.paymentRepository.add(
+        auction.auctioner.toString(),
+        auctionerWallet.balance + auction.currentBid,
+        {
+          amount: highestBidder.bidAmount,
+          time: new Date(),
+          action: `$ ${highestBidder.bidAmount} was added from the auction ${auction.itemName}`,
+        }
+      );
+
+      console.log("auctioner payment updated", auctionerPaymentUpdate);
+
+      auction.completed = true;
+      auction.currentBid = 0;
+
+      const completedAuction = await this.repository.edit(
+        auction._id.toString(),
+        auction
+      );
     } catch (error: any) {
       throw new Error(error.message);
     }
