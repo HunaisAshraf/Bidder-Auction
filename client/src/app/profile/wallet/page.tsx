@@ -9,6 +9,7 @@ import WalletTableComponent from "@/components/WalletTableComponent";
 
 type WalletType = {
   balance: number;
+  amountUsed: number;
   transcation: any[];
 };
 
@@ -49,12 +50,26 @@ export default function Wallet() {
       <div>
         <div className="p-5 shadow-sm shadow-gray-400 rounded-md w-[400px]">
           <div>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <div>
                 <p className="text-gray-600">Wallet Amount</p>
                 <h1 className="text-3xl my-3 font-semibold">
                   $ {wallet ? wallet?.balance : "0"}
                 </h1>
+              </div>
+              <div className="flex gap-2">
+                <div className="text-center">
+                  <p className="text-gray-600 text-xs">Used Amount</p>
+                  <h1 className="text-md my-1 font-semibold text-red-500">
+                    $ {wallet ? wallet?.amountUsed : "0"}
+                  </h1>
+                </div>
+                <div className="text-center">
+                  <p className="text-gray-600 text-xs">Usable Amount</p>
+                  <h1 className="text-md my-1 font-semibold text-green-800">
+                    $ {wallet ? (wallet.balance - wallet?.amountUsed) : "0"}
+                  </h1>
+                </div>
               </div>
               <div>
                 <div className="bg-gray-300 p-2 rounded-full">

@@ -2,7 +2,7 @@
 
 import { axiosInstance } from "@/utils/constants";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function PaymentProcessing({
   searchParams,

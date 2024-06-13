@@ -300,7 +300,7 @@ export default function EditAuctionModal({ id }: { id: string }) {
                           accept="image/*"
                           multiple
                           {...register("images", {
-                            required: "Please upload three images",
+                            
                             validate: {
                               exactlyThreeFiles: (files) =>
                                 files.length === 3 ||

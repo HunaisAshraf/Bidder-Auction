@@ -51,8 +51,8 @@ export default function ProfileComponent() {
       <div className="flex items-center gap-3">
         {user?.profilePicture ? (
           <Image
-            height={160}
             width={160}
+            height={160}
             src={user?.profilePicture}
             alt={user?.name}
             className="rounded-full"
