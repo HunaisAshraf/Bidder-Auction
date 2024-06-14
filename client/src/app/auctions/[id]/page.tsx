@@ -21,6 +21,7 @@ type Auction = {
   endDate: Date;
   auctioner: string;
   images: string[];
+  completed: boolean;
 };
 
 export default function SingleAuction({
@@ -97,10 +98,15 @@ export default function SingleAuction({
       <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2 md:mt-5">
         <div className="md:flex justify-center ">
           <div className="md:w-1/2 shadow-md p-3">
-            <Image src={auction.images[0]} alt={auction.itemName} width={500} height={400}/>
+            <Image
+              src={auction.images[0]}
+              alt={auction.itemName}
+              width={500}
+              height={400}
+            />
             <div className="flex flex-wrap gap-2 mt-2">
               {auction.images?.map((img: string, i: number) => (
-                <Image  key={i} src={img} alt="" height={100} width={150} />
+                <Image key={i} src={img} alt="" height={100} width={150} />
               ))}
             </div>
           </div>

@@ -25,7 +25,7 @@ type Auction = {
   endDate: Date;
   images: string[];
   isListed: string;
-  isCompleted:boolean;
+  completed:boolean;
 };
 
 export default function AuctionTable() {
@@ -111,7 +111,7 @@ export default function AuctionTable() {
                   {moment(auction?.endDate).format("lll")}
                 </TableCell>
                 <TableCell align="right">
-                  {auction?.isCompleted ? (
+                  {auction?.completed ? (
                     <span className="bg-yellow-500 text-white font-semibold py-2 px-3 rounded">
                       Completed
                     </span>

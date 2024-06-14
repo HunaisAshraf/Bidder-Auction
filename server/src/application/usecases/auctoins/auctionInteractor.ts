@@ -214,6 +214,10 @@ export class AuctionInteractor implements IAuctionInteractor {
         }
       }
 
+      for(let bid of bids){
+        await this.paymentRepository.edit(bid.userId._id,{amountUsed:0},{})
+      }
+
       console.log("highest bidder", highestBidder);
 
       if (!highestBidder) {
@@ -239,7 +243,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         highestBidder.userId._id.toString(),
         {
           balance: wallet.balance - highestBidder.bidAmount,
-          amountUsed: wallet.amountUsed - highestBidder.bidAmount,
+          amountUsed: 0,
         },
         {
           amount: highestBidder.bidAmount,

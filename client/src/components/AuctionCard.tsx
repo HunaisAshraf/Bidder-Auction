@@ -9,6 +9,7 @@ type Auction = {
   startDate: Date;
   endDate: Date;
   image: string;
+  completed: boolean;
 };
 
 export default function AuctionCard({
@@ -18,6 +19,7 @@ export default function AuctionCard({
   startDate,
   endDate,
   image,
+  completed,
 }: Auction) {
   return (
     <div className="flex  shadow-lg p-4  my-5 items-center">
@@ -51,9 +53,15 @@ export default function AuctionCard({
           <div className="">
             <p className="font-bold">$ Current Bid</p>
             <p className="text-gray-500">${basePrice}</p>
-            <button className="p-2 shadow bg-[#200f66] text-white font-semibold rounded-lg">
-              Place Bid
-            </button>
+            {completed ? (
+              <button className="p-2 shadow bg-yellow-500 text-white font-semibold rounded-lg">
+                Completed
+              </button>
+            ) : (
+              <button className="p-2 shadow bg-[#200f66] text-white font-semibold rounded-lg">
+                Place Bid
+              </button>
+            )}
           </div>
         </div>
       </div>

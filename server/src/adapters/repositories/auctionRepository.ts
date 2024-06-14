@@ -22,6 +22,7 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       const auctions = await AuctionModel.find({
         isListed: true,
+
         endDate: { $gte: new Date() },
       });
 
@@ -159,7 +160,9 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async getAuctionWon(id: string): Promise<AuctionWinner[]> {
     try {
-      const auctions = await AuctionWinnerModel.find({ user: id }).populate("auctionItem");
+      const auctions = await AuctionWinnerModel.find({ user: id }).populate(
+        "auctionItem"
+      );
       return auctions;
     } catch (error: any) {
       throw new Error(error.message);

@@ -8,6 +8,7 @@ import { UserRepository } from "../../adapters/repositories/userRepository";
 import { UserInteractor } from "../../application/usecases/users/userInteractor";
 import { AuthService } from "../service/authService";
 import { MailService } from "../service/mailService";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 const router = express.Router();
 
@@ -30,13 +31,13 @@ router.post(
 router.post("/google-signup", controller.onGoogleSignUp.bind(controller));
 router.post("/verify-email", controller.onVerifyAccount.bind(controller));
 router.post("/forgotpassword", controller.onForgotPassword.bind(controller));
-router.put("/update-user/:id", controller.onUpdateUser.bind(controller));
+router.put("/update-user/:id", isAuthenticated,controller.onUpdateUser.bind(controller));
 router.get("/logout", controller.onUserLogout.bind(controller));
 router.put(
-  "/update-profile-image",
+  "/update-profile-image", isAuthenticated,
   controller.onUpdateProfileImage.bind(controller)
 );
 router.put("/update-password",controller.onUpdatePassword.bind(controller))
-router.get("/verify-token", controller.onVerifyToken.bind(controller));
+router.get("/verify-token",isAuthenticated, controller.onVerifyToken.bind(controller));
 
 export { router as userRouter };
