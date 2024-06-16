@@ -123,15 +123,13 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async getCompletedAuction(): Promise<Auction[]> {
     try {
-
       console.log("getting completed auctionn from database");
-      
+
       const completedAuction = await AuctionModel.find({
         completed: false,
         endDate: { $lte: new Date() },
       });
       console.log(completedAuction);
-      
 
       return completedAuction;
     } catch (error: any) {
@@ -145,6 +143,24 @@ export class AuctionRepositry implements IAuctionRepository {
 
       await winner.save();
       return winner;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getUserBid(id: string): Promise<Bid[]> {
+    try {
+      const bids = await BidModel.find({ userId: id }).populate("auctionId");
+      return bids;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getAuctionWon(id: string): Promise<AuctionWinner[]> {
+    try {
+      const auctions = await AuctionWinnerModel.find({ user: id }).populate("auctionItem");
+      return auctions;
     } catch (error: any) {
       throw new Error(error.message);
     }

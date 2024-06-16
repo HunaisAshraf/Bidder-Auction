@@ -57,7 +57,8 @@ export class PaymentRepository implements IPaymentRepository {
           $push: {
             transcation: details,
           },
-        }
+        },
+        {upsert:true}
       );
 
       if (!walletData) {

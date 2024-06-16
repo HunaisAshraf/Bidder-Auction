@@ -132,7 +132,11 @@ export class AuctionInteractor implements IAuctionInteractor {
 
       let amountUsed = bidAmount + wallet.amountUsed;
 
-      await this.paymentRepository.edit(user?._id.toString(), { amountUsed },{});
+      await this.paymentRepository.edit(
+        user?._id.toString(),
+        { amountUsed },
+        {}
+      );
 
       const bid: Bid = {
         auctionId,
@@ -238,7 +242,7 @@ export class AuctionInteractor implements IAuctionInteractor {
           amountUsed: wallet.amountUsed - highestBidder.bidAmount,
         },
         {
-          amount:  highestBidder.bidAmount,
+          amount: highestBidder.bidAmount,
           time: new Date(),
           action: `$ ${highestBidder.bidAmount} was paid for the auction ${auction.itemName}`,
         }
@@ -256,9 +260,14 @@ export class AuctionInteractor implements IAuctionInteractor {
       //   time: new Date(),
       // };
 
+      let auctionerBalance = 0;
+      if (auctionerWallet) {
+        auctionerBalance = auctionerWallet.balance;
+      }
+
       const auctionerPaymentUpdate = await this.paymentRepository.add(
         auction.auctioner.toString(),
-        auctionerWallet.balance + auction.currentBid,
+        auctionerBalance + auction.currentBid,
         {
           amount: highestBidder.bidAmount,
           time: new Date(),
@@ -275,6 +284,24 @@ export class AuctionInteractor implements IAuctionInteractor {
         auction._id.toString(),
         auction
       );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getBiddingHistory(id: string): Promise<Bid[]> {
+    try {
+      const bids = await this.repository.getUserBid(id);
+      return bids;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getWonAuction(id: string): Promise<AuctionWinner[]> {
+    try {
+      const auctions = await this.repository.getAuctionWon(id);
+      return auctions;
     } catch (error: any) {
       throw new Error(error.message);
     }

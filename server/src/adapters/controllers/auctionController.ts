@@ -182,4 +182,39 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onGetBiddingHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+
+      const { _id } = this.authService.verifyToken(token);
+
+      const biddingHistory = await this.interactor.getBiddingHistory(
+        _id.toString()
+      );
+
+      return res.status(200).json({ success: true, biddingHistory });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onAuctionWon(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        throw new Error("user not authorised");
+      }
+
+      const { _id } = this.authService.verifyToken(token);
+
+      const auctionsWon = await this.interactor.getWonAuction(_id.toString());
+      return res.status(200).json({ success: true, auctionsWon });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
