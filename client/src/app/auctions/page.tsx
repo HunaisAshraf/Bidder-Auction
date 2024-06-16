@@ -4,6 +4,7 @@ import AuctionCard from "@/components/AuctionCard";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Loading from "./loading";
 
 type Auction = {
   _id: string;
@@ -16,7 +17,7 @@ type Auction = {
 };
 
 export default function Auction() {
-  const [auctions, setAuctions] = useState<Auction[]>([]);
+  const [auctions, setAuctions] = useState<Auction[] | null>();
 
   const getData = async () => {
     try {
@@ -35,6 +36,20 @@ export default function Auction() {
     getData();
   }, []);
 
+  if (!auctions) {
+    return <Loading />;
+  }
+
+  if (auctions.length === 0) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-gray-500 text-xl md:text-3xl font-bold">
+          No Available <span className="text-[#231656]">Auction</span>
+        </h1>
+      </div>
+    );
+  }
+  
   return (
     <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2 md:mt-5">
       <div className="flex items-center justify-between">
