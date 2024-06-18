@@ -1,4 +1,5 @@
 "use client";
+
 import toast, { Toaster } from "react-hot-toast";
 import Input from "../Input";
 import { useState } from "react";
@@ -7,19 +8,23 @@ import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/utils/constants";
 import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import Spinner from "../Spinner";
+import { useSearchParams } from "next/navigation";
 
 type FormValues = {
   password: string;
   confirmPassword: string;
 };
 
-export default function UpdatePasswordForm({ email }: { email: string | null }) {
+export default function UpdatePasswordForm() {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState, getValues } =
     useForm<FormValues>();
   const { errors } = formState;
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const email = searchParams.get("email");
 
   const handleUpdatePassword = async (formData: FormValues) => {
     try {
@@ -35,16 +40,6 @@ export default function UpdatePasswordForm({ email }: { email: string | null }) 
       console.log(data);
 
       if (data?.success) {
-        //     const user = {
-        //       id: data?.user?._id,
-        //       name: data?.user?.name,
-        //       email: data?.user?.email,
-        //       phone: data?.user?.phone,
-        //       profilePicture: data?.user?.profilePicture,
-        //     };
-        //     localStorage.setItem("auth", JSON.stringify(user));
-        //     localStorage.setItem("token", JSON.stringify(data?.token));
-
         setLoading(false);
         router.push("/login");
       }

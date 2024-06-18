@@ -117,7 +117,7 @@ export default function EditProfileComponent() {
     setValue("name", user?.name);
     setValue("phone", user?.phone);
     setValue("email", user?.email);
-  }, [user]);
+  }, [user,setValue]);
 
   return (
     <div>

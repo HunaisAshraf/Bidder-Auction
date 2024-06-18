@@ -155,24 +155,24 @@ export default function EditAuctionModal({ id }: { id: string }) {
     // }
   };
 
-  const getAuction = async () => {
-    try {
-      const { data } = await axiosInstance.get(
-        `/api/auction/get-single-auction/${id}`
-      );
-
-      if (data?.success) {
-        setAuction(data.auction);
-        setImages(data?.auction?.images);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const getAuction = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          `/api/auction/get-single-auction/${id}`
+        );
+
+        if (data?.success) {
+          setAuction(data.auction);
+          setImages(data?.auction?.images);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getAuction();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (auction) {
@@ -182,7 +182,7 @@ export default function EditAuctionModal({ id }: { id: string }) {
       setValue("startDate", auction.startDate.split("T")[0]);
       setValue("endDate", auction.endDate.split("T")[0]);
     }
-  }, [auction]);
+  }, [auction, setValue]);
 
   return (
     <div>

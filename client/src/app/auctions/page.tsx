@@ -14,7 +14,7 @@ type Auction = {
   startDate: Date;
   endDate: Date;
   images: string;
-  completed:boolean
+  completed: boolean;
 };
 
 export default function Auction() {
@@ -36,21 +36,20 @@ export default function Auction() {
     setUpcoming(upcomingAuctions);
   };
 
-  const getData = async () => {
-    try {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/get-all-auctions`
-      );
-      if (data.success) {
-        setAuctions(data.auctions);
-        categorizeAuctions(data.auctions);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/get-all-auctions`
+        );
+        if (data.success) {
+          setAuctions(data.auctions);
+          categorizeAuctions(data.auctions);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
     getData();
   }, []);
 
@@ -67,9 +66,9 @@ export default function Auction() {
       </div>
     );
   }
-  console.log("live",live);
-  console.log("upcoming",upcoming);
-  
+  console.log("live", live);
+  console.log("upcoming", upcoming);
+
   if (live && live?.length > 0) {
     return (
       <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2 md:mt-5">

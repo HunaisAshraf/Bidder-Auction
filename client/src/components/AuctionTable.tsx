@@ -25,27 +25,13 @@ type Auction = {
   endDate: Date;
   images: string[];
   isListed: string;
-  completed:boolean;
+  completed: boolean;
 };
 
 export default function AuctionTable() {
   const [auctions, setAuctions] = React.useState<Auction[]>();
   const [dataChange, setDataChange] = React.useState(false);
-  console.log("all auct", auctions);
   const router = useRouter();
-  const getAuctions = async () => {
-    try {
-      const { data } = await axiosInstance.get("/api/auction/get-auctions");
-
-      console.log(data);
-      if (data.success) {
-        setAuctions(data?.auctions);
-        console.log("auction", auctions);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleChangeStatus = async (id: string) => {
     try {
@@ -63,6 +49,19 @@ export default function AuctionTable() {
   };
 
   React.useEffect(() => {
+    const getAuctions = async () => {
+      try {
+        const { data } = await axiosInstance.get("/api/auction/get-auctions");
+
+        console.log(data);
+        if (data.success) {
+          setAuctions(data?.auctions);
+          console.log("auction", auctions);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getAuctions();
   }, [dataChange]);
 

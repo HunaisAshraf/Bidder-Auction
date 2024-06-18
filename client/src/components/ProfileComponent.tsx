@@ -46,7 +46,7 @@ export default function ProfileComponent() {
       router.push("/profile/details");
       setRedirected(true);
     }
-  }, [pathname, user?.role, router]);
+  }, [pathname, user?.role, router, redirected]);
 
   return (
     <div className="">

@@ -8,7 +8,7 @@ type InputProps = {
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ type, placeholder, icon, errors, ...rest }, ref) => {
+  function InputCompontent ({ type, placeholder, icon, errors, ...rest }, ref) {
     return (
       <div>
         <div className="w-full my-3 flex items-center gap-2 border rounded-md p-2">

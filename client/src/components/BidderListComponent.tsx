@@ -31,21 +31,6 @@ export default function BidderListComponent({
 
   const { socket } = useSocket();
 
-  const getBids = async () => {
-    try {
-      const { data } = await axiosInstance.get(
-        `/api/auction/get-bids/${auctionId}`
-      );
-
-      if (data.success) {
-        setBids((prev) => [...data?.bids]);
-        // console.log("rowssssssssss", bids);
-        // rows.push(...bids);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const arr = [];
 
   for (let i = 0; i < bids.length; i++) {
@@ -60,8 +45,21 @@ export default function BidderListComponent({
   rows = arr;
 
   useEffect(() => {
+    const getBids = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          `/api/auction/get-bids/${auctionId}`
+        );
+
+        if (data.success) {
+          setBids((prev) => [...data?.bids]);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getBids();
-  }, []);
+  }, [auctionId]);
 
   useEffect(() => {
     socket?.on("newBid", (bid) => {

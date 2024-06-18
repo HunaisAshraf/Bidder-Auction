@@ -70,7 +70,7 @@ export default function Header() {
     if (user && !user?.role) {
       router.push("/role");
     }
-  }, [session, dispatch, user?.email]);
+  }, [user, router, session, dispatch]);
 
   return (
     <header className="bg-white py-3">

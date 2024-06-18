@@ -38,23 +38,6 @@ export default function SingleAuction({
   const router = useRouter();
   const user = useAppSelector((state) => state.users.user);
 
-  const getAuction = async () => {
-    try {
-      const { data } = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/get-single-auction/${auctionId}`
-      );
-
-      if (data?.success) {
-        if (data.auction) {
-          setAuction(data.auction);
-        }
-      }
-      console.log(auction);
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
   const handleBid = async () => {
     try {
       const { data } = await axiosInstance.post("/api/auction/place-bid", {
@@ -82,9 +65,25 @@ export default function SingleAuction({
     socket?.on("updatedAuction", (auction) => {
       setAuction((prev) => auction);
     });
-  }, [socket]);
+  }, [socket,auctionId,auction]);
 
   useEffect(() => {
+    const getAuction = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/get-single-auction/${auctionId}`
+        );
+
+        if (data?.success) {
+          if (data.auction) {
+            setAuction(data.auction);
+          }
+        }
+        console.log(auction);
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
     getAuction();
   }, []);
 

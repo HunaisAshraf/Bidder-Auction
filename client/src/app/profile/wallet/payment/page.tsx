@@ -5,32 +5,18 @@ import { axiosInstance } from "@/utils/constants";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
 
-export default function Payment() {
+function Payment() {
   const [clientSecret, setClientSecret] = useState<string>("");
 
   const searchParams = useSearchParams();
 
   const amount = searchParams.get("amount");
-
-  async function getClientSecret() {
-    try {
-      const { data } = await axiosInstance.post(
-        "/api/payments/create-payment-intent",
-        { amount }
-      );
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   //   const appearance = {
   //     theme: "stripe",
@@ -40,6 +26,19 @@ export default function Payment() {
   };
 
   useEffect(() => {
+    async function getClientSecret() {
+      try {
+        const { data } = await axiosInstance.post(
+          "/api/payments/create-payment-intent",
+          { amount }
+        );
+        if (data.clientSecret) {
+          setClientSecret(data.clientSecret);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
     getClientSecret();
   }, [amount]);
   return (
@@ -51,5 +50,13 @@ export default function Payment() {
         </Elements>
       )}
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense>
+      <Payment />
+    </Suspense>
   );
 }
