@@ -52,4 +52,14 @@ export class ChatRepository implements IChatRepository {
       throw new Error(error.message);
     }
   }
+  async checkChat(firstUser: string, secondUser: string): Promise<any> {
+    try {
+      const chat = await ChatModel.findOne({
+        users: { $all: [firstUser, secondUser] },
+      });
+      return chat;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

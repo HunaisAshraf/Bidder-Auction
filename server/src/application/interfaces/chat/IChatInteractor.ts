@@ -1,7 +1,7 @@
 import { Message } from "../../../entities/message";
 
 export interface IChatInteractor {
-  getChat(chatId: string): Promise<any[]>;
+  getChat(userId: string): Promise<any[]>;
   addChat(firstUser: string, secondUser: string): Promise<any>;
   getMessage(chatId: string): Promise<Message[]>;
   createMessage(

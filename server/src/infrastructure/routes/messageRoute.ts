@@ -12,6 +12,16 @@ const interactor = new ChatInteractor(repository);
 const controller = new ChatController(interactor);
 
 router.get(
+  "/get-chat",
+  isAuthenticated,
+  controller.onGetChats.bind(controller)
+);
+router.post(
+  "/add-chat",
+  isAuthenticated,
+  controller.onAddChat.bind(controller)
+);
+router.get(
   "/get-messages",
   isAuthenticated,
   controller.ongetMessages.bind(controller)

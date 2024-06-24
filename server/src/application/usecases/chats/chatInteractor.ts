@@ -17,7 +17,13 @@ export class ChatInteractor implements IChatInteractor {
   }
   async addChat(firstUser: string, secondUser: string): Promise<any> {
     try {
+      const chatExist = await this.repository.checkChat(firstUser, secondUser);
+
+      if (chatExist) {
+        return chatExist;
+      }
       const chat = await this.repository.createChat(firstUser, secondUser);
+
       return chat;
     } catch (error: any) {
       throw new Error(error.message);

@@ -8,6 +8,30 @@ export class ChatController {
     this.interactor = interactor;
   }
 
+  async onAddChat(req: IRequestWithUser, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.user!;
+      const { secondUser } = req.body;
+
+      const chat = await this.interactor.addChat(id, secondUser);
+
+      return res.status(200).json({ success: true, chat });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onGetChats(req: IRequestWithUser, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.user!;
+      const chat = await this.interactor.getChat(id);
+
+      return res.status(200).json({ success: true, chat });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async ongetMessages(
     req: IRequestWithUser,
     res: Response,
@@ -42,8 +66,8 @@ export class ChatController {
         success: true,
         newMessage,
       });
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (error) {
+      next(error);
     }
   }
 }

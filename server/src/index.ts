@@ -9,8 +9,9 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { auctionRouter } from "./infrastructure/routes/auctionRoute";
 import { paymentRouter } from "./infrastructure/routes/paymentRoute";
+import { messageRouter } from "./infrastructure/routes/messageRoute";
 import { Server } from "socket.io";
-import "./infrastructure/scheduler/auctionSchedule"
+import "./infrastructure/scheduler/auctionSchedule";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", userRouter);
 app.use("/api/auction", auctionRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/chat", messageRouter);
 app.use(errorHandler);
 
 // io.on("connection", (socket) => {
@@ -55,5 +57,4 @@ server.listen(port, () => {
   console.log(`server running in port ${port}`);
 });
 
-
-export {io}
+export { io };
