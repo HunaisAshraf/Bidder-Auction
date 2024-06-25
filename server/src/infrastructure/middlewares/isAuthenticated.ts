@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../service/authService";
+import { IRequestWithUser } from "../../application/types/types";
 
 const auth = new AuthService();
 
 export const isAuthenticated = async (
-  req: Request,
+  req: IRequestWithUser,
   res: Response,
   next: NextFunction
 ) => {
@@ -14,6 +15,8 @@ export const isAuthenticated = async (
       res.status(400).send({ success: false, error: "user not authorised" });
     }
     const { _id, role } = auth.verifyToken(token!);
+    req.user = { id: _id.toString(), role };
+
     next();
   } catch (error) {
     next(error);

@@ -61,11 +61,26 @@ export default function SingleAuction({
     }
   };
 
+  const handleChat = async () => {
+    try {
+      const { data } = await axiosInstance.post("/api/chat/add-chat", {
+        secondUser: auction?.auctioner,
+      });
+      if (data.success) {
+        console.log(data);
+
+        router.push("/chat");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     socket?.on("updatedAuction", (auction) => {
       setAuction((prev) => auction);
     });
-  }, [socket,auctionId,auction]);
+  }, [socket, auctionId, auction]);
 
   useEffect(() => {
     const getAuction = async () => {
@@ -169,7 +184,10 @@ export default function SingleAuction({
                     </button>
                   </div>
                 )}
-              <button className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4">
+              <button
+                className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4"
+                onClick={handleChat}
+              >
                 <QuestionAnswerIcon />
                 Chat with auctioner
               </button>
