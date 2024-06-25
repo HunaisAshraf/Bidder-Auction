@@ -10,6 +10,7 @@ export class ChatInteractor implements IChatInteractor {
   async getChat(userId: string): Promise<any[]> {
     try {
       const chat = await this.repository.getChats(userId);
+
       return chat;
     } catch (error: any) {
       throw new Error(error);
