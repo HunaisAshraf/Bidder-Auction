@@ -43,13 +43,22 @@ app.use("/api/payments", paymentRouter);
 app.use("/api/chat", messageRouter);
 app.use(errorHandler);
 
-// io.on("connection", (socket) => {
-//   console.log("socket connected", socket.id);
+io.on("connection", (socket) => {
+  console.log("socket connected", socket.id);
 
-//   socket.on("disconnect", () => {
-//     console.log("socket disconnected");
-//   });
-// });
+  socket.on("join_chat", (chatId) => {
+    socket.join(chatId);
+    console.log("connected to chat id", chatId);
+  });
+  // socket.on("send_message", (data, room) => {
+  //   // socket.join(chatId);
+  //   console.log("connected tosakdfjks", data, room);
+  // });
+
+  socket.on("disconnect", () => {
+    console.log("socket disconnected");
+  });
+});
 
 const port = 5000;
 
