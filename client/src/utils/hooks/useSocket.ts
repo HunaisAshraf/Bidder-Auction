@@ -7,13 +7,9 @@ export const useSocket = () => {
   const [socket, setSocket] = useState<Socket | null>();
 
   useEffect(() => {
-
-    console.log();
-    
     const socket = io(process.env.NEXT_PUBLIC_SERVER_HOST as string, {
       withCredentials: true,
     });
-    
 
     setSocket(socket);
 

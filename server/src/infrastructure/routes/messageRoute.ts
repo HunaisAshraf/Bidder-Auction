@@ -22,7 +22,7 @@ router.post(
   controller.onAddChat.bind(controller)
 );
 router.get(
-  "/get-messages",
+  "/get-messages/:chatId",
   isAuthenticated,
   controller.ongetMessages.bind(controller)
 );

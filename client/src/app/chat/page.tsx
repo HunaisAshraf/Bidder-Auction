@@ -24,11 +24,11 @@ async function getChat() {
 export default async function Chat() {
   const chats = await getChat();
   return (
-    <div className="mx-12 md:mx-36 flex">
-      <div className="w-1/4 min-h-screen shadow-lg p-4">
+    <div className="mx-12 md:mx-36 flex my-3">
+      <div className="w-1/4 min-h-[85vh] shadow-lg p-4">
         <ChatListComponent chats={chats} />
       </div>
-      <div className="w-3/4 min-h-screen shadow-lg">
+      <div className="w-3/4 min-h-[85vh] shadow-lg">
         <ChatComponent />
       </div>
     </div>

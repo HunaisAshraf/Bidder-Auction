@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { IChatInteractor } from "../../application/interfaces/chat/IChatInteractor";
 import { IRequestWithUser } from "../../application/types/types";
+import { io } from "../..";
 
 export class ChatController {
   private interactor: IChatInteractor;
@@ -38,7 +39,7 @@ export class ChatController {
     next: NextFunction
   ) {
     try {
-      const { chatId } = req.body;
+      const { chatId } = req.params;
 
       const data = await this.interactor.getMessage(chatId);
 
@@ -62,6 +63,14 @@ export class ChatController {
         id,
         message
       );
+
+      io.to(chatId).emit("receive_message", newMessage);
+
+      // io.on("send_message", (data) => {
+      //   console.log("asdfasdfsd0f0", data);
+
+      // });
+
       return res.status(200).json({
         success: true,
         newMessage,

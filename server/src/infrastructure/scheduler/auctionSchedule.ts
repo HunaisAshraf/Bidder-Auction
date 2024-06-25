@@ -14,20 +14,20 @@ const auctionInteractor = new AuctionInteractor(
   paymentRepository
 );
 
-cron.schedule("*/30 * * * * *", async () => {
-  try {
-    const auctions = await auctionInteractor.completedAuction();
+// cron.schedule("*/30 * * * * *", async () => {
+//   try {
+//     const auctions = await auctionInteractor.completedAuction();
 
-    if (auctions.length === 0) {
-      throw new Error("no completed bids available");
-    }
+//     if (auctions.length === 0) {
+//       throw new Error("no completed bids available");
+//     }
 
-    for (let auction of auctions) {
-      console.log("single auction");
+//     for (let auction of auctions) {
+//       console.log("single auction");
 
-      await auctionInteractor.completeAuction(auction);
-    }
-  } catch (error: any) {
-    console.log(error.message);
-  }
-});
+//       await auctionInteractor.completeAuction(auction);
+//     }
+//   } catch (error: any) {
+//     console.log(error.message);
+//   }
+// });
