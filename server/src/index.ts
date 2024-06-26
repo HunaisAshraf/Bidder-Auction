@@ -11,6 +11,7 @@ import { auctionRouter } from "./infrastructure/routes/auctionRoute";
 import { paymentRouter } from "./infrastructure/routes/paymentRoute";
 import { messageRouter } from "./infrastructure/routes/messageRoute";
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
 import "./infrastructure/scheduler/auctionSchedule";
 
 dotenv.config();
@@ -43,16 +44,44 @@ app.use("/api/payments", paymentRouter);
 app.use("/api/chat", messageRouter);
 app.use(errorHandler);
 
+const joinedUsers: any = {};
+
 io.on("connection", (socket) => {
   console.log("socket connected", socket.id);
 
+  let roomId: string;
+
   socket.on("join_chat", (chatId) => {
     socket.join(chatId);
+    roomId = chatId;
     console.log("connected to chat id", chatId);
   });
-  // socket.on("send_message", (data, room) => {
-  //   // socket.join(chatId);
-  //   console.log("connected tosakdfjks", data, room);
+
+  socket.on("join_call", (user) => {
+    console.log("join call", user);
+
+    io.to(roomId).emit("incoming_call", user);
+  });
+
+  socket.on("call_rejected", (chat) => {
+    console.log("reject", chat);
+
+    io.to(chat).emit("call_declined");
+  });
+
+  // socket.on("join_call", ({ room, user }) => {
+  //   console.log("joining call");
+
+  // if (joinedUsers[room]) {
+  //   joinedUsers[room].push(user);
+  // } else {
+  //   joinedUsers[room] = [user];
+  // }
+
+  // console.log("connected to video chat ", room, user);
+  // console.log(joinedUsers);
+
+  // io.to(room).emit("user-joined", user);
   // });
 
   socket.on("disconnect", () => {

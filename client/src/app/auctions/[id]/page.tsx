@@ -167,7 +167,7 @@ export default function SingleAuction({
               </div>
 
               {new Date(auction.startDate) < new Date() &&
-                user?.id !== auction?.auctioner && (
+                user?._id !== auction?.auctioner && (
                   <div className="flex items-center my-5 gap-3">
                     <input
                       type="number"

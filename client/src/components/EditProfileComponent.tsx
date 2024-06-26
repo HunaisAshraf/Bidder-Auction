@@ -87,7 +87,7 @@ export default function EditProfileComponent() {
       console.log(updateuser);
 
       const { data } = await axiosInstance.put(
-        `/api/auth/update-user/${user?.id}`,
+        `/api/auth/update-user/${user?._id}`,
         updateuser
       );
 
@@ -117,7 +117,7 @@ export default function EditProfileComponent() {
     setValue("name", user?.name);
     setValue("phone", user?.phone);
     setValue("email", user?.email);
-  }, [user,setValue]);
+  }, [user, setValue]);
 
   return (
     <div>
