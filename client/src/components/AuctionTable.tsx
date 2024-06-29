@@ -129,7 +129,11 @@ export default function AuctionTable() {
                   )}
                 </TableCell>
                 <TableCell align="right">
-                  <EditAuctionModal id={auction._id} />
+                  <EditAuctionModal
+                    change={dataChange}
+                    setChange={setDataChange}
+                    id={auction._id}
+                  />
                 </TableCell>
               </TableRow>
             ))}
