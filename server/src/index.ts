@@ -13,6 +13,7 @@ import { messageRouter } from "./infrastructure/routes/messageRoute";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import "./infrastructure/scheduler/auctionSchedule";
+import { notificationRoute } from "./infrastructure/routes/notificationRoute";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use("/api/auth", userRouter);
 app.use("/api/auction", auctionRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/chat", messageRouter);
+app.use("/api/notificaion", notificationRoute);
 app.use(errorHandler);
 
 const joinedUsers: any = {};
@@ -67,6 +69,10 @@ io.on("connection", (socket) => {
     console.log("reject", chat);
 
     io.to(chat).emit("call_declined");
+  });
+
+  socket.on("send_notification", ({ user, newMessage, chat }) => {
+    io.emit("notification_send", { user, newMessage });
   });
 
   // socket.on("join_call", ({ room, user }) => {

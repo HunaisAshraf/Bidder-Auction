@@ -8,6 +8,7 @@ export interface IChatRepository {
   createMessage(
     chatId: string,
     sender: string,
-    message: string
+    message: string,
+    image: string
   ): Promise<Message>;
 }

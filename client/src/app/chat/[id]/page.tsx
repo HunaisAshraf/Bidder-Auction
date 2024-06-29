@@ -30,7 +30,7 @@ export default function page({ params }: { params: { id: string } }) {
         mode: ZegoUIKitPrebuilt.OneONoneCall,
       },
       showScreenSharingButton: false,
-      turnOnCameraWhenJoining: false,
+      turnOnCameraWhenJoining: true,
     });
   };
 
@@ -42,7 +42,17 @@ export default function page({ params }: { params: { id: string } }) {
     //   );
     //   router.push("/chat");
     // });
-  }, [socket]);
+
+    return () => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => track.stop());
+          tracks.forEach((track) => (track.enabled = false));
+        });
+    };
+  }, []);
 
   return (
     <div>

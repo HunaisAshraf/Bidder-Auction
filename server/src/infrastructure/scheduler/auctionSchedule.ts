@@ -3,10 +3,12 @@ import { AuctionInteractor } from "../../application/usecases/auctoins/auctionIn
 import { AuctionRepositry } from "../../adapters/repositories/auctionRepository";
 import { UserRepository } from "../../adapters/repositories/userRepository";
 import { PaymentRepository } from "../../adapters/repositories/paymentRepository";
+import { NotificationRepository } from "../../adapters/repositories/notificationRepository";
 
 const auctionRepository = new AuctionRepositry();
 const userRepository = new UserRepository();
 const paymentRepository = new PaymentRepository();
+const notificationRepository = new NotificationRepository();
 
 const auctionInteractor = new AuctionInteractor(
   auctionRepository,

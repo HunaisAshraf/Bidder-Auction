@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@mui/material";
+import { Badge, Button } from "@mui/material";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -13,24 +13,46 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { blue } from "@mui/material/colors";
 import { axiosInstance } from "@/utils/constants";
 import Image from "next/image";
+import { useSocket } from "@/utils/hooks/useSocket";
+import { addNotification } from "@/lib/store/features/notificationSlice";
 
 const links = [
   { title: "Home", href: "/" },
   { title: "Auction", href: "/auctions" },
   { title: "Watch List", href: "/watchlist" },
   { title: "Chat", href: "/chat" },
-  { title: "Notification", href: "/notification" },
 ];
+
+function count(notification: any, userId: any) {
+  console.log(notification, userId);
+
+  let count = 0;
+
+  for (let i of notification) {
+    if (i.user === userId) {
+      count++;
+    }
+  }
+
+  console.log(count);
+
+  return count;
+}
 
 export default function Header() {
   const [menu, setMenu] = useState(true);
+  const [notificationCount, setnotificationCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { socket } = useSocket();
 
   const user = useAppSelector((state) => state?.users?.user);
+  const notification = useAppSelector((state) => state?.notification);
 
   const dispatch = useAppDispatch();
+
+  // setnotificationCount(count(notification, user?._id));
 
   const toggleMenu = () => {
     setMenu(!menu);
@@ -72,6 +94,17 @@ export default function Header() {
     }
   }, [user, router, session, dispatch]);
 
+  useEffect(() => {
+    socket?.on("notification_send", ({ user, newMessage }) => {
+      console.log("notification received", user, newMessage);
+      dispatch(addNotification({ user, newMessage }));
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    setnotificationCount(count(notification, user?._id));
+  }, [notification]);
+
   return (
     <header className="bg-white py-3">
       <nav className="flex justify-between items-center w-[92%]  mx-auto">
@@ -99,7 +132,13 @@ export default function Header() {
                     }
                     href={l.href}
                   >
-                    {l.title}
+                    {l.title === "Chat" ? (
+                      <Badge badgeContent={notificationCount} color="primary">
+                        {l.title}
+                      </Badge>
+                    ) : (
+                      <>{l.title}</>
+                    )}
                   </Link>
                 </li>
               );

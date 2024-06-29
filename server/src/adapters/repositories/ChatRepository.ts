@@ -7,7 +7,6 @@ import { MessageModel } from "../../infrastructure/db/models/messageModel";
 export class ChatRepository implements IChatRepository {
   async getChats(userId: string): Promise<any[]> {
     try {
-      
       const chats = await ChatModel.find({
         users: { $in: [userId] },
       }).populate("users");
@@ -19,9 +18,8 @@ export class ChatRepository implements IChatRepository {
   }
   async createChat(firstUser: string, secondUser: string): Promise<any> {
     try {
-
-      let user1 = new mongoose.Types.ObjectId(firstUser)
-      let user2 = new mongoose.Types.ObjectId(secondUser)
+      let user1 = new mongoose.Types.ObjectId(firstUser);
+      let user2 = new mongoose.Types.ObjectId(secondUser);
 
       const chat = new ChatModel({
         users: [user1, user2],
@@ -44,13 +42,15 @@ export class ChatRepository implements IChatRepository {
   async createMessage(
     chatId: string,
     sender: string,
-    message: string
+    message: string,
+    image: string
   ): Promise<Message> {
     try {
       const newMessage = new MessageModel({
         chatId,
         sender,
         message,
+        image,
       });
       await newMessage.save();
       return newMessage;
