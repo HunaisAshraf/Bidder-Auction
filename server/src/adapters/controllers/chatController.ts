@@ -56,12 +56,15 @@ export class ChatController {
     try {
       const { id } = req.user!;
       const { chatId } = req.params;
-      const { message } = req.body;
+      const { message, image } = req.body;
+
+      console.log(req.body);
 
       const newMessage = await this.interactor.createMessage(
         chatId,
         id,
-        message
+        message,
+        image
       );
 
       io.to(chatId).emit("receive_message", newMessage);

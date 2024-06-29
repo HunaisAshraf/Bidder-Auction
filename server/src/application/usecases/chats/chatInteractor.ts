@@ -42,13 +42,15 @@ export class ChatInteractor implements IChatInteractor {
   async createMessage(
     chatId: string,
     sender: string,
-    message: string
+    message: string,
+    image: string
   ): Promise<Message> {
     try {
       const newMessage = await this.repository.createMessage(
         chatId,
         sender,
-        message
+        message,
+        image
       );
       return newMessage;
     } catch (error: any) {

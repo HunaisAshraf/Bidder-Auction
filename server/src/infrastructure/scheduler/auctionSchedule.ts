@@ -3,10 +3,12 @@ import { AuctionInteractor } from "../../application/usecases/auctoins/auctionIn
 import { AuctionRepositry } from "../../adapters/repositories/auctionRepository";
 import { UserRepository } from "../../adapters/repositories/userRepository";
 import { PaymentRepository } from "../../adapters/repositories/paymentRepository";
+import { NotificationRepository } from "../../adapters/repositories/notificationRepository";
 
 const auctionRepository = new AuctionRepositry();
 const userRepository = new UserRepository();
 const paymentRepository = new PaymentRepository();
+const notificationRepository = new NotificationRepository();
 
 const auctionInteractor = new AuctionInteractor(
   auctionRepository,
@@ -14,20 +16,20 @@ const auctionInteractor = new AuctionInteractor(
   paymentRepository
 );
 
-// cron.schedule("*/30 * * * * *", async () => {
-//   try {
-//     const auctions = await auctionInteractor.completedAuction();
+cron.schedule("*/30 * * * * *", async () => {
+  try {
+    const auctions = await auctionInteractor.completedAuction();
 
-//     if (auctions.length === 0) {
-//       throw new Error("no completed bids available");
-//     }
+    if (auctions.length === 0) {
+      throw new Error("no completed bids available");
+    }
 
-//     for (let auction of auctions) {
-//       console.log("single auction");
+    for (let auction of auctions) {
+      console.log("single auction");
 
-//       await auctionInteractor.completeAuction(auction);
-//     }
-//   } catch (error: any) {
-//     console.log(error.message);
-//   }
-// });
+      await auctionInteractor.completeAuction(auction);
+    }
+  } catch (error: any) {
+    console.log(error.message);
+  }
+});
