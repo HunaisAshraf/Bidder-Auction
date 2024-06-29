@@ -36,12 +36,12 @@ router.get(
   controller.onGetOneAuction.bind(controller)
 );
 router.put(
-  "/edit-auction/:id",
+  "/edit-auction/:auctionId",
   isAuctioner,
   controller.onEditAuction.bind(controller)
 );
 router.put(
-  "/auction-status/:id",
+  "/auction-status/:auctionId",
   isAuctioner,
   controller.onAuctionStatus.bind(controller)
 );

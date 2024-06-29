@@ -65,10 +65,20 @@ export class AuctionInteractor implements IAuctionInteractor {
     }
   }
 
-  async editAuction(id: string, value: Auction): Promise<Auction> {
+  async editAuction(
+    userId: string,
+    auctionId: string,
+    value: Auction
+  ): Promise<Auction> {
     try {
-      const auction = await this.repository.edit(id, value);
-      return auction;
+      const auction = await this.repository.findOne(auctionId);
+
+      if (auction.auctioner.toString() !== userId) {
+        throw new Error("user not authorised");
+      }
+
+      const editedAuction = await this.repository.edit(auctionId, value);
+      return editedAuction;
     } catch (error: any) {
       console.log("error in editing auction", error);
 
@@ -76,9 +86,17 @@ export class AuctionInteractor implements IAuctionInteractor {
     }
   }
 
-  async changeAuctionStatus(id: string, status: string): Promise<Auction> {
+  async changeAuctionStatus(
+    userId: string,
+    auctionId: string,
+    status: string
+  ): Promise<Auction> {
     try {
-      const auction = await this.repository.findOne(id);
+      const auction = await this.repository.findOne(auctionId);
+
+      if (auction.auctioner.toString() !== userId) {
+        throw new Error("user not authorised");
+      }
 
       if (auction.isListed) {
         auction.isListed = false;
@@ -86,7 +104,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         auction.isListed = true;
       }
 
-      const updatetdAuction = await this.repository.edit(id, auction);
+      const updatetdAuction = await this.repository.edit(auctionId, auction);
 
       return updatetdAuction;
     } catch (error: any) {
@@ -214,8 +232,12 @@ export class AuctionInteractor implements IAuctionInteractor {
         }
       }
 
-      for(let bid of bids){
-        await this.paymentRepository.edit(bid.userId._id,{amountUsed:0},{})
+      for (let bid of bids) {
+        await this.paymentRepository.edit(
+          bid.userId._id,
+          { amountUsed: 0 },
+          {}
+        );
       }
 
       console.log("highest bidder", highestBidder);

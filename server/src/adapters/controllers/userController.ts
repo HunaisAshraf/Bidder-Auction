@@ -3,6 +3,7 @@ import { User } from "../../entities/User";
 import { IUserInteractor } from "../../application/interfaces/user/IuserInteractor";
 import { validationResult } from "express-validator";
 import { IAuthService } from "../../application/interfaces/service/IAuthService";
+import { IRequestWithUser } from "../../application/types/types";
 
 export class UserController {
   private interactor: IUserInteractor;
@@ -105,19 +106,11 @@ export class UserController {
     }
   }
 
-  async onUpdateUser(req: Request, res: Response, next: NextFunction) {
+  async onUpdateUser(req: IRequestWithUser, res: Response, next: NextFunction) {
     try {
-      console.log("update user");
-
-      const token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
-        throw new Error("not authorised");
-      }
-      const { _id } = this.authService.verifyToken(token);
+      const { id } = req.user!;
 
       const body = req.body;
-
-      const id = req.params.id;
 
       let user = await this.interactor.updateDetails(id, body);
 
@@ -170,6 +163,7 @@ export class UserController {
       next(error);
     }
   }
+
   async onUserLogout(req: Request, res: Response, next: NextFunction) {
     try {
       res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
@@ -178,22 +172,17 @@ export class UserController {
       next(error);
     }
   }
-  async onUpdateProfileImage(req: Request, res: Response, next: NextFunction) {
+
+  async onUpdateProfileImage(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      const { id } = req.user!;
       const { fileUrl } = req.body;
 
-      console.log(fileUrl);
-
-      const token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
-        throw new Error("not authorised");
-      }
-      const { _id } = this.authService.verifyToken(token);
-
-      const user = await this.interactor.updateProfileImage(
-        _id.toString(),
-        fileUrl
-      );
+      const user = await this.interactor.updateProfileImage(id, fileUrl);
 
       return res.status(200).send({ success: true, user });
     } catch (error) {
@@ -203,18 +192,6 @@ export class UserController {
 
   onVerifyToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
-      console.log(token);
-
-      if (!token) {
-        throw new Error("user not authorised");
-      }
-      const validToken = this.authService.verifyToken(token);
-
-      if (!validToken) {
-        throw new Error("user not authorised");
-      }
-
       return res.status(200).send({ success: true, message: "user verified" });
     } catch (error) {
       next(error);

@@ -7,8 +7,16 @@ export interface IAuctionInteractor {
   getAllAuctions(): Promise<Auction[]>;
   getSingleAuctoin(id: string): Promise<Auction | null>;
   addAuction(id: string, auction: Auction): Promise<Auction>;
-  editAuction(id: string, value: Auction): Promise<Auction>;
-  changeAuctionStatus(id: string, status: string): Promise<Auction>;
+  editAuction(
+    userId: string,
+    auction_id: string,
+    value: Auction
+  ): Promise<Auction>;
+  changeAuctionStatus(
+    userId: string,
+    auctionId: string,
+    status: string
+  ): Promise<Auction>;
   placeBid(bidAmount: number, auctionId: string, userId: string): Promise<Bid>;
   getBids(id: string): Promise<Bid[]>;
   completedAuction(): Promise<Auction[]>;

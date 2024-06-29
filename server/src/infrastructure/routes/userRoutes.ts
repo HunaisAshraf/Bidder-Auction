@@ -31,13 +31,22 @@ router.post(
 router.post("/google-signup", controller.onGoogleSignUp.bind(controller));
 router.post("/verify-email", controller.onVerifyAccount.bind(controller));
 router.post("/forgotpassword", controller.onForgotPassword.bind(controller));
-router.put("/update-user/:id", isAuthenticated,controller.onUpdateUser.bind(controller));
+router.put(
+  "/update-user",
+  isAuthenticated,
+  controller.onUpdateUser.bind(controller)
+);
 router.get("/logout", controller.onUserLogout.bind(controller));
 router.put(
-  "/update-profile-image", isAuthenticated,
+  "/update-profile-image",
+  isAuthenticated,
   controller.onUpdateProfileImage.bind(controller)
 );
-router.put("/update-password",controller.onUpdatePassword.bind(controller))
-router.get("/verify-token",isAuthenticated, controller.onVerifyToken.bind(controller));
+router.put("/update-password", controller.onUpdatePassword.bind(controller));
+router.get(
+  "/verify-token",
+  isAuthenticated,
+  controller.onVerifyToken.bind(controller)
+);
 
 export { router as userRouter };

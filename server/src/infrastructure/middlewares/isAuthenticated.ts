@@ -46,7 +46,7 @@ export const isBidder = async (
 };
 
 export const isAuctioner = async (
-  req: Request,
+  req: IRequestWithUser,
   res: Response,
   next: NextFunction
 ) => {
@@ -61,6 +61,9 @@ export const isAuctioner = async (
     if (role !== "auctioner") {
       res.status(400).send({ success: false, error: "user not authorised" });
     }
+
+    req.user = { id: _id.toString(), role };
+
     next();
   } catch (error) {
     next(error);
