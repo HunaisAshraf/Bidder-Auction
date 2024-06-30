@@ -1,6 +1,7 @@
 import { INotificationRepository } from "../../application/interfaces/notification/INotifcationRepository";
 import { Notification } from "../../entities/notification";
 import { NotificationModel } from "../../infrastructure/db/models/notificationModel";
+import { ErrorResponse } from "../../utils/errors";
 
 export class NotificationRepository implements INotificationRepository {
   async add(user: string, message: string): Promise<Notification> {
@@ -12,7 +13,7 @@ export class NotificationRepository implements INotificationRepository {
       await notification.save();
       return notification;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async get(user: string): Promise<Notification[]> {
@@ -20,7 +21,7 @@ export class NotificationRepository implements INotificationRepository {
       const notification = await NotificationModel.find({ user });
       return notification;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async edit(id: string): Promise<Notification> {
@@ -34,12 +35,12 @@ export class NotificationRepository implements INotificationRepository {
       );
 
       if (!notification) {
-        throw new Error("error in updating");
+        throw new ErrorResponse("error in updating", 500);
       }
 
       return notification;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

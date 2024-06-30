@@ -13,7 +13,7 @@ export class NotificationInteractor implements INotificationInteractor {
       const notificaion = await this.repository.add(user, message);
       return notificaion;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async getNotification(user: string): Promise<Notification[]> {
@@ -21,7 +21,7 @@ export class NotificationInteractor implements INotificationInteractor {
       const notificaion = await this.repository.get(user);
       return notificaion;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async updateNotification(id: string): Promise<Notification> {
@@ -29,7 +29,7 @@ export class NotificationInteractor implements INotificationInteractor {
       const notificaion = await this.repository.edit(id);
       return notificaion;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

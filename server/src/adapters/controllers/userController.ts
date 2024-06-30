@@ -4,6 +4,7 @@ import { IUserInteractor } from "../../application/interfaces/user/IuserInteract
 import { validationResult } from "express-validator";
 import { IAuthService } from "../../application/interfaces/service/IAuthService";
 import { IRequestWithUser } from "../../application/types/types";
+import { ErrorResponse } from "../../utils/errors";
 
 export class UserController {
   private interactor: IUserInteractor;
@@ -19,7 +20,7 @@ export class UserController {
 
       if (!errors.isEmpty()) {
         console.log(errors.array());
-        throw new Error("Invalid email or password");
+        throw new ErrorResponse("Invalid email or password", 401);
       }
 
       const { email, password } = req.body;
@@ -51,7 +52,7 @@ export class UserController {
 
       if (!errors.isEmpty()) {
         console.log(errors.array());
-        throw new Error("invalid credentials");
+        throw new ErrorResponse("invalid credentials", 401);
       }
 
       const body = req.body;

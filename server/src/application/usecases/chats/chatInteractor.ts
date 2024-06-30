@@ -1,4 +1,5 @@
 import { Message } from "../../../entities/message";
+import { ErrorResponse } from "../../../utils/errors";
 import { IChatInteractor } from "../../interfaces/chat/IChatInteractor";
 import { IChatRepository } from "../../interfaces/chat/IChatRepository";
 
@@ -13,7 +14,7 @@ export class ChatInteractor implements IChatInteractor {
 
       return chat;
     } catch (error: any) {
-      throw new Error(error);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async addChat(firstUser: string, secondUser: string): Promise<any> {
@@ -27,7 +28,7 @@ export class ChatInteractor implements IChatInteractor {
 
       return chat;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -36,7 +37,7 @@ export class ChatInteractor implements IChatInteractor {
       const message = await this.repository.getMessage(chatId);
       return message;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async createMessage(
@@ -54,7 +55,7 @@ export class ChatInteractor implements IChatInteractor {
       );
       return newMessage;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

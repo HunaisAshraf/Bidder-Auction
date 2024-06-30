@@ -20,7 +20,7 @@ export class StipeIneractor {
     } catch (error: any) {
       console.log(error);
 
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async retreivePaymentIntent(paymentIntent: string): Promise<any> {
@@ -30,7 +30,7 @@ export class StipeIneractor {
       const data = await stripe.paymentIntents.retrieve(paymentIntent);
       return data;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

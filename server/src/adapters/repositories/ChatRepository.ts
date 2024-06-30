@@ -3,6 +3,7 @@ import { IChatRepository } from "../../application/interfaces/chat/IChatReposito
 import { Message } from "../../entities/message";
 import { ChatModel } from "../../infrastructure/db/models/chatModel";
 import { MessageModel } from "../../infrastructure/db/models/messageModel";
+import { ErrorResponse } from "../../utils/errors";
 
 export class ChatRepository implements IChatRepository {
   async getChats(userId: string): Promise<any[]> {
@@ -13,7 +14,7 @@ export class ChatRepository implements IChatRepository {
 
       return chats;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async createChat(firstUser: string, secondUser: string): Promise<any> {
@@ -28,7 +29,7 @@ export class ChatRepository implements IChatRepository {
 
       return chat;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async getMessage(chatId: string): Promise<Message[]> {
@@ -36,7 +37,7 @@ export class ChatRepository implements IChatRepository {
       const messages = await MessageModel.find({ chatId });
       return messages;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async createMessage(
@@ -55,7 +56,7 @@ export class ChatRepository implements IChatRepository {
       await newMessage.save();
       return newMessage;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async checkChat(firstUser: string, secondUser: string): Promise<any> {
@@ -65,7 +66,7 @@ export class ChatRepository implements IChatRepository {
       });
       return chat;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

@@ -6,6 +6,7 @@ import { Bid } from "../../entities/bid";
 import { AuctionModel } from "../../infrastructure/db/models/auctionModel";
 import { AuctionWinnerModel } from "../../infrastructure/db/models/auctionWinner";
 import { BidModel } from "../../infrastructure/db/models/bidModel";
+import { ErrorResponse } from "../../utils/errors";
 
 export class AuctionRepositry implements IAuctionRepository {
   async add(auction: Auction): Promise<Auction> {
@@ -15,7 +16,7 @@ export class AuctionRepositry implements IAuctionRepository {
       return data;
     } catch (error: any) {
       console.log("error in adding auction to database", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async find(): Promise<Auction[]> {
@@ -27,13 +28,13 @@ export class AuctionRepositry implements IAuctionRepository {
       });
 
       if (!auctions) {
-        throw new Error("no auction found");
+        throw new ErrorResponse("no auction found", 404);
       }
 
       return auctions;
     } catch (error: any) {
       console.log("error in getting all auction", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -42,13 +43,13 @@ export class AuctionRepositry implements IAuctionRepository {
       const auctions = await AuctionModel.find({ auctioner: id });
 
       if (!auctions) {
-        throw new Error("no auction found");
+        throw new ErrorResponse("no auction found", 404);
       }
 
       return auctions;
     } catch (error: any) {
       console.log("error in getting all auction", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -57,13 +58,13 @@ export class AuctionRepositry implements IAuctionRepository {
       const auction = await AuctionModel.findById(id);
 
       if (!auction) {
-        throw new Error("auction not found");
+        throw new ErrorResponse("auction not found", 404);
       }
 
       return auction;
     } catch (error: any) {
       console.log("error in getting auction", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
   async edit(id: string, value: Auction): Promise<Auction> {
@@ -76,13 +77,13 @@ export class AuctionRepositry implements IAuctionRepository {
       console.log(auction);
 
       if (!auction) {
-        throw new Error("error in editing auction");
+        throw new ErrorResponse("error in editing auction", 500);
       }
 
       return auction;
     } catch (error: any) {
       console.log("error in editing auction", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -101,13 +102,12 @@ export class AuctionRepositry implements IAuctionRepository {
       console.log(newBid);
 
       if (!newBid) {
-        throw new Error("Error in adding bid");
+        throw new ErrorResponse("Error in adding bid", 500);
       }
       return newBid;
     } catch (error: any) {
       console.log(error);
-
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -118,7 +118,7 @@ export class AuctionRepositry implements IAuctionRepository {
         .sort({ bidAmount: -1 });
       return bids;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -134,7 +134,7 @@ export class AuctionRepositry implements IAuctionRepository {
 
       return completedAuction;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -145,7 +145,7 @@ export class AuctionRepositry implements IAuctionRepository {
       await winner.save();
       return winner;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -154,7 +154,7 @@ export class AuctionRepositry implements IAuctionRepository {
       const bids = await BidModel.find({ userId: id }).populate("auctionId");
       return bids;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -165,7 +165,7 @@ export class AuctionRepositry implements IAuctionRepository {
       );
       return auctions;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

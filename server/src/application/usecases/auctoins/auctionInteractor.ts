@@ -8,6 +8,7 @@ import { io } from "../../..";
 import { IPaymentRepository } from "../../interfaces/service/IPaymentRepository";
 import { AuctionWinner } from "../../../entities/auctionWinner";
 import { User } from "../../../entities/User";
+import { ErrorResponse } from "../../../utils/errors";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
@@ -28,7 +29,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const data = await this.repository.findByAuctionerId(id);
       return data;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -37,7 +38,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const data = await this.repository.find();
       return data;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -46,7 +47,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const auction = await this.repository.findOne(id);
       return auction;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -61,7 +62,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       return data;
     } catch (error: any) {
       console.log("error in add auction interactor", error);
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -74,7 +75,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const auction = await this.repository.findOne(auctionId);
 
       if (auction.auctioner.toString() !== userId) {
-        throw new Error("user not authorised");
+        throw new ErrorResponse("user not authorised");
       }
 
       const editedAuction = await this.repository.edit(auctionId, value);
@@ -82,7 +83,7 @@ export class AuctionInteractor implements IAuctionInteractor {
     } catch (error: any) {
       console.log("error in editing auction", error);
 
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -95,7 +96,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const auction = await this.repository.findOne(auctionId);
 
       if (auction.auctioner.toString() !== userId) {
-        throw new Error("user not authorised");
+        throw new ErrorResponse("user not authorised", 401);
       }
 
       if (auction.isListed) {
@@ -108,7 +109,7 @@ export class AuctionInteractor implements IAuctionInteractor {
 
       return updatetdAuction;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -125,19 +126,22 @@ export class AuctionInteractor implements IAuctionInteractor {
       console.log(wallet);
 
       if (auction.startDate > new Date()) {
-        throw new Error("Auction has not started yet");
+        throw new ErrorResponse("Auction has not started yet", 400);
       }
 
       if (auction.endDate < new Date()) {
-        throw new Error("Auction has ended");
+        throw new ErrorResponse("Auction has ended", 400);
       }
 
       if (!user || user?.role === "auctioner" || auction.auctioner === userId) {
-        throw new Error("Auctioner cannot bid");
+        throw new ErrorResponse("Auctioner cannot bid", 400);
       }
 
       if (auction.currentBid >= bidAmount) {
-        throw new Error("Bid amount must be greater than current bid");
+        throw new ErrorResponse(
+          "Bid amount must be greater than current bid",
+          400
+        );
       }
 
       if (
@@ -145,7 +149,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         wallet?.balance < bidAmount ||
         wallet.amountUsed + bidAmount > wallet.balance
       ) {
-        throw new Error("No sufficient balance in wallet");
+        throw new ErrorResponse("No sufficient balance in wallet", 400);
       }
 
       let amountUsed = bidAmount + wallet.amountUsed;
@@ -188,7 +192,7 @@ export class AuctionInteractor implements IAuctionInteractor {
 
       return newBid;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -197,7 +201,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const bids = await this.repository.getBid(id);
       return bids;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -209,7 +213,7 @@ export class AuctionInteractor implements IAuctionInteractor {
 
       return completedAuction;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -220,7 +224,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       console.log("available bids", bids);
 
       if (bids.length === 0) {
-        throw new Error("no bids available");
+        throw new ErrorResponse("no bids available", 400);
       }
 
       let highestBidder;
@@ -243,7 +247,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       console.log("highest bidder", highestBidder);
 
       if (!highestBidder) {
-        throw new Error("no bids available");
+        throw new ErrorResponse("no bids available");
       }
 
       const auctionWinner: AuctionWinner = {
@@ -311,7 +315,7 @@ export class AuctionInteractor implements IAuctionInteractor {
         auction
       );
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -320,7 +324,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const bids = await this.repository.getUserBid(id);
       return bids;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 
@@ -329,7 +333,7 @@ export class AuctionInteractor implements IAuctionInteractor {
       const auctions = await this.repository.getAuctionWon(id);
       return auctions;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new ErrorResponse(error.message, error.status);
     }
   }
 }

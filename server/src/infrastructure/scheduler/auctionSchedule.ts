@@ -4,6 +4,7 @@ import { AuctionRepositry } from "../../adapters/repositories/auctionRepository"
 import { UserRepository } from "../../adapters/repositories/userRepository";
 import { PaymentRepository } from "../../adapters/repositories/paymentRepository";
 import { NotificationRepository } from "../../adapters/repositories/notificationRepository";
+import { ErrorResponse } from "../../utils/errors";
 
 const auctionRepository = new AuctionRepositry();
 const userRepository = new UserRepository();
