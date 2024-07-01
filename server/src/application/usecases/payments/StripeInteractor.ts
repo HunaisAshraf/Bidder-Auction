@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import dotenv from "dotenv";
+import { ErrorResponse } from "../../../utils/errors";
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
