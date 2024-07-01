@@ -5,6 +5,7 @@ import { Bid } from "../../../entities/bid";
 export interface IAuctionInteractor {
   getAuction(id: string): Promise<Auction[]>;
   getAllAuctions(): Promise<Auction[]>;
+  adminGetAllAuctions(): Promise<Auction[]>;
   getSingleAuctoin(id: string): Promise<Auction | null>;
   addAuction(id: string, auction: Auction): Promise<Auction>;
   editAuction(

@@ -16,6 +16,26 @@ export class UserInteractor implements IUserInteractor {
     this.repository = repository;
     this.mailService = mailService;
   }
+  async getAllUser(): Promise<User[]> {
+    try {
+      const users = await this.repository.find({ role: { $ne: "admin" } });
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          users[i] = {
+            ...JSON.parse(JSON.stringify(users[i])),
+            password: undefined,
+            verifyToken: undefined,
+            verifyTokenExpiry: undefined,
+            forgotPasswordToken: undefined,
+            forgotPasswordTokenExpiry: undefined,
+          };
+        }
+      }
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
   async adminLogin(email: string, password: string): Promise<User | null> {
     try {
       let admin = await this.repository.findByEmail(email);

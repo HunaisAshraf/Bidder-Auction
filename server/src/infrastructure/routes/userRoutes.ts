@@ -8,7 +8,7 @@ import { UserRepository } from "../../adapters/repositories/userRepository";
 import { UserInteractor } from "../../application/usecases/users/userInteractor";
 import { AuthService } from "../service/authService";
 import { MailService } from "../service/mailService";
-import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAdmin, isAuthenticated } from "../middlewares/isAuthenticated";
 
 const router = express.Router();
 
@@ -52,6 +52,11 @@ router.get(
   "/verify-token",
   isAuthenticated,
   controller.onVerifyToken.bind(controller)
+);
+router.get(
+  "/get-all-users",
+  isAdmin,
+  controller.onGetAllUsers.bind(controller)
 );
 
 export { router as userRouter };

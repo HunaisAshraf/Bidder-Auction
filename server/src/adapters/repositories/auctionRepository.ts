@@ -9,6 +9,16 @@ import { BidModel } from "../../infrastructure/db/models/bidModel";
 import { ErrorResponse } from "../../utils/errors";
 
 export class AuctionRepositry implements IAuctionRepository {
+  async findAll(): Promise<Auction[]> {
+    try {
+      const auctions = await AuctionModel.find();
+
+      return auctions;
+    } catch (error: any) {
+      console.log("error in getting all auction", error);
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
   async add(auction: Auction): Promise<Auction> {
     try {
       const data = new AuctionModel(auction);

@@ -11,4 +11,5 @@ export interface IUserInteractor {
   updatePassword(email: string, password: string): Promise<User | null>;
   googleSignUp(user: User): Promise<User | null>;
   updateProfileImage(_id: string, url: string): Promise<User | null>;
+  getAllUser(): Promise<User[]>;
 }

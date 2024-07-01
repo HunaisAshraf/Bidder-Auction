@@ -250,4 +250,20 @@ export class UserController {
       next(error);
     }
   }
+
+  async onGetAllUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const users = await this.interactor.getAllUser();
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "users retrieved successfully",
+          users,
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

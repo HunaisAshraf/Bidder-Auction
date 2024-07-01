@@ -5,7 +5,11 @@ import { AuctionInteractor } from "../../application/usecases/auctoins/auctionIn
 import { AuctionRepositry } from "../../adapters/repositories/auctionRepository";
 import { UserRepository } from "../../adapters/repositories/userRepository";
 import { PaymentRepository } from "../../adapters/repositories/paymentRepository";
-import { isAuctioner, isAuthenticated } from "../middlewares/isAuthenticated";
+import {
+  isAdmin,
+  isAuctioner,
+  isAuthenticated,
+} from "../middlewares/isAuthenticated";
 const router = express.Router();
 
 const authService = new AuthService();
@@ -26,6 +30,11 @@ router.post(
   controller.onAddAuction.bind(controller)
 );
 router.get("/get-all-auctions", controller.onGetAllAuction.bind(controller));
+router.get(
+  "/admin-get-auction",
+  isAdmin,
+  controller.onAdminGetAllAuction.bind(controller)
+);
 router.get(
   "/get-auctions",
   isAuctioner,
