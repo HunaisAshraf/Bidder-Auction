@@ -9,6 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
 import PasswordRoundedIcon from "@mui/icons-material/PasswordRounded";
 import Spinner from "../Spinner";
+import { setAdmin } from "@/lib/store/features/adminSlice";
 
 type FormValue = {
   email: string;
@@ -32,10 +33,10 @@ export default function AdminLoginForm() {
       );
 
       if (data?.success) {
-        localStorage.setItem("admin-auth", JSON.stringify(data.user));
+        localStorage.setItem("admin-auth", JSON.stringify(data.admin));
         localStorage.setItem("admin-token", JSON.stringify(data?.token));
 
-        // dispatch(setUser(data.user));
+        dispatch(setAdmin(data.admin));
 
         router.replace("/admin/dashboard");
       }

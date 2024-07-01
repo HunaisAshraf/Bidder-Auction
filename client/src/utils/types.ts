@@ -14,3 +14,7 @@ export type AuthData = {
   user?: User | null;
   //   admin?: User | null;
 };
+
+export type AdminAuthData = {
+  admin?: User | null;
+};
