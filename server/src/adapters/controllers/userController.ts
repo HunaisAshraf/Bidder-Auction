@@ -32,36 +32,9 @@ export class UserController {
         role: user?.role,
       };
 
-      const token = this.authService.generateToken(data);
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-      });
-
-      return res.status(200).json({ success: true, user, token });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async onUserSignUp(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("reached controller");
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        console.log(errors.array());
-        throw new ErrorResponse("invalid credentials", 401);
-      }
-
-      const body = req.body;
-      console.log("validation completed");
-      const user = await this.interactor.signup(body);
-      const data = {
-        _id: user?._id,
-        email: user?.email,
-        role: user?.role,
+      const loginUser = {
+        ...JSON.parse(JSON.stringify(user)),
+        password: undefined,
       };
 
       const token = this.authService.generateToken(data);
@@ -70,7 +43,44 @@ export class UserController {
         secure: false,
         sameSite: "lax",
       });
-      return res.status(200).json({ success: true, user, token });
+
+      return res.status(200).json({ success: true, user: loginUser, token });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onUserSignUp(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        console.log(errors.array());
+
+        let err = errors.array();
+        throw new ErrorResponse(err[0].msg, 401);
+      }
+
+      const body = req.body;
+      const user = await this.interactor.signup(body);
+      const data = {
+        _id: user?._id,
+        email: user?.email,
+        role: user?.role,
+      };
+
+      const newUser = {
+        ...JSON.parse(JSON.stringify(user)),
+        password: undefined,
+      };
+
+      const token = this.authService.generateToken(data);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+      return res.status(200).json({ success: true, user: newUser, token });
     } catch (error) {
       console.log(error);
 
