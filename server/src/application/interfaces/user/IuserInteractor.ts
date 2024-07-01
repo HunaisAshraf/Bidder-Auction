@@ -3,6 +3,7 @@ import { User } from "../../../entities/User";
 export interface IUserInteractor {
   login(email: string, password: string): Promise<User | null>;
   signup(user: User): Promise<User>;
+  adminLogin(email: string, password: string): Promise<User | null>;
   // updatePassword(email: string, password: string): Promise<User>;
   updateDetails(id: string, value: User): Promise<User>;
   verifyMail(type: string, token: string, email: string): Promise<User | null>;

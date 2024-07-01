@@ -24,6 +24,11 @@ const controller = new UserController(interactor, authService);
 
 router.post("/login", loginValidator, controller.onUserLogin.bind(controller));
 router.post(
+  "/admin-login",
+  loginValidator,
+  controller.onAdminLogin.bind(controller)
+);
+router.post(
   "/signup",
   signupValidator,
   controller.onUserSignUp.bind(controller)

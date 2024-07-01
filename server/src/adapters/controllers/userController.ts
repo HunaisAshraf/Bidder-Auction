@@ -26,6 +26,11 @@ export class UserController {
       const { email, password } = req.body;
       const user = await this.interactor.login(email, password);
       console.log(user);
+
+      if (user?.role === "admin") {
+        throw new ErrorResponse("User not found", 404);
+      }
+
       const data = {
         _id: user?._id,
         email: user?.email,
@@ -45,6 +50,43 @@ export class UserController {
       });
 
       return res.status(200).json({ success: true, user: loginUser, token });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onAdminLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        console.log(errors.array());
+        throw new ErrorResponse("Invalid email or password", 401);
+      }
+
+      const { email, password } = req.body;
+
+      const admin = await this.interactor.adminLogin(email, password);
+
+      const data = {
+        _id: admin?._id,
+        email: admin?.email,
+        role: admin?.role,
+      };
+
+      const adminLogin = {
+        ...JSON.parse(JSON.stringify(admin)),
+        password: undefined,
+      };
+
+      const token = this.authService.generateToken(data);
+      res.cookie("admin_token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+
+      return res.status(200).json({ success: true, admin: adminLogin, token });
     } catch (error) {
       next(error);
     }

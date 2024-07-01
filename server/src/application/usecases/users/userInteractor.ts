@@ -16,6 +16,24 @@ export class UserInteractor implements IUserInteractor {
     this.repository = repository;
     this.mailService = mailService;
   }
+  async adminLogin(email: string, password: string): Promise<User | null> {
+    try {
+      let admin = await this.repository.findByEmail(email);
+      if (admin?.role !== "admin") {
+        throw new ErrorResponse("user not authorised", 402);
+      }
+
+      const passwordMatch = await comparePassword(password, admin.password);
+
+      if (!passwordMatch) {
+        throw new ErrorResponse("password dosen't match", 400);
+      }
+
+      return admin;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 
   async login(email: string, password: string): Promise<User | null> {
     try {
