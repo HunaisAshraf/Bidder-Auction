@@ -2,9 +2,13 @@ import { NextResponse, NextRequest } from "next/server";
 
 const protectedRouteRegex = /^\/profile\/.*$/;
 const protectedRoute = ["/profile", "/watchlist"];
-const authRoute = ["/login", "/signup","/update-password","/forgot-password"];
+const authRoute = ["/login", "/signup", "/update-password", "/forgot-password"];
 
 export function middleware(req: NextRequest) {
+  const requestHeaders = new Headers(req.headers);
+  const url = new URL(req.url).pathname;
+  requestHeaders.set("x-url", url);
+
   const token = req.cookies.get("token")?.value;
 
   const currentRoute = req.nextUrl.pathname;
@@ -37,5 +41,9 @@ export function middleware(req: NextRequest) {
 
     return NextResponse.redirect(absoluteUrl.toString());
   }
-  return response;
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
