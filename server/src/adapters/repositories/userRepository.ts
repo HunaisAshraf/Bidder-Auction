@@ -13,13 +13,6 @@ export class UserRepository implements IUserRepository {
         $and: [{ role: { $ne: "admin" } }, filter],
       }).countDocuments();
 
-      const user = await UserModel.find({
-        $and: [{ role: { $ne: "admin" } }, filter],
-      });
-      console.log(user);
-
-      console.log(count);
-
       return count;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);

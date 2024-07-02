@@ -14,12 +14,14 @@ import {
   TableRow,
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState<number>(1);
   const [count, setCount] = useState<number>(0);
   const [filter, setFilter] = useState<string | null>(null);
+  const [change, setChange] = useState(false);
 
   const filterUser = async () => {
     try {
@@ -37,7 +39,20 @@ export default function Users() {
     }
   };
 
-  useEffect(() => {}, []);
+  const handleStatus = async (id: string) => {
+    try {
+      const { data } = await adminAxiosInstance.put(
+        `/api/auth/change-user-status/${id}`
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setChange(!change);
+      }
+    } catch (error) {
+      toast.error("failed to block/unblock user");
+    }
+  };
 
   useEffect(() => {
     const getUsers = async () => {
@@ -62,11 +77,12 @@ export default function Users() {
     } else {
       getUsers();
     }
-  }, [page, filter]);
+  }, [page, filter, change]);
 
   console.log(count);
   return (
     <AdminLayout>
+      <Toaster />
       <TableContainer component={Paper}>
         <div className="p-3 flex justify-between">
           <h1 className="text-2xl font-semibold ">All Users</h1>
@@ -94,6 +110,11 @@ export default function Users() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {users.length === 0 && (
+              <h1 className="text-center font-semibold text-1xl my-5">
+                No user found.....
+              </h1>
+            )}
             {users.map((user, index) => (
               <TableRow
                 key={user._id}
@@ -109,12 +130,18 @@ export default function Users() {
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
                   {user.isActive ? (
-                    <button className="bg-green-500 border-2 border-green-800 py-2 px-3 rounded-sm">
+                    <button
+                      onClick={() => handleStatus(user._id)}
+                      className="bg-green-500 border-2 border-green-800 py-2 px-3 rounded-sm"
+                    >
                       Active
                     </button>
                   ) : (
-                    <button className="bg-red-500 border-2 border-red-900 py-2 px-3 rounded-sm">
-                      Active
+                    <button
+                      onClick={() => handleStatus(user._id)}
+                      className="bg-red-500 border-2 border-red-900 text-white py-2 px-3 rounded-sm"
+                    >
+                      Blocked
                     </button>
                   )}
                 </TableCell>

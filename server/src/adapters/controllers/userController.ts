@@ -288,4 +288,18 @@ export class UserController {
       next(error);
     }
   }
+
+  async onChangeStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      await this.interactor.chaneStatus(id);
+      return res.status(200).json({
+        success: true,
+        message: "users updated successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

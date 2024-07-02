@@ -16,6 +16,7 @@ export class UserInteractor implements IUserInteractor {
     this.repository = repository;
     this.mailService = mailService;
   }
+
   async getCount(filter: any): Promise<number> {
     try {
       let searchFilter;
@@ -309,6 +310,31 @@ export class UserInteractor implements IUserInteractor {
         }
       }
       return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async chaneStatus(id: string): Promise<User> {
+    try {
+      const availableUser = await this.repository.findOne(id);
+
+      if (!availableUser) {
+        throw new ErrorResponse("user not found", 404);
+      }
+
+      let status;
+      if (availableUser.isActive) {
+        status = false;
+      } else {
+        status = true;
+      }
+
+      const user = await this.repository.update(id, { isActive: status });
+      if (!user) {
+        throw new ErrorResponse("error in changing status", 400);
+      }
+      return user;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

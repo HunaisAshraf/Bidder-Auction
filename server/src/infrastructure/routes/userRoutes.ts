@@ -60,5 +60,10 @@ router.get(
 );
 
 router.get("/filter-users", isAdmin, controller.onFilterUser.bind(controller));
+router.put(
+  "/change-user-status/:id",
+  isAdmin,
+  controller.onChangeStatus.bind(controller)
+);
 
 export { router as userRouter };

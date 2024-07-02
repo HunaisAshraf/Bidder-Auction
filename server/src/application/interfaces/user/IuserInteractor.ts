@@ -14,4 +14,5 @@ export interface IUserInteractor {
   getAllUser(page: any): Promise<User[]>;
   filterUser(filter: any, page: any): Promise<User[]>;
   getCount(filter: any): Promise<number>;
+  chaneStatus(id: string): Promise<User>;
 }
