@@ -85,10 +85,9 @@ export class UserInteractor implements IUserInteractor {
     try {
       let user = await this.repository.findByEmail(email);
 
-      if (!user) {
+      if (!user || !user.password) {
         throw new ErrorResponse("user dosen't exist", 404);
       }
-      console.log(user);
 
       const passwordMatch = await comparePassword(password, user.password);
 

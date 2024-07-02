@@ -292,6 +292,7 @@ export default function EditAuctionModal({
                             required: "enter the startDate",
                             validate: (value) => {
                               const today = new Date();
+                              today.setHours(today.getHours() - 24);
                               if (today && new Date(value) < today) {
                                 return "End date must be after current date";
                               }
