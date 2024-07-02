@@ -253,15 +253,37 @@ export class UserController {
 
   async onGetAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await this.interactor.getAllUser();
+      const { page } = req.query;
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "users retrieved successfully",
-          users,
-        });
+      const users = await this.interactor.getAllUser(page);
+      const count = await this.interactor.getCount({});
+
+      return res.status(200).json({
+        success: true,
+        message: "users retrieved successfully",
+        users,
+        count,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onFilterUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { filter, page } = req.query;
+      console.log(filter);
+
+      const users = await this.interactor.filterUser(filter, page);
+      console.log(users);
+      const count = await this.interactor.getCount(filter);
+
+      return res.status(200).json({
+        success: true,
+        message: "users filtered successfully",
+        users,
+        count,
+      });
     } catch (error) {
       next(error);
     }

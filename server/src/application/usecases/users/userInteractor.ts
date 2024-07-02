@@ -16,9 +16,33 @@ export class UserInteractor implements IUserInteractor {
     this.repository = repository;
     this.mailService = mailService;
   }
-  async getAllUser(): Promise<User[]> {
+  async getCount(filter: any): Promise<number> {
     try {
-      const users = await this.repository.find({ role: { $ne: "admin" } });
+      let searchFilter;
+      if (filter === "auctioner" || filter === "bidder") {
+        searchFilter = { role: filter };
+      } else if (filter === "active") {
+        searchFilter = { isActive: true };
+      } else if (filter === "blocked") {
+        searchFilter = { isActive: false };
+      } else {
+        searchFilter = {};
+      }
+      console.log(filter, searchFilter);
+
+      const count = await this.repository.count(searchFilter);
+      return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async getAllUser(page: any): Promise<User[]> {
+    try {
+      const users = await this.repository.find(
+        { role: { $ne: "admin" } },
+        page
+      );
       if (users.length > 0) {
         for (let i = 0; i < users.length; i++) {
           users[i] = {
@@ -36,6 +60,7 @@ export class UserInteractor implements IUserInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
   async adminLogin(email: string, password: string): Promise<User | null> {
     try {
       let admin = await this.repository.findByEmail(email);
@@ -252,6 +277,38 @@ export class UserInteractor implements IUserInteractor {
       const data = { profilePicture: url };
       const user = await this.repository.update(_id, data);
       return user;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async filterUser(filter: any, page: any): Promise<User[]> {
+    try {
+      let searchFilter;
+      if (filter === "auctioner" || filter === "bidder") {
+        searchFilter = { role: filter };
+      } else if (filter === "active") {
+        searchFilter = { isActive: true };
+      } else if (filter === "blocked") {
+        searchFilter = { isActive: false };
+      } else {
+        searchFilter = {};
+      }
+
+      const users = await this.repository.filter(searchFilter, page);
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          users[i] = {
+            ...JSON.parse(JSON.stringify(users[i])),
+            password: undefined,
+            verifyToken: undefined,
+            verifyTokenExpiry: undefined,
+            forgotPasswordToken: undefined,
+            forgotPasswordTokenExpiry: undefined,
+          };
+        }
+      }
+      return users;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

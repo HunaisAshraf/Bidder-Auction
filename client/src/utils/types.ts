@@ -8,6 +8,7 @@ export type User = {
   profilePicture?: string;
   token: string;
   role: string;
+  isActive: boolean;
 };
 
 export type AuthData = {

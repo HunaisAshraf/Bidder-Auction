@@ -32,7 +32,8 @@ export default function RootLayout({
           <NextAuthProvider>
             {/* <AuthHandler /> */}
             {isAdminRoute ? (
-              <AdminLayout>{children}</AdminLayout>
+              // <AdminLayout>{children}</AdminLayout>
+              <main>{children}</main>
             ) : (
               <UserLayout>{children}</UserLayout>
             )}

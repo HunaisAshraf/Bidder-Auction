@@ -59,4 +59,6 @@ router.get(
   controller.onGetAllUsers.bind(controller)
 );
 
+router.get("/filter-users", isAdmin, controller.onFilterUser.bind(controller));
+
 export { router as userRouter };

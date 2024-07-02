@@ -5,9 +5,32 @@ import { UserModel } from "../../infrastructure/db/models/userMoldel";
 import { ErrorResponse } from "../../utils/errors";
 
 export class UserRepository implements IUserRepository {
-  async find(filter: any): Promise<User[]> {
+  async count(filter: any): Promise<number> {
     try {
-      const data = await UserModel.find(filter);
+      console.log("filter in repo", filter);
+
+      const count = await UserModel.find({
+        $and: [{ role: { $ne: "admin" } }, filter],
+      }).countDocuments();
+
+      const user = await UserModel.find({
+        $and: [{ role: { $ne: "admin" } }, filter],
+      });
+      console.log(user);
+
+      console.log(count);
+
+      return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async find(filter: any, page: any): Promise<User[]> {
+    try {
+      let pageNo = Number(page) || 1;
+      let limit = 5;
+      let skip = (pageNo - 1) * limit;
+      const data = await UserModel.find(filter).skip(skip).limit(limit);
       return data;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
@@ -66,6 +89,19 @@ export class UserRepository implements IUserRepository {
       );
 
       return true;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async filter(filter: any, page: any): Promise<User[]> {
+    try {
+      let pageNo = Number(page) || 1;
+      let limit = 5;
+      let skip = (pageNo - 1) * limit;
+      const users = await UserModel.find(filter).skip(skip).limit(limit);
+
+      return users;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

@@ -1,5 +1,10 @@
+import AdminLayout from "@/components/Layout/AdminLayout";
 import React from "react";
 
 export default function Auctions() {
-  return <div>Auctions</div>;
+  return (
+    <AdminLayout>
+      <div>Auctions</div>
+    </AdminLayout>
+  );
 }
