@@ -19,3 +19,15 @@ export type AuthData = {
 export type AdminAuthData = {
   admin?: User | null;
 };
+
+export type Auction = {
+  _id: string;
+  itemName: string;
+  basePrice: number;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  images: string[];
+  completed: boolean;
+  isListed: boolean;
+};

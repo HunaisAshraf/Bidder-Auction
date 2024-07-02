@@ -110,12 +110,12 @@ export default function Users() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.length === 0 && (
-              <h1 className="text-center font-semibold text-1xl my-5">
+            {users?.length === 0 && (
+              <h1 className="text-center font-semibold text-2xl my-5">
                 No user found.....
               </h1>
             )}
-            {users.map((user, index) => (
+            {users?.map((user, index) => (
               <TableRow
                 key={user._id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

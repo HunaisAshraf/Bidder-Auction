@@ -184,4 +184,10 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onAdminVerifyAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {}
 }

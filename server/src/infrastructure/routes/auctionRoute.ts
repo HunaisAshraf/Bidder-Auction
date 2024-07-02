@@ -71,4 +71,10 @@ router.get(
   controller.onAuctionWon.bind(controller)
 );
 
+router.get(
+  "/filter-auction",
+  isAdmin,
+  controller.onAdminVerifyAuction.bind(controller)
+);
+
 export { router as auctionRouter };
