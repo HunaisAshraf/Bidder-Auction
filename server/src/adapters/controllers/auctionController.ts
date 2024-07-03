@@ -22,6 +22,16 @@ export class AuctionController {
     }
   }
 
+  async onAdminGetAllAuction(req: Request, res: Response, next: NextFunction) {
+    try {
+      const auctions = await this.interactor.adminGetAllAuctions();
+      return res.status(200).json({ success: true, auctions });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   async onGetAuction(req: IRequestWithUser, res: Response, next: NextFunction) {
     try {
       const { id, role } = req.user!;
@@ -174,4 +184,10 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onAdminVerifyAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {}
 }

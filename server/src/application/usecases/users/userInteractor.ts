@@ -17,14 +17,77 @@ export class UserInteractor implements IUserInteractor {
     this.mailService = mailService;
   }
 
+  async getCount(filter: any): Promise<number> {
+    try {
+      let searchFilter;
+      if (filter === "auctioner" || filter === "bidder") {
+        searchFilter = { role: filter };
+      } else if (filter === "active") {
+        searchFilter = { isActive: true };
+      } else if (filter === "blocked") {
+        searchFilter = { isActive: false };
+      } else {
+        searchFilter = {};
+      }
+      console.log(filter, searchFilter);
+
+      const count = await this.repository.count(searchFilter);
+      return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async getAllUser(page: any): Promise<User[]> {
+    try {
+      const users = await this.repository.find(
+        { role: { $ne: "admin" } },
+        page
+      );
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          users[i] = {
+            ...JSON.parse(JSON.stringify(users[i])),
+            password: undefined,
+            verifyToken: undefined,
+            verifyTokenExpiry: undefined,
+            forgotPasswordToken: undefined,
+            forgotPasswordTokenExpiry: undefined,
+          };
+        }
+      }
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async adminLogin(email: string, password: string): Promise<User | null> {
+    try {
+      let admin = await this.repository.findByEmail(email);
+      if (admin?.role !== "admin") {
+        throw new ErrorResponse("user not authorised", 402);
+      }
+
+      const passwordMatch = await comparePassword(password, admin.password);
+
+      if (!passwordMatch) {
+        throw new ErrorResponse("password dosen't match", 400);
+      }
+
+      return admin;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
   async login(email: string, password: string): Promise<User | null> {
     try {
       let user = await this.repository.findByEmail(email);
 
-      if (!user) {
+      if (!user || !user.password) {
         throw new ErrorResponse("user dosen't exist", 404);
       }
-      console.log(user);
 
       const passwordMatch = await comparePassword(password, user.password);
 
@@ -213,6 +276,63 @@ export class UserInteractor implements IUserInteractor {
     try {
       const data = { profilePicture: url };
       const user = await this.repository.update(_id, data);
+      return user;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async filterUser(filter: any, page: any): Promise<User[]> {
+    try {
+      let searchFilter;
+      if (filter === "auctioner" || filter === "bidder") {
+        searchFilter = { role: filter };
+      } else if (filter === "active") {
+        searchFilter = { isActive: true };
+      } else if (filter === "blocked") {
+        searchFilter = { isActive: false };
+      } else {
+        searchFilter = {};
+      }
+
+      const users = await this.repository.filter(searchFilter, page);
+      if (users.length > 0) {
+        for (let i = 0; i < users.length; i++) {
+          users[i] = {
+            ...JSON.parse(JSON.stringify(users[i])),
+            password: undefined,
+            verifyToken: undefined,
+            verifyTokenExpiry: undefined,
+            forgotPasswordToken: undefined,
+            forgotPasswordTokenExpiry: undefined,
+          };
+        }
+      }
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async chaneStatus(id: string): Promise<User> {
+    try {
+      const availableUser = await this.repository.findOne(id);
+
+      if (!availableUser) {
+        throw new ErrorResponse("user not found", 404);
+      }
+
+      let status;
+      if (availableUser.isActive) {
+        status = false;
+      } else {
+        status = true;
+      }
+
+      const user = await this.repository.update(id, { isActive: status });
+      if (!user) {
+        throw new ErrorResponse("error in changing status", 400);
+      }
       return user;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);

@@ -8,7 +8,7 @@ import { UserRepository } from "../../adapters/repositories/userRepository";
 import { UserInteractor } from "../../application/usecases/users/userInteractor";
 import { AuthService } from "../service/authService";
 import { MailService } from "../service/mailService";
-import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAdmin, isAuthenticated } from "../middlewares/isAuthenticated";
 
 const router = express.Router();
 
@@ -23,6 +23,11 @@ const authService = new AuthService();
 const controller = new UserController(interactor, authService);
 
 router.post("/login", loginValidator, controller.onUserLogin.bind(controller));
+router.post(
+  "/admin-login",
+  loginValidator,
+  controller.onAdminLogin.bind(controller)
+);
 router.post(
   "/signup",
   signupValidator,
@@ -47,6 +52,18 @@ router.get(
   "/verify-token",
   isAuthenticated,
   controller.onVerifyToken.bind(controller)
+);
+router.get(
+  "/get-all-users",
+  isAdmin,
+  controller.onGetAllUsers.bind(controller)
+);
+
+router.get("/filter-users", isAdmin, controller.onFilterUser.bind(controller));
+router.put(
+  "/change-user-status/:id",
+  isAdmin,
+  controller.onChangeStatus.bind(controller)
 );
 
 export { router as userRouter };

@@ -31,13 +31,17 @@ export const isBidder = async (
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      res.status(400).send({ success: false, error: "user not authorised" });
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
     }
 
     const { _id, role } = auth.verifyToken(token!);
 
     if (role !== "bidder") {
-      res.status(400).send({ success: false, error: "user not authorised" });
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
     }
     next();
   } catch (error) {
@@ -53,19 +57,53 @@ export const isAuctioner = async (
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      res.status(400).send({ success: false, error: "user not authorised" });
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
     }
 
     const { _id, role } = auth.verifyToken(token!);
 
     if (role !== "auctioner") {
-      res.status(400).send({ success: false, error: "user not authorised" });
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
     }
 
     req.user = { id: _id.toString(), role };
 
     next();
   } catch (error) {
+    next(error);
+  }
+};
+
+export const isAdmin = async (
+  req: IRequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
+    }
+
+    const { _id, role } = auth.verifyToken(token!);
+
+    if (role !== "admin") {
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
+    }
+    req.user = { id: _id.toString(), role };
+
+    next();
+  } catch (error) {
+    console.log(error);
+
     next(error);
   }
 };
