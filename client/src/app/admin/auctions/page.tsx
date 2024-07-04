@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@mui/material";
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -24,6 +24,7 @@ export default function Auctions() {
   const [count, setCount] = useState<number>(0);
   const [filter, setFilter] = useState<string | null>(null);
   const [change, setChange] = useState(false);
+  const [search, setSearch] = useState("");
 
   const filterAuctions = async () => {
     try {
@@ -73,6 +74,22 @@ export default function Auctions() {
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    try {
+      e.preventDefault();
+      const { data } = await adminAxiosInstance.get(
+        `/api/auction/search-auction/?search=${search}`
+      );
+
+      if (data.success) {
+        setAuctions(data.auctions);
+        setCount(data.auctions.length);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const getAuctions = async () => {
       try {
@@ -100,11 +117,12 @@ export default function Auctions() {
       <Toaster />
       <div className="p-3 flex justify-between bg-white">
         <h1 className="text-2xl font-semibold ">All Auctions</h1>
-        <form className="flex">
+        <form className="flex" onSubmit={handleSubmit}>
           <input
             className="outline-none shadow-md px-4 py-2 rounded-l-md w-[200px] md:w-[400px]"
             placeholder="Search..."
             type="text"
+            onChange={(e) => setSearch(e.target.value)}
           />
           <button className="bg-[#231656] text-white py-2 px-4 rounded-r-md font-semibold">
             <SearchIcon />

@@ -88,5 +88,10 @@ router.put(
   isAdmin,
   controller.onBlockAuction.bind(controller)
 );
+router.get(
+  "/search-auction",
+  isAdmin,
+  controller.onSearchAuction.bind(controller)
+);
 
 export { router as auctionRouter };

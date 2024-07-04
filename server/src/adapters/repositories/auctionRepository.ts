@@ -202,7 +202,7 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       console.log("filter auction", filter);
 
-      const auction = await AuctionModel.find(filter);
+      const auction = await AuctionModel.find(filter).populate("auctioner");
       console.log(auction);
 
       return auction;
@@ -216,7 +216,9 @@ export class AuctionRepositry implements IAuctionRepository {
 
       const count = await AuctionModel.find({
         filter,
-      }).countDocuments();
+      })
+        .populate("auctioner")
+        .countDocuments();
 
       return count;
     } catch (error: any) {
@@ -235,6 +237,16 @@ export class AuctionRepositry implements IAuctionRepository {
         throw new ErrorResponse("error in blocking/unblocking auction", 500);
       }
       return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async search(search: string): Promise<Auction[]> {
+    try {
+      const auctions = await AuctionModel.find({
+        itemName: { $regex: search, $options: "i" },
+      }).populate("auctioner");
+      return auctions;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }
