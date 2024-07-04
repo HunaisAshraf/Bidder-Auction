@@ -14,6 +14,7 @@ import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import "./infrastructure/scheduler/auctionSchedule";
 import { notificationRoute } from "./infrastructure/routes/notificationRoute";
+import { watchListRoute } from "./infrastructure/routes/watchListRoute";
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use("/api/auction", auctionRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/chat", messageRouter);
 app.use("/api/notificaion", notificationRoute);
+app.use("/api/watchlist", watchListRoute);
 app.use(errorHandler);
 
 const joinedUsers: any = {};

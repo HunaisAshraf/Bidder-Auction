@@ -92,6 +92,7 @@ export default function Auction() {
           {live?.map((auction) => (
             <Link href={`/auctions/${auction._id}`} key={auction._id}>
               <AuctionCard
+                id={auction._id}
                 basePrice={auction.basePrice}
                 description={auction.description}
                 endDate={auction.endDate}
@@ -120,6 +121,7 @@ export default function Auction() {
           {upcoming?.map((auction) => (
             <Link href={`/auctions/${auction._id}`} key={auction._id}>
               <AuctionCard
+                id={auction._id}
                 basePrice={auction.basePrice}
                 description={auction.description}
                 endDate={auction.endDate}
