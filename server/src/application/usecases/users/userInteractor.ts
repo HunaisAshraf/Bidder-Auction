@@ -338,4 +338,12 @@ export class UserInteractor implements IUserInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+  async searchUser(search: string): Promise<User[]> {
+    try {
+      const users = await this.repository.search(search);
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }
