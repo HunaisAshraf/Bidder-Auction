@@ -36,7 +36,8 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       const auctions = await AuctionModel.find({
         isListed: true,
-
+        isVerified: true,
+        isBlocked: false,
         endDate: { $gte: new Date() },
       });
 
