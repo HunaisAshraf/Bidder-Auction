@@ -224,4 +224,23 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onBlockAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const auction = await this.interactor.blockAuction(id);
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "auction blocked/unblocked successfully",
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

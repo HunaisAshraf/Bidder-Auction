@@ -83,4 +83,10 @@ router.get(
   controller.onFilterAuction.bind(controller)
 );
 
+router.put(
+  "/block-auction/:id",
+  isAdmin,
+  controller.onBlockAuction.bind(controller)
+);
+
 export { router as auctionRouter };

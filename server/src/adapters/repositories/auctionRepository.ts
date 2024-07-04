@@ -223,4 +223,20 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async block(id: string, status: boolean): Promise<Auction> {
+    try {
+      const auction = await AuctionModel.findByIdAndUpdate(
+        id,
+        { isBlocked: status },
+        { new: true }
+      );
+      if (!auction) {
+        throw new ErrorResponse("error in blocking/unblocking auction", 500);
+      }
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

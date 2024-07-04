@@ -12,6 +12,7 @@ export class Auction {
     public auctioner: ObjectId | string,
     public isListed: boolean,
     public isVerified: boolean,
+    public isBlocked: boolean,
     public images: string[],
     public completed: boolean
   ) {}

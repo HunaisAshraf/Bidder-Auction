@@ -27,4 +27,5 @@ export interface IAuctionInteractor {
   verifyAuction(id: string): Promise<Auction>;
   filterAuction(filter: any): Promise<Auction[]>;
   getCount(filter: any): Promise<number>;
+  blockAuction(id: string): Promise<Auction>;
 }

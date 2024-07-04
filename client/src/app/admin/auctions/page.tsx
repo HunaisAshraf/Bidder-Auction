@@ -52,7 +52,24 @@ export default function Auctions() {
         setChange(!change);
       }
     } catch (error) {
-      toast.error("failed to block/unblock user");
+      toast.error("failed to veruify auction");
+    }
+  };
+
+  const handleStatus = async (id: string) => {
+    try {
+      console.log("aldksfjkl");
+
+      const { data } = await adminAxiosInstance.put(
+        `/api/auction/block-auction/${id}`
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setChange(!change);
+      }
+    } catch (error) {
+      toast.error("failed to block/unblock auction");
     }
   };
 
@@ -168,19 +185,19 @@ export default function Auctions() {
                   )}
                 </TableCell>
                 <TableCell>
-                  {auction.isListed ? (
+                  {auction.isBlocked ? (
                     <button
-                      // onClick={() => handleStatus(auction._id)}
-                      className="bg-green-500 border-2 border-green-800 py-2 px-3 rounded-sm"
-                    >
-                      Active
-                    </button>
-                  ) : (
-                    <button
-                      // onClick={() => handleStatus(auction._id)}
+                      onClick={() => handleStatus(auction._id)}
                       className="bg-red-500 border-2 border-red-900 text-white py-2 px-3 rounded-sm"
                     >
                       Blocked
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleStatus(auction._id)}
+                      className="bg-green-500 border-2 border-green-800 py-2 px-3 rounded-sm"
+                    >
+                      Active
                     </button>
                   )}
                 </TableCell>

@@ -39,6 +39,10 @@ const auctionSchema = new Schema<Auction>({
     type: Boolean,
     default: false,
   },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
   images: [],
   completed: {
     type: Boolean,

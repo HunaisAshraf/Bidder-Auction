@@ -26,6 +26,7 @@ type Auction = {
   images: string[];
   isListed: string;
   completed: boolean;
+  isBlocked: boolean;
   isVerified: boolean;
 };
 
@@ -110,14 +111,22 @@ export default function AuctionTable() {
                 </TableCell>
                 <TableCell>{moment(auction?.endDate).format("lll")}</TableCell>
                 <TableCell>
-                  {auction.isVerified ? (
-                    <button className=" border-2  py-2 px-3 rounded-sm">
-                      Verified
+                  {auction.isBlocked ? (
+                    <button className="bg-red-500 text-white font-semibold py-2 px-3 rounded">
+                      Blocked
                     </button>
                   ) : (
-                    <button className="bg-[#231656] text-white font-semibold border-2  py-2 px-3 rounded-sm">
-                      Requested
-                    </button>
+                    <>
+                      {auction.isVerified ? (
+                        <button className=" border-2  py-2 px-3 rounded-sm">
+                          Verified
+                        </button>
+                      ) : (
+                        <button className="bg-[#231656] text-white font-semibold border-2  py-2 px-3 rounded-sm">
+                          Requested
+                        </button>
+                      )}
+                    </>
                   )}
                 </TableCell>
                 <TableCell>

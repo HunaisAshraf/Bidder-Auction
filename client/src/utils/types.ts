@@ -32,4 +32,5 @@ export type Auction = {
   isListed: boolean;
   isVerified: string;
   auctioner: User;
+  isBlocked: boolean;
 };
