@@ -56,6 +56,8 @@ export const isAuctioner = async (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+    console.log(req.headers.authorization);
+
     if (!token) {
       return res
         .status(400)

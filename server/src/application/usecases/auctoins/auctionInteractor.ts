@@ -23,6 +23,7 @@ export class AuctionInteractor implements IAuctionInteractor {
     this.userRepository = userRepository;
     this.paymentRepository = paymentRepository;
   }
+
   async adminGetAllAuctions(): Promise<Auction[]> {
     try {
       const data = await this.repository.findAll();
@@ -340,6 +341,64 @@ export class AuctionInteractor implements IAuctionInteractor {
     try {
       const auctions = await this.repository.getAuctionWon(id);
       return auctions;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async verifyAuction(id: string): Promise<Auction> {
+    try {
+      const auction = await this.repository.verify(id);
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async filterAuction(filter: any): Promise<Auction[]> {
+    try {
+      let searchFilter;
+      if (filter === "live") {
+        searchFilter = {
+          completed: false,
+        };
+      } else if (filter === "completed") {
+        searchFilter = { completed: true };
+      } else if (filter === "verified") {
+        searchFilter = { isVerified: true };
+      } else if (filter === "notVerified") {
+        searchFilter = { isVerified: false };
+      } else {
+        searchFilter = {};
+      }
+
+      const auctions = await this.repository.filter(searchFilter);
+      return auctions;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async getCount(filter: any): Promise<number> {
+    try {
+      let searchFilter;
+      if (filter === "live") {
+        searchFilter = {
+          completed: false,
+        };
+      } else if (filter === "completed") {
+        searchFilter = { completed: true };
+      } else if (filter === "verified") {
+        searchFilter = { isVerified: true };
+      } else if (filter === "notVerified") {
+        searchFilter = { isVerified: false };
+      } else {
+        searchFilter = {};
+      }
+
+      console.log(searchFilter);
+
+      const count = await this.repository.count(searchFilter);
+      return count;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }
