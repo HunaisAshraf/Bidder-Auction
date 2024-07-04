@@ -11,7 +11,9 @@ import { ErrorResponse } from "../../utils/errors";
 export class AuctionRepositry implements IAuctionRepository {
   async findAll(): Promise<Auction[]> {
     try {
-      const auctions = await AuctionModel.find().sort({ startDate: -1 });
+      const auctions = await AuctionModel.find()
+        .sort({ startDate: -1 })
+        .populate("auctioner");
       console.log(auctions);
 
       return auctions;
@@ -182,7 +184,11 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async verify(id: string): Promise<Auction> {
     try {
-      const auction = await AuctionModel.findByIdAndUpdate(id, { new: true });
+      const auction = await AuctionModel.findByIdAndUpdate(
+        id,
+        { isVerified: true },
+        { new: true }
+      );
       if (!auction) {
         throw new ErrorResponse("error in verifying auction", 500);
       }

@@ -30,4 +30,6 @@ export type Auction = {
   images: string[];
   completed: boolean;
   isListed: boolean;
+  isVerified: string;
+  auctioner: User;
 };

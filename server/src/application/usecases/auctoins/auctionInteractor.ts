@@ -349,6 +349,8 @@ export class AuctionInteractor implements IAuctionInteractor {
   async verifyAuction(id: string): Promise<Auction> {
     try {
       const auction = await this.repository.verify(id);
+      console.log("interactor", auction);
+
       return auction;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);

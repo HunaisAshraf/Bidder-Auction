@@ -71,7 +71,7 @@ router.get(
   controller.onAuctionWon.bind(controller)
 );
 
-router.get(
+router.put(
   "/verify-auction/:id",
   isAdmin,
   controller.onAdminVerifyAuction.bind(controller)

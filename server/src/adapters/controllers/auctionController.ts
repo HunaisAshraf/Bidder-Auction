@@ -192,11 +192,12 @@ export class AuctionController {
   ) {
     try {
       const { id } = req.params;
+      console.log(req.params);
 
       await this.interactor.verifyAuction(id);
       return res
-        .send(200)
-        .json({ success: true, message: "Failed to verify Auction" });
+        .status(200)
+        .json({ success: true, message: "Auction verified successfully" });
     } catch (error) {
       next(error);
     }
