@@ -35,6 +35,11 @@ const auctionSchema = new Schema<Auction>({
     type: Boolean,
     default: true,
   },
+  isVerified: {
+    type: String,
+    // enum: ["verified", "notVerified", "blocked"],
+    default: "notVerified",
+  },
   images: [],
   completed: {
     type: Boolean,

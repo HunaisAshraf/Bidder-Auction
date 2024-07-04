@@ -27,12 +27,12 @@ export default function Auctions() {
   const filterAuctions = async () => {
     try {
       const { data } = await adminAxiosInstance.get(
-        `/api/auth/filter-users/?filter=${filter}&page=${page}`
+        `/api/auction/filter-auction/?filter=${filter}&page=${page}`
       );
       if (data.success) {
         console.log(data);
 
-        setAuctions(data.users);
+        setAuctions(data.auctions);
         setCount(data.count);
       }
     } catch (error) {
@@ -82,22 +82,22 @@ export default function Auctions() {
   return (
     <AdminLayout>
       <Toaster />
+      <div className="p-3 flex justify-between bg-white">
+        <h1 className="text-2xl font-semibold ">All Auctions</h1>
+        <select
+          onChange={(e) => setFilter(e.target.value)}
+          className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
+        >
+          <option value="" defaultValue="">
+            Sort
+          </option>
+          <option value="live">Live</option>
+          <option value="completed">Completed</option>
+          <option value="verified">Verified</option>
+          <option value="notVerified">Not Verified</option>
+        </select>
+      </div>
       <TableContainer component={Paper}>
-        <div className="p-3 flex justify-between">
-          <h1 className="text-2xl font-semibold ">All Auctions</h1>
-          <select
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
-          >
-            <option value="" defaultValue="">
-              Sort
-            </option>
-            <option value="auctioner">Auctioner</option>
-            <option value="bidder">Bidder</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-          </select>
-        </div>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -129,7 +129,13 @@ export default function Auctions() {
                 <TableCell>
                   <div className="flex gap-2">
                     {auction.images.map((img) => (
-                      <Image src={img} width={70} height={70} alt={img} />
+                      <Image
+                        key={img}
+                        src={img}
+                        width={70}
+                        height={70}
+                        alt={img}
+                      />
                     ))}
                   </div>
                 </TableCell>

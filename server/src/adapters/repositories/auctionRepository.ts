@@ -11,7 +11,8 @@ import { ErrorResponse } from "../../utils/errors";
 export class AuctionRepositry implements IAuctionRepository {
   async findAll(): Promise<Auction[]> {
     try {
-      const auctions = await AuctionModel.find();
+      const auctions = await AuctionModel.find().sort({ startDate: -1 });
+      console.log(auctions);
 
       return auctions;
     } catch (error: any) {
@@ -174,6 +175,44 @@ export class AuctionRepositry implements IAuctionRepository {
         "auctionItem"
       );
       return auctions;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async verify(id: string): Promise<Auction> {
+    try {
+      const auction = await AuctionModel.findByIdAndUpdate(id, { new: true });
+      if (!auction) {
+        throw new ErrorResponse("error in verifying auction", 500);
+      }
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async filter(filter: any): Promise<Auction[]> {
+    try {
+      console.log("filter auction", filter);
+
+      const auction = await AuctionModel.find(filter);
+      console.log(auction);
+
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async count(filter: any): Promise<number> {
+    try {
+      console.log("filter in repo", filter);
+
+      const count = await AuctionModel.find({
+        filter,
+      }).countDocuments();
+
+      return count;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

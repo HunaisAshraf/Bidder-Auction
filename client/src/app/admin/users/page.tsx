@@ -83,22 +83,22 @@ export default function Users() {
   return (
     <AdminLayout>
       <Toaster />
+      <div className="p-3 flex justify-between bg-white">
+        <h1 className="text-2xl font-semibold ">All Users</h1>
+        <select
+          onChange={(e) => setFilter(e.target.value)}
+          className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
+        >
+          <option value="" defaultValue="">
+            Sort
+          </option>
+          <option value="auctioner">Auctioner</option>
+          <option value="bidder">Bidder</option>
+          <option value="active">Active</option>
+          <option value="blocked">Blocked</option>
+        </select>
+      </div>
       <TableContainer component={Paper}>
-        <div className="p-3 flex justify-between">
-          <h1 className="text-2xl font-semibold ">All Users</h1>
-          <select
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
-          >
-            <option value="" defaultValue="">
-              Sort
-            </option>
-            <option value="auctioner">Auctioner</option>
-            <option value="bidder">Bidder</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-          </select>
-        </div>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

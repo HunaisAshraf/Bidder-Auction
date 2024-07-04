@@ -189,5 +189,38 @@ export class AuctionController {
     req: IRequestWithUser,
     res: Response,
     next: NextFunction
-  ) {}
+  ) {
+    try {
+      const { id } = req.params;
+
+      await this.interactor.verifyAuction(id);
+      return res
+        .send(200)
+        .json({ success: true, message: "Failed to verify Auction" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onFilterAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { filter } = req.query;
+
+      const auctions = await this.interactor.filterAuction(filter);
+      const count = await this.interactor.getCount(filter);
+      return res.status(200).json({
+        success: true,
+        message: "auction filtered successfully",
+        auctions,
+        count,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }
