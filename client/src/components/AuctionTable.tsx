@@ -26,6 +26,7 @@ type Auction = {
   images: string[];
   isListed: string;
   completed: boolean;
+  isVerified: boolean;
 };
 
 export default function AuctionTable() {
@@ -78,11 +79,12 @@ export default function AuctionTable() {
             <TableRow>
               <TableCell>Auction Name</TableCell>
               <TableCell>Image</TableCell>
-              <TableCell align="right">Base Price</TableCell>
-              <TableCell align="right">Start Date</TableCell>
-              <TableCell align="right">End Date</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell>Base Price</TableCell>
+              <TableCell>Start Date</TableCell>
+              <TableCell>End Date</TableCell>
+              <TableCell>Verified</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -94,7 +96,7 @@ export default function AuctionTable() {
                 <TableCell component="th" scope="auction">
                   {auction?.itemName}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <Image
                     width={96}
                     height={96}
@@ -102,14 +104,23 @@ export default function AuctionTable() {
                     alt={auction?.itemName}
                   />
                 </TableCell>
-                <TableCell align="right">{auction?.basePrice}</TableCell>
-                <TableCell align="right">
+                <TableCell>{auction?.basePrice}</TableCell>
+                <TableCell>
                   {moment(auction?.startDate).format("lll")}
                 </TableCell>
-                <TableCell align="right">
-                  {moment(auction?.endDate).format("lll")}
+                <TableCell>{moment(auction?.endDate).format("lll")}</TableCell>
+                <TableCell>
+                  {auction.isVerified ? (
+                    <button className=" border-2  py-2 px-3 rounded-sm">
+                      Verified
+                    </button>
+                  ) : (
+                    <button className="bg-[#231656] text-white font-semibold border-2  py-2 px-3 rounded-sm">
+                      Requested
+                    </button>
+                  )}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   {auction?.completed ? (
                     <span className="bg-yellow-500 text-white font-semibold py-2 px-3 rounded">
                       Completed
@@ -128,7 +139,7 @@ export default function AuctionTable() {
                     </button>
                   )}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <EditAuctionModal
                     change={dataChange}
                     setChange={setDataChange}

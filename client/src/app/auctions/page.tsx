@@ -15,6 +15,7 @@ type Auction = {
   endDate: Date;
   images: string;
   completed: boolean;
+  auctioner: string;
 };
 
 export default function Auction() {
@@ -98,6 +99,7 @@ export default function Auction() {
                 startDate={auction.startDate}
                 image={auction.images[0]}
                 completed={auction.completed}
+                auctioner={auction.auctioner}
               />
             </Link>
           ))}
@@ -125,6 +127,7 @@ export default function Auction() {
                 startDate={auction.startDate}
                 image={auction.images[0]}
                 completed={auction.completed}
+                auctioner={auction.auctioner}
               />
             </Link>
           ))}

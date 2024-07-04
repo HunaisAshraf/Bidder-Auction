@@ -184,13 +184,15 @@ export default function SingleAuction({
                     </button>
                   </div>
                 )}
-              <button
-                className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4"
-                onClick={handleChat}
-              >
-                <QuestionAnswerIcon />
-                Chat with auctioner
-              </button>
+              {user?._id !== auction?.auctioner && (
+                <button
+                  className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4"
+                  onClick={handleChat}
+                >
+                  <QuestionAnswerIcon />
+                  Chat with auctioner
+                </button>
+              )}
             </div>
           </div>
         </div>

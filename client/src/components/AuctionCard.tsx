@@ -1,3 +1,6 @@
+"use client";
+
+import { useAppSelector } from "@/lib/store/hooks";
 import moment from "moment";
 import Image from "next/image";
 import React from "react";
@@ -10,6 +13,7 @@ type Auction = {
   endDate: Date;
   image: string;
   completed: boolean;
+  auctioner: string;
 };
 
 export default function AuctionCard({
@@ -20,7 +24,11 @@ export default function AuctionCard({
   endDate,
   image,
   completed,
+  auctioner,
 }: Auction) {
+  const user = useAppSelector((state) => state.users.user);
+  console.log("ksadjhfkjadshfkjshkj", user, auctioner);
+
   return (
     <div className="flex  shadow-lg p-4  my-5 items-center">
       <Image height={180} width={260} className="rounded" src={image} alt="" />
@@ -53,14 +61,18 @@ export default function AuctionCard({
           <div className="">
             <p className="font-bold">$ Current Bid</p>
             <p className="text-gray-500">${basePrice}</p>
-            {completed ? (
-              <button className="p-2 shadow bg-yellow-500 text-white font-semibold rounded-lg">
-                Completed
-              </button>
-            ) : (
-              <button className="p-2 shadow bg-[#200f66] text-white font-semibold rounded-lg">
-                Place Bid
-              </button>
+            {user?._id !== auctioner && (
+              <>
+                {completed ? (
+                  <button className="p-2 shadow bg-yellow-500 text-white font-semibold rounded-lg">
+                    Completed
+                  </button>
+                ) : (
+                  <button className="p-2 shadow bg-[#200f66] text-white font-semibold rounded-lg">
+                    Place Bid
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
