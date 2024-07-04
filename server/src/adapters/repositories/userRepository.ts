@@ -99,4 +99,15 @@ export class UserRepository implements IUserRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async search(search: string): Promise<User[]> {
+    try {
+      const users = await UserModel.find({
+        name: { $regex: search, $options: "i" },
+      });
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

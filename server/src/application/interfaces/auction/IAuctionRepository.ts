@@ -18,4 +18,6 @@ export interface IAuctionRepository {
   verify(id: string): Promise<Auction>;
   filter(filter: any): Promise<Auction[]>;
   count(filter: any): Promise<number>;
+  block(id: string, status: boolean): Promise<Auction>;
+  search(search: string): Promise<Auction[]>;
 }

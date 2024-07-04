@@ -9,4 +9,5 @@ export interface IUserRepository {
   upsert(user: User): Promise<boolean>;
   filter(filter: any, page: any): Promise<User[]>;
   count(filter: any): Promise<number>;
+  search(search: string): Promise<User[]>;
 }

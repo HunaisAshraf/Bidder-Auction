@@ -13,7 +13,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { GridSearchIcon } from "@mui/x-data-grid";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function Users() {
@@ -22,6 +23,7 @@ export default function Users() {
   const [count, setCount] = useState<number>(0);
   const [filter, setFilter] = useState<string | null>(null);
   const [change, setChange] = useState(false);
+  const [search, setSearch] = useState("");
 
   const filterUser = async () => {
     try {
@@ -51,6 +53,21 @@ export default function Users() {
       }
     } catch (error) {
       toast.error("failed to block/unblock user");
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    try {
+      e.preventDefault();
+      const { data } = await adminAxiosInstance(
+        `/api/auth/search-users/?search=${search}`
+      );
+      if (data.success) {
+        setUsers(data.users);
+        setCount(data.users.length);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -85,6 +102,17 @@ export default function Users() {
       <Toaster />
       <div className="p-3 flex justify-between bg-white">
         <h1 className="text-2xl font-semibold ">All Users</h1>
+        <form className="flex" onSubmit={handleSubmit}>
+          <input
+            className="outline-none shadow-md px-4 py-2 rounded-l-md w-[200px] md:w-[400px]"
+            placeholder="Search..."
+            type="text"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="bg-[#231656] text-white py-2 px-4 rounded-r-md font-semibold">
+            <GridSearchIcon />
+          </button>
+        </form>
         <select
           onChange={(e) => setFilter(e.target.value)}
           className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
@@ -110,11 +138,13 @@ export default function Users() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users?.length === 0 && (
-              <h1 className="text-center font-semibold text-2xl my-5">
-                No user found.....
-              </h1>
-            )}
+            <TableRow>
+              {users?.length === 0 && (
+                <TableCell className="text-center font-semibold text-2xl my-5">
+                  No user found.....
+                </TableCell>
+              )}
+            </TableRow>
             {users?.map((user, index) => (
               <TableRow
                 key={user._id}
@@ -149,16 +179,16 @@ export default function Users() {
             ))}
           </TableBody>
         </Table>
-        <div className="my-2">
-          {count / 5 > 1 && (
-            <Pagination
-              count={Math.ceil(count / 5)}
-              page={page}
-              onChange={(event, value) => setPage(value)}
-            />
-          )}
-        </div>
       </TableContainer>
+      {count / 5 > 1 && (
+        <div className="my-2 bg-white py-2">
+          <Pagination
+            count={Math.ceil(count / 5)}
+            page={page}
+            onChange={(event, value) => setPage(value)}
+          />
+        </div>
+      )}
     </AdminLayout>
   );
 }

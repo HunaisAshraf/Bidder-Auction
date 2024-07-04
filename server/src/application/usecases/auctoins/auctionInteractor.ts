@@ -349,6 +349,8 @@ export class AuctionInteractor implements IAuctionInteractor {
   async verifyAuction(id: string): Promise<Auction> {
     try {
       const auction = await this.repository.verify(id);
+      console.log("interactor", auction);
+
       return auction;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
@@ -399,6 +401,30 @@ export class AuctionInteractor implements IAuctionInteractor {
 
       const count = await this.repository.count(searchFilter);
       return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async blockAuction(id: string): Promise<Auction> {
+    try {
+      const auction = await this.repository.findOne(id);
+      let status;
+      if (auction.isBlocked) {
+        status = false;
+      } else {
+        status = true;
+      }
+
+      const updatedAuction = await this.repository.block(id, status);
+      return updatedAuction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async searchAuction(search: string): Promise<Auction[]> {
+    try {
+      const auction = await this.repository.search(search);
+      return auction;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

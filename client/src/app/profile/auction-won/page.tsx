@@ -74,21 +74,21 @@ export default async function AuctionWon() {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="auction">
-                    {auction?.auctionItem.itemName}
+                    {auction?.auctionItem?.itemName}
                   </TableCell>
                   <TableCell align="right">
                     <Image
                       width={96}
                       height={96}
-                      src={auction.auctionItem.images[0]}
-                      alt={auction.auctionItem.itemName}
+                      src={auction.auctionItem?.images[0]}
+                      alt={auction.auctionItem?.itemName}
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {auction.auctionItem.description}
+                    {auction.auctionItem?.description}
                   </TableCell>
                   <TableCell align="right">
-                    {auction.auctionItem.basePrice}
+                    {auction.auctionItem?.basePrice}
                   </TableCell>
                   <TableCell align="right">{auction.bidAmount}</TableCell>
                   {/* <TableCell align="right">

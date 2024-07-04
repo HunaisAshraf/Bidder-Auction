@@ -302,4 +302,23 @@ export class UserController {
       next(error);
     }
   }
+
+  async onSearchUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { search } = req.query;
+      const users = await this.interactor.searchUser(search?.toString()!);
+      const count = await this.interactor.getCount(search);
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "search user successfull",
+          users,
+          count,
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

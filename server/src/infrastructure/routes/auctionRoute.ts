@@ -71,7 +71,7 @@ router.get(
   controller.onAuctionWon.bind(controller)
 );
 
-router.get(
+router.put(
   "/verify-auction/:id",
   isAdmin,
   controller.onAdminVerifyAuction.bind(controller)
@@ -81,6 +81,17 @@ router.get(
   "/filter-auction",
   isAdmin,
   controller.onFilterAuction.bind(controller)
+);
+
+router.put(
+  "/block-auction/:id",
+  isAdmin,
+  controller.onBlockAuction.bind(controller)
+);
+router.get(
+  "/search-auction",
+  isAdmin,
+  controller.onSearchAuction.bind(controller)
 );
 
 export { router as auctionRouter };

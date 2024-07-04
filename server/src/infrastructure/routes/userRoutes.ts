@@ -70,5 +70,6 @@ router.put(
   isAdmin,
   controller.onChangeStatus.bind(controller)
 );
+router.get("/search-users", isAdmin, controller.onSearchUser.bind(controller));
 
 export { router as userRouter };

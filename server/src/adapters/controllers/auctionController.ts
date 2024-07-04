@@ -192,11 +192,12 @@ export class AuctionController {
   ) {
     try {
       const { id } = req.params;
+      console.log(req.params);
 
       await this.interactor.verifyAuction(id);
       return res
-        .send(200)
-        .json({ success: true, message: "Failed to verify Auction" });
+        .status(200)
+        .json({ success: true, message: "Auction verified successfully" });
     } catch (error) {
       next(error);
     }
@@ -220,6 +221,42 @@ export class AuctionController {
       });
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  }
+
+  async onBlockAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const auction = await this.interactor.blockAuction(id);
+      return res.status(200).json({
+        success: true,
+        message: "auction blocked/unblocked successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onSearchAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { search } = req.query;
+
+      const auctions = await this.interactor.searchAuction(search?.toString()!);
+      return res.status(200).json({
+        success: true,
+        message: "search auction successfully",
+        auctions,
+      });
+    } catch (error) {
       next(error);
     }
   }

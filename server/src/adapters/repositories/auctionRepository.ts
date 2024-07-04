@@ -11,7 +11,9 @@ import { ErrorResponse } from "../../utils/errors";
 export class AuctionRepositry implements IAuctionRepository {
   async findAll(): Promise<Auction[]> {
     try {
-      const auctions = await AuctionModel.find().sort({ startDate: -1 });
+      const auctions = await AuctionModel.find()
+        .sort({ startDate: -1 })
+        .populate("auctioner");
       console.log(auctions);
 
       return auctions;
@@ -34,7 +36,8 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       const auctions = await AuctionModel.find({
         isListed: true,
-
+        isVerified: true,
+        isBlocked: false,
         endDate: { $gte: new Date() },
       });
 
@@ -182,7 +185,11 @@ export class AuctionRepositry implements IAuctionRepository {
 
   async verify(id: string): Promise<Auction> {
     try {
-      const auction = await AuctionModel.findByIdAndUpdate(id, { new: true });
+      const auction = await AuctionModel.findByIdAndUpdate(
+        id,
+        { isVerified: true },
+        { new: true }
+      );
       if (!auction) {
         throw new ErrorResponse("error in verifying auction", 500);
       }
@@ -196,7 +203,7 @@ export class AuctionRepositry implements IAuctionRepository {
     try {
       console.log("filter auction", filter);
 
-      const auction = await AuctionModel.find(filter);
+      const auction = await AuctionModel.find(filter).populate("auctioner");
       console.log(auction);
 
       return auction;
@@ -210,9 +217,37 @@ export class AuctionRepositry implements IAuctionRepository {
 
       const count = await AuctionModel.find({
         filter,
-      }).countDocuments();
+      })
+        .populate("auctioner")
+        .countDocuments();
 
       return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async block(id: string, status: boolean): Promise<Auction> {
+    try {
+      const auction = await AuctionModel.findByIdAndUpdate(
+        id,
+        { isBlocked: status },
+        { new: true }
+      );
+      if (!auction) {
+        throw new ErrorResponse("error in blocking/unblocking auction", 500);
+      }
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async search(search: string): Promise<Auction[]> {
+    try {
+      const auctions = await AuctionModel.find({
+        itemName: { $regex: search, $options: "i" },
+      }).populate("auctioner");
+      return auctions;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }
