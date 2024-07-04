@@ -83,7 +83,7 @@ export default function AuctionTable() {
               <TableCell>Base Price</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
-              <TableCell>Verified</TableCell>
+              <TableCell>Verification</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
