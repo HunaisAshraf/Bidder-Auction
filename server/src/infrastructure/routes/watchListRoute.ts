@@ -17,13 +17,18 @@ router.get(
   isAuthenticated,
   controller.onGetListInteractor.bind(controller)
 );
+router.get(
+  "/check-watchlist/:auctionId",
+  isAuthenticated,
+  controller.onCheckWatchList.bind(controller)
+);
 router.post(
   "/add-watchlist/:auctionId",
   isAuthenticated,
   controller.onAddToList.bind(controller)
 );
 router.delete(
-  "/delete-watchlist/:id",
+  "/delete-watchlist/:auctionId",
   isAuthenticated,
   controller.onRemoveFromList.bind(controller)
 );

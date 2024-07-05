@@ -26,6 +26,11 @@ type Auction = {
   completed: boolean;
 };
 
+type WatchList = {
+  _id: string;
+  auciton: string;
+  user: string;
+};
 export default function SingleAuction({
   params,
 }: {
@@ -37,6 +42,7 @@ export default function SingleAuction({
   const auctionId = params.id;
   const [auction, setAuction] = useState<Auction>();
   const [bidAmount, setBidAmount] = useState<number>();
+  const [subscribed, setSubscribed] = useState<WatchList | null>(null);
   const router = useRouter();
   const user = useAppSelector((state) => state.users.user);
 
@@ -85,11 +91,27 @@ export default function SingleAuction({
       );
 
       if (data.success) {
+        setSubscribed(data.watchList);
         toast.success(data.message);
       }
     } catch (error: any) {
       console.log(error);
       toast.error(error.response.data.error);
+    }
+  };
+
+  const removeFromWatchList = async (id: string) => {
+    try {
+      const { data } = await axiosInstance.delete(
+        `/api/watchlist/delete-watchlist/${id}`
+      );
+
+      if (data.success) {
+        setSubscribed(null);
+        toast.success("removed from watchlist");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -117,6 +139,22 @@ export default function SingleAuction({
       }
     };
     getAuction();
+  }, []);
+  useEffect(() => {
+    const getWatchList = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          `/api/watchList/check-watchlist/${params.id}`
+        );
+
+        if (data.success) {
+          setSubscribed(data.watchList);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getWatchList();
   }, []);
 
   if (!auction) {
@@ -211,11 +249,21 @@ export default function SingleAuction({
                     Chat with auctioner
                   </button>
                 )}
-                <div onClick={() => addToWatchList(auction._id)}>
-                  <button className="mt-3 bg-[#200f66] p-2 text-white rounded-full text-md">
+                {subscribed?._id ? (
+                  <button
+                    onClick={() => removeFromWatchList(subscribed._id)}
+                    className="mt-3 bg-[#200f66] p-2 text-white rounded-full text-md"
+                  >
+                    <AddAlertIcon /> UnSubscribe
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => addToWatchList(auction._id)}
+                    className="mt-3 bg-[#200f66] p-2 text-white rounded-full text-md"
+                  >
                     <AddAlertIcon /> Subscribe
                   </button>
-                </div>
+                )}
               </div>
             </div>
           </div>

@@ -50,11 +50,29 @@ export class WatchListController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      await this.interactor.removeFromList(id);
+      const { auctionId } = req.params;
+      await this.interactor.removeFromList(auctionId);
       return res.status(200).json({
         success: true,
         message: "watchlist removed successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async onCheckWatchList(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.user!;
+      const { auctionId } = req.params;
+      const watchList = await this.interactor.checkList(auctionId, id);
+      return res.status(200).json({
+        success: true,
+        message: "available in watchlist",
+        watchList,
       });
     } catch (error) {
       next(error);

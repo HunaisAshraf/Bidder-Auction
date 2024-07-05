@@ -37,4 +37,15 @@ export class WatchListInteractor implements IWatchListInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+  async checkList(auction: string, user: string): Promise<WatchList> {
+    try {
+      const exist = await this.repository.search(auction, user);
+      if (!exist) {
+        throw new ErrorResponse("not in watch list", 404);
+      }
+      return exist;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }
