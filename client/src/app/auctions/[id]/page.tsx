@@ -11,8 +11,10 @@ import { useRouter } from "next/navigation";
 import Loading from "./loading";
 import { useAppSelector } from "@/lib/store/hooks";
 import Image from "next/image";
+import AddAlertIcon from "@mui/icons-material/AddAlert";
 
 type Auction = {
+  _id: string;
   itemName: string;
   description: string;
   basePrice: number;
@@ -73,6 +75,21 @@ export default function SingleAuction({
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const addToWatchList = async (id: string) => {
+    try {
+      const { data } = await axiosInstance.post(
+        `/api/watchlist/add-watchlist/${id}`
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response.data.error);
     }
   };
 
@@ -184,15 +201,22 @@ export default function SingleAuction({
                     </button>
                   </div>
                 )}
-              {user?._id !== auction?.auctioner && (
-                <button
-                  className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4"
-                  onClick={handleChat}
-                >
-                  <QuestionAnswerIcon />
-                  Chat with auctioner
-                </button>
-              )}
+              <div className="flex justify-between items-center">
+                {user?._id !== auction?.auctioner && (
+                  <button
+                    className="outline-none shadow-[#231656] shadow-sm px-4 py-2 rounded-full mt-4"
+                    onClick={handleChat}
+                  >
+                    <QuestionAnswerIcon />
+                    Chat with auctioner
+                  </button>
+                )}
+                <div onClick={() => addToWatchList(auction._id)}>
+                  <button className="mt-3 bg-[#200f66] p-2 text-white rounded-full text-md">
+                    <AddAlertIcon /> Subscribe
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

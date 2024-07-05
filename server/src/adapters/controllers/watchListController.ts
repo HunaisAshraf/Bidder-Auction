@@ -36,7 +36,7 @@ export class WatchListController {
 
       return res.status(200).json({
         success: true,
-        message: "watchlist retrieved successfully",
+        message: "watchlist added successfully",
         watchList,
       });
     } catch (error) {

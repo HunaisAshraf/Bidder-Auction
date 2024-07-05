@@ -19,6 +19,11 @@ export class WatchListInteractor implements IWatchListInteractor {
   }
   async addToList(auctionId: string, userId: string): Promise<WatchList> {
     try {
+      const watchListExist = await this.repository.search(auctionId, userId);
+      if (watchListExist) {
+        throw new ErrorResponse("auction already exist in watchlist");
+      }
+
       const watchList = await this.repository.add(auctionId, userId);
       return watchList;
     } catch (error: any) {
