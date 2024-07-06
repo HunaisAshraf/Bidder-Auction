@@ -152,6 +152,18 @@ export class AuctionRepositry implements IAuctionRepository {
     }
   }
 
+  async getStartedAuction(): Promise<Auction[]> {
+    try {
+      const startedAuction = await AuctionModel.find({
+        started: false,
+        startDate: { $lte: new Date() },
+      });
+      return startedAuction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
   async addWinner(data: AuctionWinner): Promise<AuctionWinner> {
     try {
       const winner = new AuctionWinnerModel(data);

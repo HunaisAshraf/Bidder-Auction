@@ -1,8 +1,9 @@
 import { IMailerService } from "../../application/interfaces/service/IMailerService";
 import { IUserRepository } from "../../application/interfaces/user/IUserRepository";
 import { User } from "../../entities/User";
+import { Auction } from "../../entities/auction";
 import { ErrorResponse } from "../../utils/errors";
-import { sendMail } from "../../utils/sendMail";
+import { sendAuctionMail, sendMail } from "../../utils/sendMail";
 import { generateHashPassword } from "../middlewares/hashPasswordMiddleware";
 
 export class MailService implements IMailerService {
@@ -31,11 +32,17 @@ export class MailService implements IMailerService {
         user.forgotPasswordTokenExpiry = twoDaysLater;
       }
 
-      console.log("token ddddddddddddddddddddddd", user);
-
       let data = await this.repository.update(user._id.toString(), user);
 
       await sendMail(user.name, user.email, type, token);
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async auctionStartMail(user: any, auction: Auction): Promise<void> {
+    try {
+      await sendAuctionMail(user.name, user.email, auction);
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

@@ -10,16 +10,22 @@ import {
   isAuctioner,
   isAuthenticated,
 } from "../middlewares/isAuthenticated";
+import { MailService } from "../service/mailService";
+import { WatchRepository } from "../../adapters/repositories/watchListRepository";
 const router = express.Router();
 
 const authService = new AuthService();
 const repository = new AuctionRepositry();
 const userRepository = new UserRepository();
 const paymentRepository = new PaymentRepository();
+const mailService = new MailService(userRepository);
+const watchListRepository = new WatchRepository();
 const interactor = new AuctionInteractor(
   repository,
   userRepository,
-  paymentRepository
+  paymentRepository,
+  mailService,
+  watchListRepository
 );
 
 const controller = new AuctionController(authService, interactor);

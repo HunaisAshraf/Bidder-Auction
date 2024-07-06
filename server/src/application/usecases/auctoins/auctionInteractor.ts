@@ -9,19 +9,27 @@ import { IPaymentRepository } from "../../interfaces/service/IPaymentRepository"
 import { AuctionWinner } from "../../../entities/auctionWinner";
 import { User } from "../../../entities/User";
 import { ErrorResponse } from "../../../utils/errors";
+import { IMailerService } from "../../interfaces/service/IMailerService";
+import { IWatchListRepository } from "../../interfaces/watchList/IWatchListRepository";
 
 export class AuctionInteractor implements IAuctionInteractor {
   private repository: IAuctionRepository;
   private userRepository: IUserRepository;
   private paymentRepository: IPaymentRepository;
+  private mailService: IMailerService;
+  private watchListRepository: IWatchListRepository;
   constructor(
     repository: IAuctionRepository,
     userRepository: IUserRepository,
-    paymentRepository: IPaymentRepository
+    paymentRepository: IPaymentRepository,
+    mailService: IMailerService,
+    watchListRepository: IWatchListRepository
   ) {
     this.repository = repository;
     this.userRepository = userRepository;
     this.paymentRepository = paymentRepository;
+    this.mailService = mailService;
+    this.watchListRepository = watchListRepository;
   }
 
   async adminGetAllAuctions(): Promise<Auction[]> {
@@ -323,6 +331,41 @@ export class AuctionInteractor implements IAuctionInteractor {
         auction._id.toString(),
         auction
       );
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async startedAuction(): Promise<Auction[]> {
+    try {
+      console.log("started auction function");
+
+      const startedAuction = await this.repository.getStartedAuction();
+
+      return startedAuction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async startAuction(auction: Auction): Promise<void> {
+    try {
+      auction.started = true;
+      const updateAuction = await this.repository.edit(
+        auction._id.toString(),
+        auction
+      );
+
+      const watchList = await this.watchListRepository.findByAuction(
+        auction._id.toString()
+      );
+
+      if (watchList.length === 0) {
+        throw new ErrorResponse("no one in watchlist", 404);
+      }
+      for (let list of watchList) {
+        await this.mailService.auctionStartMail(list.user, auction);
+      }
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

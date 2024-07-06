@@ -12,6 +12,14 @@ export class WatchRepository implements IWatchListRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+  async findByAuction(auction: string): Promise<WatchList[]> {
+    try {
+      const watchList = await WatchListModel.find({ auction }).populate("user");
+      return watchList;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
   async add(auction: string, user: string): Promise<WatchList> {
     try {
       const watchList = new WatchListModel({

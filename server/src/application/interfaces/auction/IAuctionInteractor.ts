@@ -20,6 +20,8 @@ export interface IAuctionInteractor {
   ): Promise<Auction>;
   placeBid(bidAmount: number, auctionId: string, userId: string): Promise<Bid>;
   getBids(id: string): Promise<Bid[]>;
+  startedAuction(): Promise<Auction[]>;
+  startAuction(auction: Auction): Promise<void>;
   completedAuction(): Promise<Auction[]>;
   completeAuction(auction: Auction): Promise<void>;
   getBiddingHistory(id: string): Promise<Bid[]>;

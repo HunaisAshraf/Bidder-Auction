@@ -14,6 +14,7 @@ export class Auction {
     public isVerified: boolean,
     public isBlocked: boolean,
     public images: string[],
-    public completed: boolean
+    public completed: boolean,
+    public started: boolean
   ) {}
 }

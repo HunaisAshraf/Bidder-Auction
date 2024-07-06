@@ -12,6 +12,7 @@ export interface IAuctionRepository {
   addBid(bid: Bid): Promise<Bid>;
   getBid(id: string): Promise<any[]>;
   getCompletedAuction(): Promise<Auction[]>;
+  getStartedAuction(): Promise<Auction[]>;
   addWinner(data: AuctionWinner): Promise<AuctionWinner>;
   getUserBid(id: string): Promise<Bid[]>;
   getAuctionWon(id: string): Promise<AuctionWinner[]>;
