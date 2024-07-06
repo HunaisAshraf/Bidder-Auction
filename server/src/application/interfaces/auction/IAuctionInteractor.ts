@@ -32,4 +32,5 @@ export interface IAuctionInteractor {
   blockAuction(id: string): Promise<Auction>;
   searchAuction(search: string): Promise<Auction[]>;
   getCompletedAuction(userId: string): Promise<AuctionWinner[]>;
+  getAuctionWonByAuction(aucitonId: string): Promise<AuctionWinner>;
 }

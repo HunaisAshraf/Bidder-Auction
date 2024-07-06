@@ -71,7 +71,7 @@ export default function Auction() {
   console.log("upcoming", upcoming);
 
   return (
-    <div className="mx-6 md:mx-16 lg:mx-32 min-h-[91vh] mt-2">
+    <div className="mx-8 md:mx-16 lg:mx-32 min-h-[91vh] mt-2">
       {live && live.length > 0 && (
         <div className=" md:mt-5">
           <div className="flex items-center justify-between">
@@ -80,7 +80,7 @@ export default function Auction() {
             </h1>
             <div className="flex">
               <input
-                className="outline-none shadow-md px-4 py-2 rounded-l-full w-[200px] md:w-[400px]"
+                className="outline-none shadow-md px-4 py-2 rounded-l-full w-[120px] md:w-[400px]"
                 placeholder="Search..."
                 type="text"
               />
@@ -89,7 +89,7 @@ export default function Auction() {
               </button>
             </div>
           </div>
-          <div className="my-4 flex flex-wrap">
+          <div className="my-4 mx-12 md:mx-0 flex flex-wrap">
             {live?.map((auction) => (
               <Link href={`/auctions/${auction._id}`} key={auction._id}>
                 <AuctionCard

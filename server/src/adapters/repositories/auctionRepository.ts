@@ -278,4 +278,20 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async getAuctionByauctionId(auctionId: string): Promise<AuctionWinner> {
+    try {
+      const auction = await AuctionWinnerModel.findOne({
+        auctionItem: auctionId,
+      })
+        .populate("auctionItem")
+        .populate("user");
+      if (!auction) {
+        throw new ErrorResponse("auciton not found", 404);
+      }
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

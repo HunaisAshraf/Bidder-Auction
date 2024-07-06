@@ -76,6 +76,11 @@ router.get(
   isAuthenticated,
   controller.onAuctionWon.bind(controller)
 );
+router.get(
+  "/auction-won/:auctionId",
+  isAuthenticated,
+  controller.onGetAuctionWon.bind(controller)
+);
 
 router.put(
   "/verify-auction/:id",

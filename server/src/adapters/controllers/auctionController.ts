@@ -282,4 +282,22 @@ export class AuctionController {
       next(error);
     }
   }
+  async onGetAuctionWon(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { auctionId } = req.params;
+
+      const auction = await this.interactor.getAuctionWonByAuction(auctionId);
+      return res.status(200).json({
+        success: true,
+        message: " auction retreived successfull",
+        auction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
