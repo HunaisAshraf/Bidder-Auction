@@ -14,7 +14,8 @@ import {
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import moment from "moment";
 import Image from "next/image";
-import { generateInvoice } from "@/utils/generateInvoice";
+import { useAppSelector } from "@/lib/store/hooks";
+// import { generateInvoice } from "@/utils/generateInvoice";
 
 type Auctions = {
   _id: string;
@@ -23,6 +24,7 @@ type Auctions = {
     basePrice: string;
     description: string;
     images: string[];
+    endDate: Date;
   };
   bidAmount: number;
 };
@@ -32,6 +34,7 @@ export default function AuctionWonTable({
 }: {
   auctions: Auctions[];
 }) {
+  const user = useAppSelector((state) => state.users.user);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -72,15 +75,16 @@ export default function AuctionWonTable({
                 </TableCell>
                 <TableCell align="right">{auction.bidAmount}</TableCell>
                 <TableCell align="right">
-                  <button onClick={() => generateInvoice(auction)}>
-                    Download
+                  <button className="bg-blue-800 p-2 text-white font-semibold rounded-sm">
+                    <PDFDownloadLink
+                      document={
+                        <InvoiceDocument auction={auction} user={user!} />
+                      }
+                      fileName="invoice.pdf"
+                    >
+                      {({ loading }) => (loading ? "loading" : "Download")}
+                    </PDFDownloadLink>
                   </button>
-                  {/* <PDFDownloadLink
-                    document={<InvoiceDocument />}
-                    fileName="invoice.pdf"
-                  >
-                    {({ loading }) => (loading ? "loading" : "Download")}
-                  </PDFDownloadLink> */}
                 </TableCell>
                 {/* <TableCell align="right">
                     {moment(auction?.).format("lll")}
