@@ -12,10 +12,8 @@ import {
   TableRow,
 } from "@mui/material";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import moment from "moment";
 import Image from "next/image";
 import { useAppSelector } from "@/lib/store/hooks";
-// import { generateInvoice } from "@/utils/generateInvoice";
 
 type Auctions = {
   _id: string;
