@@ -21,4 +21,5 @@ export interface IAuctionRepository {
   count(filter: any): Promise<number>;
   block(id: string, status: boolean): Promise<Auction>;
   search(search: string): Promise<Auction[]>;
+  completedAuctionByAuctioner(auctioner: string): Promise<AuctionWinner[]>;
 }

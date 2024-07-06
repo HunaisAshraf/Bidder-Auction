@@ -472,4 +472,15 @@ export class AuctionInteractor implements IAuctionInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+  async getCompletedAuction(userId: string): Promise<AuctionWinner[]> {
+    try {
+      console.log("interactor");
+
+      const auction = await this.repository.completedAuctionByAuctioner(userId);
+
+      return auction;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

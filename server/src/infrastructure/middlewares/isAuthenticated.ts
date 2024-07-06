@@ -71,11 +71,13 @@ export const isAuctioner = async (
         .status(400)
         .send({ success: false, error: "user not authorised" });
     }
+    console.log("askdfjhaksdjhfkjashdkfhasdkfhkjasdhfjk");
 
     req.user = { id: _id.toString(), role };
 
     next();
   } catch (error) {
+    console.log("error in token", error);
     next(error);
   }
 };

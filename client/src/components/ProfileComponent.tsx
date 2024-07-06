@@ -18,6 +18,11 @@ const links = [
     role: "bidder",
   },
 
+  {
+    title: "Auction Completed",
+    href: "/profile/auction-completed",
+    role: "auctioner",
+  },
   { title: "Auction Won", href: "/profile/auction-won", role: "bidder" },
   { title: "Auctions", href: "/profile/auctions", role: "auctioner" },
   { title: "Watch List", href: "/profile/watchlist", role: "bidder" },

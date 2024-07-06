@@ -264,4 +264,18 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async completedAuctionByAuctioner(
+    auctioner: string
+  ): Promise<AuctionWinner[]> {
+    try {
+      const auctions = await AuctionWinnerModel.find({ auctioner })
+        .populate("auctionItem")
+        .populate("user");
+
+      return auctions;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

@@ -260,4 +260,26 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onGetCompletedAuction(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.user!;
+      console.log(id);
+
+      const auctions = await this.interactor.getCompletedAuction(id);
+      console.log(auctions);
+
+      return res.status(200).json({
+        success: true,
+        message: "completed auction retreived successfull",
+        auctions,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

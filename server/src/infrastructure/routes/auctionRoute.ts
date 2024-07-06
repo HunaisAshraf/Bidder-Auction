@@ -99,5 +99,10 @@ router.get(
   isAdmin,
   controller.onSearchAuction.bind(controller)
 );
+router.get(
+  "/completed-auction",
+  isAuctioner,
+  controller.onGetCompletedAuction.bind(controller)
+);
 
 export { router as auctionRouter };

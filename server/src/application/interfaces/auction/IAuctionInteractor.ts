@@ -31,4 +31,5 @@ export interface IAuctionInteractor {
   getCount(filter: any): Promise<number>;
   blockAuction(id: string): Promise<Auction>;
   searchAuction(search: string): Promise<Auction[]>;
+  getCompletedAuction(userId: string): Promise<AuctionWinner[]>;
 }
