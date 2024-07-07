@@ -9,15 +9,16 @@ const adminSlice = createSlice({
   name: "admin",
   initialState,
   reducers: {
-    setAdmin: (state, action) => {
+    setAdmin: (state, auction) => {
       state.admin = {
-        _id: action.payload._id,
-        email: action.payload.email,
-        name: action.payload.name,
-        phone: action.payload.phone,
-        profilePicture: action.payload.profilePicture,
-        role: action.payload.role,
-        token: action.payload.token,
+        _id: auction.payload._id,
+        email: auction.payload.email,
+        name: auction.payload.name,
+        phone: auction.payload.phone,
+        profilePicture: auction.payload.profilePicture,
+        role: auction.payload.role,
+        token: auction.payload.token,
+        isActive: auction.payload.isActive,
       };
     },
     adminLogout: (state) => {
