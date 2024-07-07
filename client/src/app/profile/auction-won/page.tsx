@@ -12,6 +12,7 @@ type Auctions = {
     basePrice: string;
     description: string;
     images: string[];
+    endDate: Date;
   };
   bidAmount: number;
 };
