@@ -6,7 +6,7 @@ import { ErrorResponse } from "../../utils/errors";
 export class WatchRepository implements IWatchListRepository {
   async get(user: string): Promise<WatchList[]> {
     try {
-      const watchList = await WatchListModel.find({ user });
+      const watchList = await WatchListModel.find({ user }).populate("auction");
       return watchList;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
