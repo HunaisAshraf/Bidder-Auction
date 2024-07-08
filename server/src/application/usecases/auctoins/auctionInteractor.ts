@@ -53,7 +53,11 @@ export class AuctionInteractor implements IAuctionInteractor {
   async getAllAuctions(): Promise<Auction[]> {
     try {
       const data = await this.repository.find();
-      return data;
+      const filteredAuctions = data.filter(
+        (auction: any) => auction.auctioner.isActive
+      );
+
+      return filteredAuctions;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
     }

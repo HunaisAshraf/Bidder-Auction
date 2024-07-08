@@ -39,7 +39,7 @@ export class AuctionRepositry implements IAuctionRepository {
         isVerified: true,
         isBlocked: false,
         endDate: { $gte: new Date() },
-      });
+      }).populate("auctioner");
 
       if (!auctions) {
         throw new ErrorResponse("no auction found", 404);
