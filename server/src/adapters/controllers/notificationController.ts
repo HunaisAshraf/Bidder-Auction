@@ -17,10 +17,14 @@ export class NotificaionController {
     try {
       const { id } = req.user!;
 
-      const { message } = req.body;
+      const { userId } = req.params;
+
+      const { message, chatId } = req.body;
 
       const notificaion = await this.interactor.addNotification(
+        userId.toString(),
         id.toString(),
+        chatId,
         message
       );
 
@@ -30,6 +34,8 @@ export class NotificaionController {
         notificaion,
       });
     } catch (error) {
+      console.log(error);
+
       next(error);
     }
   }
@@ -42,14 +48,36 @@ export class NotificaionController {
     try {
       const { id } = req.user!;
 
-      const notification = await this.interactor.getNotification(id);
+      const notifications = await this.interactor.getNotification(id);
 
       return res.status(200).json({
         success: true,
         message: "notificattion get successfully",
+        notifications,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async onReadNotification(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { sender } = req.params;
+
+      const notification = await this.interactor.updateNotification(sender);
+
+      return res.status(200).json({
+        success: true,
+        message: "notification updated successfully",
         notification,
       });
     } catch (error) {
+      console.log(error);
+
       next(error);
     }
   }

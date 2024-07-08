@@ -3,7 +3,7 @@
 import { Badge, Button } from "@mui/material";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
@@ -15,26 +15,26 @@ import { axiosInstance } from "@/utils/constants";
 import Image from "next/image";
 import { useSocket } from "@/utils/hooks/useSocket";
 import { addNotification } from "@/lib/store/features/notificationSlice";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { selectChat } from "@/lib/store/features/chatSlice";
 
 const links = [
   { title: "Home", href: "/" },
   { title: "Auction", href: "/auctions" },
   { title: "Watch List", href: "/watchlist" },
   { title: "Chat", href: "/chat" },
+  // { title: "Notification", href: "#" },
 ];
 
-function count(notification: any, userId: any) {
-  console.log(notification, userId);
-
+function count(notifications: any, userId: any) {
   let count = 0;
 
-  for (let i of notification) {
-    if (i.user === userId) {
+  for (let notification of notifications) {
+    if (notification.user === userId && !notification.read) {
       count++;
     }
   }
-
-  console.log(count);
 
   return count;
 }
@@ -42,6 +42,7 @@ function count(notification: any, userId: any) {
 export default function Header() {
   const [menu, setMenu] = useState(true);
   const [notificationCount, setnotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState<any>([]);
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -51,6 +52,15 @@ export default function Header() {
   const notification = useAppSelector((state) => state?.notification);
 
   const dispatch = useAppDispatch();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   // setnotificationCount(count(notification, user?._id));
 
@@ -66,6 +76,21 @@ export default function Header() {
       await signOut();
       dispatch(logout());
       router.push("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleNotification = async (chatId: string, sender: any) => {
+    try {
+      await axiosInstance.put(`/api/notification/read-message/${sender}`);
+
+      dispatch(selectChat(chatId));
+      setnotificationCount(0);
+
+      handleClose();
+
+      router.push("/chat");
     } catch (error) {
       console.log(error);
     }
@@ -102,8 +127,24 @@ export default function Header() {
   }, [socket]);
 
   useEffect(() => {
-    setnotificationCount(count(notification, user?._id));
-  }, [notification]);
+    // setnotificationCount(count(notification, user?._id));
+    const getNotifications = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          "/api/notification/get-notification"
+        );
+        if (data.success) {
+          console.log(data.notifications);
+          setnotificationCount(count(data.notifications, user?._id));
+
+          setNotifications(data.notifications);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getNotifications();
+  }, [socket, notification, router]);
 
   return (
     <header className="bg-white py-3">
@@ -132,17 +173,49 @@ export default function Header() {
                     }
                     href={l.href}
                   >
-                    {l.title === "Chat" ? (
-                      <Badge badgeContent={notificationCount} color="primary">
-                        {l.title}
-                      </Badge>
-                    ) : (
-                      <>{l.title}</>
-                    )}
+                    {l.title}
                   </Link>
                 </li>
               );
             })}
+            <Badge badgeContent={notificationCount} color="primary">
+              <button
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+                className="text-gray-500 font-semibold"
+              >
+                Notification
+              </button>
+            </Badge>
+            <Menu
+              id="basic-menu"
+              className="p-2"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {notifications.map((notify: any) => (
+                <MenuItem
+                  key={notify._id}
+                  onClick={() =>
+                    handleNotification(notify.chatId, notify.sender._id)
+                  }
+                  className={`${
+                    !notify.read && "bg-gray-300"
+                  } text-slate-800 my-2`}
+                >
+                  Message from {notify.sender.name} {notify.message}
+                  {"    "}
+                  {!notify.read && <span className="text-red-500"> new</span>}
+                </MenuItem>
+              ))}
+            </Menu>
           </ul>
         </div>
         <div className="flex items-center gap-6">

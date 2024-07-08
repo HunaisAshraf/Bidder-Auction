@@ -44,7 +44,7 @@ app.use("/api/auth", userRouter);
 app.use("/api/auction", auctionRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/chat", messageRouter);
-app.use("/api/notificaion", notificationRoute);
+app.use("/api/notification", notificationRoute);
 app.use("/api/watchlist", watchListRoute);
 app.use(errorHandler);
 

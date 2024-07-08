@@ -47,6 +47,7 @@ router.put(
   controller.onUpdateUser.bind(controller)
 );
 router.get("/logout", controller.onUserLogout.bind(controller));
+router.get("/admin-logout", controller.onAdminLogout.bind(controller));
 router.put(
   "/update-profile-image",
   isAuthenticated,

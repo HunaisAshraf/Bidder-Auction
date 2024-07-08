@@ -226,6 +226,15 @@ export class UserController {
     }
   }
 
+  async onAdminLogout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.cookie("admin_token", "", { httpOnly: true, expires: new Date(0) });
+      return res.status(200).send({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async onUpdateProfileImage(
     req: IRequestWithUser,
     res: Response,
@@ -309,14 +318,12 @@ export class UserController {
       const users = await this.interactor.searchUser(search?.toString()!);
       const count = await this.interactor.getCount(search);
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "search user successfull",
-          users,
-          count,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "search user successfull",
+        users,
+        count,
+      });
     } catch (error) {
       next(error);
     }

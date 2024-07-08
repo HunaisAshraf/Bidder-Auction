@@ -5,6 +5,16 @@ const notificaionSchema = new Schema<Notification>(
   {
     user: {
       type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    sender: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    chatId: {
+      type: Schema.Types.ObjectId,
       required: true,
     },
     message: {

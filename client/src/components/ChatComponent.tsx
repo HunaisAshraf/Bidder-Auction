@@ -93,11 +93,15 @@ export default function ChatComponent() {
       if (data.success) {
         console.log(data);
 
-        // setMessages((prev) => [...prev, data.newMessage]);
         setNewMessage("");
-        // console.log(messages);
         setImage(null);
         socket?.emit("send_message", { newMessage, newImg, chat });
+
+        const response = await axiosInstance.post(
+          `/api/notification/add-notificaion/${selectedUser?._id}`,
+          { message: newMessage, chatId: chat }
+        );
+
         socket?.emit("send_notification", {
           user: selectedUser?._id,
           newMessage,
