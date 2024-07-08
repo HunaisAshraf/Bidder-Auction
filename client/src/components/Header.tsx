@@ -110,6 +110,26 @@ export default function Header() {
   // }, [, dispatch]);
 
   useEffect(() => {
+    async function verifyToken() {
+      try {
+        let { data } = await axiosInstance.get("/api/auth/verify-token");
+        if (!data.success) {
+          handleLogout();
+        }
+      } catch (error) {
+        console.log(error);
+        handleLogout();
+      }
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      verifyToken();
+    }
+  }, []);
+
+  useEffect(() => {
     const storedUser = localStorage.getItem("auth");
     if (storedUser && !user?.email) {
       dispatch(setUser(JSON.parse(storedUser)));
@@ -123,6 +143,12 @@ export default function Header() {
     socket?.on("notification_send", ({ user, newMessage }) => {
       console.log("notification received", user, newMessage);
       dispatch(addNotification({ user, newMessage }));
+    });
+
+    socket?.on("user_blocked", ({ userId }) => {
+      if (userId === user?._id) {
+        handleLogout();
+      }
     });
   }, [socket]);
 

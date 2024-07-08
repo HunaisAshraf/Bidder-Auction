@@ -15,7 +15,7 @@ export const isAuthenticated = async (
       res.status(400).send({ success: false, error: "user not authorised" });
     }
     const { _id, role } = auth.verifyToken(token!);
-    req.user = { id: _id.toString(), role };
+    req.user = { id: _id.toString(), role, token };
 
     next();
   } catch (error) {

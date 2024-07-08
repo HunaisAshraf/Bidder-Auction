@@ -11,5 +11,6 @@ export interface IRequestWithUser extends Request {
   user?: {
     id: string;
     role: string;
+    token?: string;
   };
 }

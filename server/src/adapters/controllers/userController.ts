@@ -5,6 +5,7 @@ import { validationResult } from "express-validator";
 import { IAuthService } from "../../application/interfaces/service/IAuthService";
 import { IRequestWithUser } from "../../application/types/types";
 import { ErrorResponse } from "../../utils/errors";
+import { io } from "../..";
 
 export class UserController {
   private interactor: IUserInteractor;
@@ -252,8 +253,21 @@ export class UserController {
     }
   }
 
-  onVerifyToken(req: Request, res: Response, next: NextFunction) {
+  async onVerifyToken(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
+      const { id, token } = req.user!;
+      await this.interactor.verifyUser(id);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+
       return res.status(200).send({ success: true, message: "user verified" });
     } catch (error) {
       next(error);
@@ -302,7 +316,12 @@ export class UserController {
     try {
       const { id } = req.params;
 
-      await this.interactor.chaneStatus(id);
+      const user = await this.interactor.chaneStatus(id);
+
+      if (!user.isActive) {
+        io.emit("user_blocked", { userId: user._id });
+      }
+
       return res.status(200).json({
         success: true,
         message: "users updated successfully",

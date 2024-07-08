@@ -16,4 +16,5 @@ export interface IUserInteractor {
   getCount(filter: any): Promise<number>;
   chaneStatus(id: string): Promise<User>;
   searchUser(search: string): Promise<User[]>;
+  verifyUser(id: string): Promise<User>;
 }

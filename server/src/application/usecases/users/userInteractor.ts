@@ -95,6 +95,10 @@ export class UserInteractor implements IUserInteractor {
         throw new ErrorResponse("password dosen't match", 400);
       }
 
+      if (!user.isActive) {
+        throw new ErrorResponse("user is blocked", 404);
+      }
+
       return user;
     } catch (error: any) {
       throw new ErrorResponse(error.message, error.status);
@@ -150,6 +154,20 @@ export class UserInteractor implements IUserInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async verifyUser(id: string): Promise<User> {
+    try {
+      const user = await this.repository.findOne(id);
+
+      if (!user?.isActive) {
+        throw new ErrorResponse("user not authorised", 402);
+      }
+      return user;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
   // async updatePassword(email: string, password: string): Promise<User> {
   //   try {
   //     const hashedPassword = await generateHashPassword(password);
