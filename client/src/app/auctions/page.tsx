@@ -74,10 +74,10 @@ export default function Auction() {
     <div className="mx-8 md:mx-16 lg:mx-32 min-h-[91vh] mt-2">
       {live && live.length > 0 && (
         <div className=" md:mt-5">
-          <div className="flex items-center justify-between">
-            <h1 className="text-gray-500 text-xl md:text-3xl font-bold">
-              Live <span className="text-[#231656]">Auction</span>
-            </h1>
+          <h1 className="text-gray-500 text-xl md:text-3xl font-bold">
+            Live <span className="text-[#231656]">Auction</span>
+          </h1>
+          {/* <div className="flex items-center justify-between">
             <div className="flex">
               <input
                 className="outline-none shadow-md px-4 py-2 rounded-l-full w-[120px] md:w-[400px]"
@@ -88,7 +88,7 @@ export default function Auction() {
                 search
               </button>
             </div>
-          </div>
+          </div> */}
           <div className="my-4 mx-12 md:mx-0 flex flex-wrap">
             {live?.map((auction) => (
               <Link href={`/auctions/${auction._id}`} key={auction._id}>
