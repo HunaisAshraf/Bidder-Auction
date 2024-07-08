@@ -5,6 +5,14 @@ import { UserModel } from "../../infrastructure/db/models/userMoldel";
 import { ErrorResponse } from "../../utils/errors";
 
 export class UserRepository implements IUserRepository {
+  async allUsers(): Promise<User[]> {
+    try {
+      const users = await UserModel.find({ role: { $ne: "admin" } });
+      return users;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
   async count(filter: any): Promise<number> {
     try {
       console.log("filter in repo", filter);

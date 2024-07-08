@@ -33,4 +33,6 @@ export interface IAuctionInteractor {
   searchAuction(search: string): Promise<Auction[]>;
   getCompletedAuction(userId: string): Promise<AuctionWinner[]>;
   getAuctionWonByAuction(aucitonId: string): Promise<AuctionWinner>;
+  getMonthlyRevenue(): Promise<any>;
+  getAuctionDetails(): Promise<any>;
 }

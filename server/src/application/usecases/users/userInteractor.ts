@@ -364,4 +364,24 @@ export class UserInteractor implements IUserInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async getDashboard(): Promise<any> {
+    try {
+      const users = await this.repository.allUsers();
+
+      let count: any = {};
+
+      for (let user of users) {
+        if (!count[user.role]) {
+          count[user.role] = 1;
+        } else {
+          count[user.role]++;
+        }
+      }
+
+      return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

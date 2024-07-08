@@ -10,4 +10,5 @@ export interface IUserRepository {
   filter(filter: any, page: any): Promise<User[]>;
   count(filter: any): Promise<number>;
   search(search: string): Promise<User[]>;
+  allUsers(): Promise<User[]>;
 }

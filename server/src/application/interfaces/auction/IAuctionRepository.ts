@@ -23,4 +23,6 @@ export interface IAuctionRepository {
   search(search: string): Promise<Auction[]>;
   completedAuctionByAuctioner(auctioner: string): Promise<AuctionWinner[]>;
   getAuctionByauctionId(auctionId: string): Promise<AuctionWinner>;
+  revenue(): Promise<any>;
+  auction(): Promise<any>;
 }

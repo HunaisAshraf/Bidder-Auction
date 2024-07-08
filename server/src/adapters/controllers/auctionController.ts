@@ -300,4 +300,23 @@ export class AuctionController {
       next(error);
     }
   }
+
+  async onGetAdminDashboard(
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const data = await this.interactor.getMonthlyRevenue();
+      const count = await this.interactor.getAuctionDetails();
+
+      return res.status(200).json({
+        success: true,
+        data,
+        count,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

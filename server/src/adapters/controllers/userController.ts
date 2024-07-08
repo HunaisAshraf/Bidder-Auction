@@ -347,4 +347,17 @@ export class UserController {
       next(error);
     }
   }
+
+  async onGetAdminDashboard(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await this.interactor.getDashboard();
+
+      return res.status(200).json({
+        success: true,
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

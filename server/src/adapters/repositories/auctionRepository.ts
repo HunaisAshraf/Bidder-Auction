@@ -294,4 +294,71 @@ export class AuctionRepositry implements IAuctionRepository {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async revenue(): Promise<any> {
+    try {
+      const revenue = await AuctionWinnerModel.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            totalRevenue: { $sum: "$bidAmount" },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            year: "$_id.year",
+            month: "$_id.month",
+            totalRevenue: 1,
+          },
+        },
+        {
+          $sort: { year: 1, month: 1 },
+        },
+      ]);
+
+      return revenue;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+
+  async auction(): Promise<any> {
+    // try {
+    //   const auctions = await AuctionModel.aggregate([
+    //     {
+    //       $addFields: {
+    //         currentDate: new Date(),
+    //       },
+    //     },
+    //     {
+    //       $facet: {
+    //         upcoming: [
+    //           { $match: { startDate: { $gt: "$currentDate" } } },
+    //           { $count: "count" },
+    //         ],
+    //         live: [
+    //           {
+    //             $match: {
+    //               startDate: { $lte: "$currentDate" },
+    //               endDate: { $gte: "$currentDate" },
+    //             },
+    //           },
+    //           { $count: "count" },
+    //         ],
+    //         completed: [
+    //           { $match: { endDate: { $lt: "$currentDate" } } },
+    //           { $count: "count" },
+    //         ],
+    //       },
+    //     },
+    //   ]);
+    //   return auctions;
+    // } catch (error: any) {
+    //   throw new ErrorResponse(error.message, error.status);
+    // }
+  }
 }

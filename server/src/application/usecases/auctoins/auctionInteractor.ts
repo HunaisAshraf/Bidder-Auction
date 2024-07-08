@@ -491,4 +491,40 @@ export class AuctionInteractor implements IAuctionInteractor {
       throw new ErrorResponse(error.message, error.status);
     }
   }
+
+  async getMonthlyRevenue(): Promise<any> {
+    try {
+      const revenue = await this.repository.revenue();
+      return revenue;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
+  async getAuctionDetails(): Promise<any> {
+    try {
+      const auctions = await this.repository.findAll();
+
+      const count = {
+        upcoming: 0,
+        live: 0,
+        completed: 0,
+      };
+      for (let auction of auctions) {
+        if (new Date(auction.startDate) > new Date()) {
+          count.upcoming++;
+        } else if (
+          new Date(auction.startDate) < new Date() &&
+          new Date(auction.endDate) > new Date()
+        ) {
+          count.live++;
+        } else if (auction.completed) {
+          count.completed++;
+        }
+      }
+
+      return count;
+    } catch (error: any) {
+      throw new ErrorResponse(error.message, error.status);
+    }
+  }
 }

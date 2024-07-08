@@ -109,5 +109,10 @@ router.get(
   isAuctioner,
   controller.onGetCompletedAuction.bind(controller)
 );
+router.get(
+  "/dashboard-auction",
+  isAdmin,
+  controller.onGetAdminDashboard.bind(controller)
+);
 
 export { router as auctionRouter };

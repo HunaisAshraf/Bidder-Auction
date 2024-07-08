@@ -17,4 +17,5 @@ export interface IUserInteractor {
   chaneStatus(id: string): Promise<User>;
   searchUser(search: string): Promise<User[]>;
   verifyUser(id: string): Promise<User>;
+  getDashboard(): Promise<any>;
 }
