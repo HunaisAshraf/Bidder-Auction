@@ -12,7 +12,9 @@ export const isAuthenticated = async (
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      res.status(400).send({ success: false, error: "user not authorised" });
+      return res
+        .status(400)
+        .send({ success: false, error: "user not authorised" });
     }
     const { _id, role } = auth.verifyToken(token!);
     req.user = { id: _id.toString(), role, token };

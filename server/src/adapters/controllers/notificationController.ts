@@ -47,7 +47,6 @@ export class NotificaionController {
   ) {
     try {
       const { id } = req.user!;
-
       const notifications = await this.interactor.getNotification(id);
 
       return res.status(200).json({
