@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { adminAxiosInstance } from "@/utils/constants";
-const pData: any = [];
+let pData: any = [];
 const xLabels = [
   "Jan",
   "Feb",
@@ -56,6 +56,9 @@ const ChartComponent = () => {
       }
     };
     getData();
+    return () => {
+      pData = [];
+    };
   }, []);
 
   return (

@@ -279,7 +279,7 @@ export default function Header() {
                     height={40}
                     src={user?.profilePicture}
                     alt={user.name}
-                    className=" rounded-full"
+                    className=" rounded-full h-10 w-10"
                   />
                 ) : (
                   <AccountCircleIcon
