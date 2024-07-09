@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 
 const protectedRouteRegex = /^\/profile\/.*$/;
-const protectedRoute = ["/profile", "/watchlist"];
+const protectedRoute = ["/profile", "/watchlist", "/chat"];
 const authRoute = ["/login", "/signup", "/update-password", "/forgot-password"];
 const adminRoute = ["/admin/dashboard", "/admin/users", "/admin/auctions"];
 
