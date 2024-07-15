@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { ErrorResponse } from "./errors";
 import { Auction } from "../entities/auction";
+import { config } from "../infrastructure/config/config";
 
 export const sendMail = async (
   name: string,
@@ -9,26 +10,28 @@ export const sendMail = async (
   token: string
 ) => {
   try {
-    console.log("otp sending...");
-    // const transporter = nodemailer.createTransport({
-    //   host: "smtp.gmail.com",
-    //   port: 587,
-    //   secure: false,
-    //   auth: {
-    //     user: process.env.EMAIL,
-    //     pass: process.env.PASSWORD,
-    //   },
-    // });
-
-    const transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: process.env.NODEMAILER_USER,
-        pass: process.env.NODEMAILER_PASSWORD,
-      },
-    });
-
+    console.log("mail sending...");
+    let transporter;
+    if (config.MODE === "production") {
+      transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: config.EMAIL,
+          pass: config.PASSWORD,
+        },
+      });
+    } else {
+      transporter = nodemailer.createTransport({
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: config.NODEMAILER_USER,
+          pass: config.NODEMAILER_PASSWORD,
+        },
+      });
+    }
     const info = await transporter.sendMail({
       from: '"Bidder "<bidder@gmail.com>',
       to: `${email}`,
@@ -36,7 +39,7 @@ export const sendMail = async (
         type === "verifyEmail" ? "Account verification" : "Reset Password",
       html: `<h2>Hi ${name}</h2><br/>
       <p>Click this <a href="${
-        process.env.MAIL_LINK
+        config.MAIL_LINK
       }/verifyemail?type=${type}&token=${token}&email=${email}"> link </a>to ${
         type === "verifyEmail" ? "verify your account " : "reset password"
       } 
@@ -46,7 +49,6 @@ export const sendMail = async (
     console.log("otp successful");
     return info;
   } catch (error: any) {
-    console.log(error);
     throw new ErrorResponse(error.message, error.status);
   }
 };
@@ -58,24 +60,28 @@ export const sendAuctionMail = async (
 ) => {
   try {
     console.log("mail sending...");
-    // const transporter = nodemailer.createTransport({
-    //   host: "smtp.gmail.com",
-    //   port: 587,
-    //   secure: false,
-    //   auth: {
-    //     user: process.env.EMAIL,
-    //     pass: process.env.PASSWORD,
-    //   },
-    // });
 
-    const transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: process.env.NODEMAILER_USER,
-        pass: process.env.NODEMAILER_PASSWORD,
-      },
-    });
+    let transporter;
+    if (config.MODE === "production") {
+      transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: config.EMAIL,
+          pass: config.PASSWORD,
+        },
+      });
+    } else {
+      transporter = nodemailer.createTransport({
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: config.NODEMAILER_USER,
+          pass: config.NODEMAILER_PASSWORD,
+        },
+      });
+    }
 
     const info = await transporter.sendMail({
       from: '"Bidder "<bidder@gmail.com>',
@@ -93,14 +99,13 @@ export const sendAuctionMail = async (
       <li>End Date: ${auction.endDate}</li>
       <li>Current Bid: ${auction.currentBid}</li>
       </ul><br/>
-      <p>Click this link to jump straight to the action: <a href="${process.env.MAIL_LINK}/auctions/${auction._id}"a> Click Here! </a> </p><br />
+      <p>Click this link to jump straight to the action: <a href="${config.MAIL_LINK}/auctions/${auction._id}"a> Click Here! </a> </p><br />
       <p>Happy BIdding!</p>
       `,
     });
     console.log("mail successful");
     return info;
   } catch (error: any) {
-    console.log(error);
     throw new ErrorResponse(error.message, error.status);
   }
 };

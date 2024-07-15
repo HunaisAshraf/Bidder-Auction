@@ -5,7 +5,7 @@ import Image from "next/image";
 import React from "react";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 
-export const getData = async (id: string) => {
+const getData = async (id: string) => {
   try {
     const token = cookies().get("token");
     const headers = {
@@ -15,11 +15,11 @@ export const getData = async (id: string) => {
     };
 
     const bids = axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/get-bids/${id}`,
+      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/v1/auction/get-bids/${id}`,
       headers
     );
     const auction = axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/auction/auction-won/${id}`,
+      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/v1/auction/auction-won/${id}`,
       headers
     );
 
@@ -41,7 +41,15 @@ export default async function Statement({
 }) {
   const data = await getData(params.id);
 
-  console.log(data);
+  const winData = {
+    item: data?.auctionData.auctionItem.itemName,
+    description: data?.auctionData.auctionItem.description,
+    basePrice: data?.auctionData.auctionItem.basePrice,
+    bidAmount: data?.auctionData.bidAmount,
+    winner: data?.auctionData.user.name,
+    startDate: data?.auctionData.auctionItem.startDate,
+    endDate: data?.auctionData.auctionItem.endDate,
+  };
 
   return (
     <div className="p-6">
@@ -136,7 +144,7 @@ export default async function Statement({
       )}
 
       {data && data.bidsData.length > 0 ? (
-        <BidStatementTable data={data} />
+        <BidStatementTable auction={winData} data={data} />
       ) : (
         <p>No bids available.</p>
       )}

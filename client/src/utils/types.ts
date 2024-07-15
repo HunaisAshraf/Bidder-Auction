@@ -13,7 +13,6 @@ export type User = {
 
 export type AuthData = {
   user?: User | null;
-  //   admin?: User | null;
 };
 
 export type AdminAuthData = {
@@ -24,6 +23,7 @@ export type Auction = {
   _id: string;
   itemName: string;
   basePrice: number;
+  currentBid: number;
   description: string;
   startDate: Date;
   endDate: Date;

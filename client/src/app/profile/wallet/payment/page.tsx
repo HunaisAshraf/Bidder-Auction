@@ -18,9 +18,6 @@ function Payment() {
 
   const amount = searchParams.get("amount");
 
-  //   const appearance = {
-  //     theme: "stripe",
-  //   };
   const options = {
     clientSecret,
   };
@@ -29,7 +26,7 @@ function Payment() {
     async function getClientSecret() {
       try {
         const { data } = await axiosInstance.post(
-          "/api/payments/create-payment-intent",
+          "/api/v1/payments/create-payment-intent",
           { amount }
         );
         if (data.clientSecret) {
@@ -45,7 +42,6 @@ function Payment() {
     <div>
       {clientSecret && (
         <Elements stripe={stripePromise} options={options}>
-          {/* <PaymentModal /> */}
           <PaymentForm />
         </Elements>
       )}

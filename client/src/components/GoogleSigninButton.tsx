@@ -31,11 +31,9 @@ export default function GoogleSigninButton() {
         };
 
         const { data } = await axiosInstance.post(
-          "/api/auth/google-signup",
+          "/api/v1/auth/google-signup",
           userData
         );
-
-        console.log(data);
 
         if (data?.success) {
           localStorage.setItem("auth", JSON.stringify(data?.user));

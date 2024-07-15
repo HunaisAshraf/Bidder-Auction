@@ -19,6 +19,8 @@ import InputEmoji from "react-input-emoji";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { removeNotification } from "@/lib/store/features/notificationSlice";
+import { Avatar } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const style = {
   position: "absolute" as "absolute",
@@ -41,7 +43,7 @@ type Message = {
   image: string;
 };
 
-export default function ChatComponent() {
+export default function ChatComponent({ onChatSelect }: { onChatSelect: any }) {
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [image, setImage] = useState<File | null>(null);
@@ -80,25 +82,22 @@ export default function ChatComponent() {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log(data);
 
         if (data.success) {
           newImg = data.uploadedImage[0];
         }
       }
       const { data } = await axiosInstance.post(
-        `/api/chat/add-message/${chat}`,
+        `/api/v1/chat/add-message/${chat}`,
         { message: newMessage, image: newImg }
       );
       if (data.success) {
-        console.log(data);
-
         setNewMessage("");
         setImage(null);
         socket?.emit("send_message", { newMessage, newImg, chat });
 
         const response = await axiosInstance.post(
-          `/api/notification/add-notificaion/${selectedUser?._id}`,
+          `/api/v1/notification/add-notificaion/${selectedUser?._id}`,
           { message: newMessage, chatId: chat }
         );
 
@@ -144,7 +143,7 @@ export default function ChatComponent() {
     const getMessages = async () => {
       try {
         const { data } = await axiosInstance.get(
-          `/api/chat/get-messages/${chat}`
+          `/api/v1/chat/get-messages/${chat}`
         );
         if (data.success) {
           setMessages(data.data);
@@ -170,20 +169,11 @@ export default function ChatComponent() {
       setMessages((prev) => [...prev, data]);
     });
 
-    // socket?.on("notification_send", ({ user, newMessage }) => {
-    //   console.log("notification received", user, newMessage);
-    // });
-
     socket?.on("incoming_call", (invitedUser) => {
       if (invitedUser.selectedUser === user?._id) {
-        // setCall()
         handleOpen();
       }
     });
-
-    // socket?.on("user-joined", (room, joinedUser) => {
-    //   console.log("room", room, " joinded ", joinedUser);
-    // });
 
     return () => {
       socket?.off("receive_message");
@@ -200,13 +190,6 @@ export default function ChatComponent() {
     dispatch(removeNotification());
   }, []);
 
-  // useEffect(() => {
-  //   const peerId = new Peer(user?._id!);
-  //   console.log("aksjdfhkasddfk", peerId);
-
-  //   setMe(peerId);
-  // }, []);
-
   if (!chat) {
     return (
       <div className="flex justify-center items-center min-h-[85vh]">
@@ -218,7 +201,6 @@ export default function ChatComponent() {
   return (
     <div>
       <div>
-        {/* <Button onClick={handleOpen}>Open modal</Button> */}
         <Modal
           open={open}
           onClose={handleClose}
@@ -250,16 +232,19 @@ export default function ChatComponent() {
         {selectedUser && (
           <div className="flex items-center justify-between gap-3 px-4 p-4">
             <div className="flex items-center gap-2">
+              <button onClick={() => onChatSelect(null)}>
+                <ArrowBackIcon />
+              </button>
               {selectedUser.profilePicture ? (
-                <Image
+                <Avatar
+                  className="-z-10"
                   src={selectedUser.profilePicture!}
                   alt={selectedUser.name}
-                  width={50}
-                  height={50}
-                  className="rounded-full"
                 />
               ) : (
-                <AccountCircleIcon sx={{ fontSize: 50 }} />
+                <Avatar className="-z-10">
+                  <AccountCircleIcon sx={{ fontSize: 50 }} />
+                </Avatar>
               )}
               <h1 className="text-2xl font-semibold">{selectedUser.name}</h1>
             </div>
@@ -293,13 +278,6 @@ export default function ChatComponent() {
         <div ref={messagesEndRef} />
       </div>
       <form className="flex  mt-2 items-center" onSubmit={sendMessage}>
-        {/* <input
-          type="text"
-          placeholder="send message"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="outline-none border-2 p-2 w-full"
-        /> */}
         <button type="button" onClick={() => inputRef.current?.click()}>
           <AddIcon />
         </button>

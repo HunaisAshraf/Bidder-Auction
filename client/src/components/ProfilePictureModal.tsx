@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -17,8 +17,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { setUser } from "@/lib/store/features/userSlice";
-import { axiosInstance } from "@/utils/constants";
-import Image from "next/image";
 
 const style = {
   position: "absolute" as "absolute",
@@ -36,14 +34,13 @@ type FormValues = {
   name: string | undefined;
   email: string | undefined;
   phone: string | undefined;
-  images: File[] | undefined;
+  image: File[] | undefined;
 };
 
-export default function EditProfileComponent() {
+export default function ProfilePictureModal() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [img, setImg] = useState<File>();
 
   const [loading, setLoading] = React.useState(false);
 
@@ -59,51 +56,29 @@ export default function EditProfileComponent() {
     try {
       setLoading(true);
 
-      let image;
+      const { data } = await axios.post("/api/s3-upload", formValue, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      if (formValue.images && formValue.images.length > 0) {
-        const { data } = await axios.post("/api/s3-upload", formValue, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        if (data.success) {
-          image = data.uploadedImage[0];
-        }
-      }
-
-      const updateuser = {
-        name: formValue.name,
-        email: formValue.email,
-        phone: formValue.phone,
-        profilePicture: image,
-      };
-
-      const { data } = await axiosInstance.put(
-        `/api/v1/auth/update-user`,
-        updateuser
-      );
-
-      if (data?.success) {
-        localStorage.setItem("auth", JSON.stringify(data.user));
+      if (data.success) {
+        const user = {
+          id: data?.user?._id,
+          name: data?.user?.name,
+          email: data?.user?.email,
+          phone: data?.user?.phone,
+          profilePicture: data?.user?.profilePicture,
+        };
+        localStorage.setItem("auth", JSON.stringify(user));
         dispatch(setUser(user));
         setLoading(false);
-        handleClose();
-        window.location.reload();
+        router.push("/profile/details");
+      } else {
+        toast.error("failed to update profile picture");
       }
     } catch (error: any) {
       toast.error(error.message);
-      setLoading(false);
-    }
-  };
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files && files.length > 0) {
-      const file = files[0];
-
-      setImg(file);
     }
   };
 
@@ -111,7 +86,7 @@ export default function EditProfileComponent() {
     setValue("name", user?.name);
     setValue("phone", user?.phone);
     setValue("email", user?.email);
-  }, [user, setValue]);
+  }, [user]);
 
   return (
     <div>
@@ -139,19 +114,13 @@ export default function EditProfileComponent() {
                   </h1>
 
                   <div>
-                    {img && (
-                      <Image
-                        width={300}
-                        height={300}
-                        src={URL.createObjectURL(img)}
-                        alt=""
-                      />
-                    )}
                     <input
                       type="file"
                       accept="image/*"
-                      {...register("images")}
-                      onChange={handleChange}
+                      {...register("image", {
+                        required: "Please enter name",
+                      })}
+                      multiple
                     />
                   </div>
 
@@ -160,6 +129,7 @@ export default function EditProfileComponent() {
                     placeholder="Name"
                     icon={<DriveFileRenameOutlineRoundedIcon />}
                     {...register("name", {
+                      required: "Please enter name",
                       pattern: {
                         value: /^[A-Za-z]+$/i,
                         message:
@@ -173,6 +143,7 @@ export default function EditProfileComponent() {
                     placeholder="Email"
                     icon={<AlternateEmailRoundedIcon />}
                     {...register("email", {
+                      required: "Please enter email",
                       pattern: {
                         value:
                           /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
@@ -185,7 +156,17 @@ export default function EditProfileComponent() {
                     type="number"
                     placeholder="Phone"
                     icon={<LocalPhoneRoundedIcon />}
-                    {...register("phone", {})}
+                    {...register("phone", {
+                      required: "Please enter phone number",
+                      minLength: {
+                        value: 10,
+                        message: "Please enter valid phone number",
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: "Please enter valid phone number",
+                      },
+                    })}
                     errors={errors.phone?.message}
                   />
 

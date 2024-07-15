@@ -18,7 +18,7 @@ export const useSocket = () => {
   };
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_SERVER_HOST as string, {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
       withCredentials: true,
     });
 

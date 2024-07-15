@@ -41,8 +41,6 @@ type FormValues = {
   endDate: Date;
   description: string;
   images: File[];
-  // password: string;
-  // confirmPassword: string;
 };
 
 export default function AddAuctionModal({
@@ -90,7 +88,7 @@ export default function AddAuctionModal({
         };
 
         const response = await axiosInstance.post(
-          "/api/auction/add-auction",
+          "/api/v1/auction/add-auction",
           auction
         );
 
@@ -131,7 +129,6 @@ export default function AddAuctionModal({
     } else if (files) {
       clearErrors("images");
       setImages(Array.from(files));
-      console.log(images);
     }
   };
 

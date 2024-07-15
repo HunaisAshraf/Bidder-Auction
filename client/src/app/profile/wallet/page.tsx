@@ -30,10 +30,9 @@ export default function Wallet() {
 
   const getWallet = async () => {
     try {
-      const { data } = await axiosInstance.get("/api/payments/get-wallet");
+      const { data } = await axiosInstance.get("/api/v1/payments/get-wallet");
 
       if (data?.success) {
-        console.log(data);
         setWallet(data?.data);
       }
     } catch (error) {

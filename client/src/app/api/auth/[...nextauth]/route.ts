@@ -3,7 +3,6 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { useAuth } from "@/utils/hooks/auth";
 
-// const { saveAuthData } = useAuth();
 const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -21,21 +20,10 @@ const authOptions: NextAuthOptions = {
           profilePicture: user.image,
         };
 
-        // let { data } = await axios.post(
-        //   `${process.env.BACKEND_URL}/api/auth/google-signup`,
-        //   userData
-        // );
-
-        // if (data.success) {
-        //   return true;
-        // }
-
         if (user) {
-          console.log(true);
           return true;
         }
 
-        console.log(false);
         return false;
       } catch (error) {
         console.log(error);
@@ -44,8 +32,6 @@ const authOptions: NextAuthOptions = {
     },
   },
 };
-
-// export default NextAuth(authOptions);
 
 const handler = NextAuth(authOptions);
 

@@ -35,9 +35,10 @@ export default function SignupForm() {
   const handleSignup = async (formData: FormValues) => {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.post("/api/auth/signup", formData);
-
-      console.log(data);
+      const { data } = await axiosInstance.post(
+        "/api/v1/auth/signup",
+        formData
+      );
 
       if (data?.success) {
         const user = {

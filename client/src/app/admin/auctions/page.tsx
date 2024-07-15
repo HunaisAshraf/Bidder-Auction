@@ -4,6 +4,8 @@ import AdminLayout from "@/components/Layout/AdminLayout";
 import { adminAxiosInstance } from "@/utils/constants";
 import { Auction, User } from "@/utils/types";
 import {
+  Box,
+  Modal,
   Pagination,
   Paper,
   Table,
@@ -17,6 +19,21 @@ import Image from "next/image";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import SearchIcon from "@mui/icons-material/Search";
+import exceljs from "exceljs";
+import XLSX, { utils, writeFile } from "xlsx";
+import moment from "moment";
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function Auctions() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
@@ -25,15 +42,21 @@ export default function Auctions() {
   const [filter, setFilter] = useState<string | null>(null);
   const [change, setChange] = useState(false);
   const [search, setSearch] = useState("");
+  const [selectedAuction, setSelectedAuction] = useState("");
+
+  const [open, setBlockOpen] = useState(false);
+  const [unblockOpen, setUnblockOpen] = useState(false);
+  const handleBlockOpen = () => setBlockOpen(true);
+  const handleBlockClose = () => setBlockOpen(false);
+  const handleUnblockOpen = () => setUnblockOpen(true);
+  const handleUnblockClose = () => setUnblockOpen(false);
 
   const filterAuctions = async () => {
     try {
       const { data } = await adminAxiosInstance.get(
-        `/api/auction/filter-auction/?filter=${filter}&page=${page}`
+        `/api/v1/auction/filter-auction/?filter=${filter}&page=${page}`
       );
       if (data.success) {
-        console.log(data);
-
         setAuctions(data.auctions);
         setCount(data.count);
       }
@@ -45,7 +68,7 @@ export default function Auctions() {
   const verifyAuction = async (id: string) => {
     try {
       const { data } = await adminAxiosInstance.put(
-        `/api/auction/verify-auction/${id}`
+        `/api/v1/auction/verify-auction/${id}`
       );
 
       if (data.success) {
@@ -59,15 +82,15 @@ export default function Auctions() {
 
   const handleStatus = async (id: string) => {
     try {
-      console.log("aldksfjkl");
-
       const { data } = await adminAxiosInstance.put(
-        `/api/auction/block-auction/${id}`
+        `/api/v1/auction/block-auction/${id}`
       );
 
       if (data.success) {
         toast.success(data.message);
         setChange(!change);
+        handleBlockClose();
+        handleUnblockClose();
       }
     } catch (error) {
       toast.error("failed to block/unblock auction");
@@ -78,7 +101,7 @@ export default function Auctions() {
     try {
       e.preventDefault();
       const { data } = await adminAxiosInstance.get(
-        `/api/auction/search-auction/?search=${search}`
+        `/api/v1/auction/search-auction/?search=${search}`
       );
 
       if (data.success) {
@@ -90,15 +113,39 @@ export default function Auctions() {
     }
   };
 
+  const downloadReport = async () => {
+    const workSheet = utils.json_to_sheet(
+      auctions.map((auction) => ({
+        Id: auction._id,
+        Item: auction.itemName,
+        BasePrice: auction.basePrice,
+        CurrentBid: auction.currentBid,
+        "Start Date": moment(auction.startDate).format("lll"),
+        "End Date": moment(auction.endDate).format("lll"),
+        Auctioneer: auction.auctioner.name,
+        Status: auction.isBlocked
+          ? "Blocked"
+          : !auction.isVerified
+          ? "Not Verified"
+          : auction.completed
+          ? "Completed"
+          : "Live",
+      }))
+    );
+
+    const workBook = utils.book_new();
+    utils.book_append_sheet(workBook, workSheet, "auctions");
+
+    writeFile(workBook, "report.xlsx");
+  };
+
   useEffect(() => {
     const getAuctions = async () => {
       try {
         const { data } = await adminAxiosInstance.get(
-          `/api/auction/admin-get-auction/?page=${page}`
+          `/api/v1/auction/admin-get-auction/?page=${page}`
         );
         if (data.success) {
-          console.log(data.auctions);
-
           setAuctions(data.auctions);
           setCount(data.count);
         }
@@ -128,6 +175,12 @@ export default function Auctions() {
             <SearchIcon />
           </button>
         </form>
+        <button
+          onClick={downloadReport}
+          className="p-2 bg-[#231656] text-white"
+        >
+          Report
+        </button>
         <select
           onChange={(e) => setFilter(e.target.value)}
           className="bg-[#F9FBFF]  outline-none  border-2 border-[#a7bbe3] rounded-sm px-3 py-2"
@@ -205,14 +258,20 @@ export default function Auctions() {
                 <TableCell>
                   {auction.isBlocked ? (
                     <button
-                      onClick={() => handleStatus(auction._id)}
+                      onClick={() => {
+                        setSelectedAuction(auction._id);
+                        handleUnblockOpen();
+                      }}
                       className="bg-red-500 border-2 border-red-900 text-white py-2 px-3 rounded-sm"
                     >
                       Blocked
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleStatus(auction._id)}
+                      onClick={() => {
+                        setSelectedAuction(auction._id);
+                        handleBlockOpen();
+                      }}
                       className="bg-green-500 border-2 border-green-800 py-2 px-3 rounded-sm"
                     >
                       Active
@@ -222,6 +281,58 @@ export default function Auctions() {
               </TableRow>
             ))}
           </TableBody>
+          <Modal
+            open={open}
+            onClose={handleBlockClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <p className="text-2xl font-semibold text-center mb-6">
+                Do you want to block this auction?
+              </p>
+              <div className="text-center">
+                <button
+                  onClick={() => handleStatus(selectedAuction)}
+                  className="p-2 mx-3 bg-[#231656] text-white font-semibold"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={handleBlockClose}
+                  className="p-2 mx-3 bg-red-800 text-white font-semibold"
+                >
+                  Decline
+                </button>
+              </div>
+            </Box>
+          </Modal>
+          <Modal
+            open={unblockOpen}
+            onClose={handleUnblockClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <p className="text-2xl font-semibold text-center mb-6">
+                Do you want to Unblock this auction?
+              </p>
+              <div className="text-center">
+                <button
+                  onClick={() => handleStatus(selectedAuction)}
+                  className="p-2 mx-3 bg-[#231656] text-white font-semibold"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={handleUnblockClose}
+                  className="p-2 mx-3 bg-red-800 text-white font-semibold"
+                >
+                  Decline
+                </button>
+              </div>
+            </Box>
+          </Modal>
         </Table>
       </TableContainer>
       <div className="my-2">

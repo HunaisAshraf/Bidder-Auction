@@ -58,8 +58,6 @@ export class ChatController {
       const { chatId } = req.params;
       const { message, image } = req.body;
 
-      console.log(req.body);
-
       const newMessage = await this.interactor.createMessage(
         chatId,
         id,
@@ -68,11 +66,6 @@ export class ChatController {
       );
 
       io.to(chatId).emit("receive_message", newMessage);
-
-      // io.on("send_message", (data) => {
-      //   console.log("asdfasdfsd0f0", data);
-
-      // });
 
       return res.status(200).json({
         success: true,

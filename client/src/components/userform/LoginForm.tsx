@@ -32,7 +32,7 @@ export default function LoginForm() {
   const handleLogin = async (formData: FormValue) => {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.post("/api/auth/login", formData);
+      const { data } = await axiosInstance.post("/api/v1/auth/login", formData);
 
       if (data?.success) {
         localStorage.setItem("auth", JSON.stringify(data.user));
@@ -81,7 +81,7 @@ export default function LoginForm() {
           <Spinner />
         ) : (
           <button className="bg-[#002A2C] w-full text-white font-semibold p-3 rounded-md">
-            Loing
+            Login
           </button>
         )}
       </form>

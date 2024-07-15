@@ -48,7 +48,7 @@ export default function BidderListComponent({
     const getBids = async () => {
       try {
         const { data } = await axiosInstance.get(
-          `/api/auction/get-bids/${auctionId}`
+          `/api/v1/auction/get-bids/${auctionId}`
         );
 
         if (data.success) {
@@ -63,7 +63,6 @@ export default function BidderListComponent({
 
   useEffect(() => {
     socket?.on("newBid", (bid) => {
-      console.log(bid);
       setBids((prev) => [bid, ...prev]);
     });
   }, [socket]);
